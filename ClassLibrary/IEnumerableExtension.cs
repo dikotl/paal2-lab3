@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using System;
 using System.Numerics;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace FunctionalEnumerableOperations;
-
 public static class IEnumerableExtension
 {
+    //Transforms
     public static IEnumerable<TResult> Map<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector)
     {
         foreach (var item in source)
@@ -23,16 +25,106 @@ public static class IEnumerableExtension
             if (predicate(item, k++))
                 yield return item;
     }
+    public static IEnumerable<TSource> Take<TSource>(this IEnumerable<TSource> source, int count)
+    {
+        var enumerator = source.GetEnumerator();
+        while (count-- > 0 && enumerator.MoveNext())
+            yield return enumerator.Current;
+    }
+    public static IEnumerable<TSource> TakeWhile<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
+    {
+        var enumerator = source.GetEnumerator();
+        while (enumerator.MoveNext())
+            if (predicate(enumerator.Current))
+                yield return enumerator.Current;
+            else break;
+    }
+    public static IEnumerable<TSource> Skip<TSource>(this IEnumerable<TSource> source, int count)
+    {
+        foreach(var item in source)
+            if (count <= 0)
+                yield return item;
+            else count--;
+    }
+    public static IEnumerable<TSource> SkipWhile<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate) 
+    {
+        var enumerator = source.GetEnumerator();
+        bool dontBroke = true;
+        while (enumerator.MoveNext())
+            if (dontBroke && predicate(enumerator.Current))
+                continue;
+            else 
+            { 
+                yield return enumerator.Current; 
+                dontBroke = false;
+            }
+    }
+
+    //Bool aggregations
+    public static bool All<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
+    {
+        foreach (TSource element in source)
+            if (!predicate(element))
+                return false;
+        return true;
+    }
+    public static bool Any<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
+    {
+        foreach (TSource element in source)
+            if (predicate(element))
+                return true;
+        return false;
+    }
+
+    //Convertors
     public static TSource[] ToArray<TSource>(this IEnumerable<TSource> source)
     {
+        TSource[]? items = null;
         int count = 0;
-        foreach (var item in source) count++;
-        var result = new TSource[count];
-        int k = 0;
-        foreach (var item in result) result[k++] = item;
+        ICollection<TSource>? collection = source as ICollection<TSource>;
+        if (collection != null)
+        {
+            count = collection.Count;
+            if (count > 0)
+            {
+                items = new TSource[count];
+                collection.CopyTo(items, 0);
+            }
+        }
+        else
+        {
+            foreach (TSource item in source)
+            {
+                if (items == null)
+                {
+                    items = new TSource[4];
+                }
+                else if (items.Length == count)
+                {
+                    TSource[] newItems = new TSource[count * 2];
+                    Array.Copy(items, 0, newItems, 0, count);
+                    items = newItems;
+                }
+                items[count] = item;
+                count++;
+            }
+        }
+        if (count == 0) return Array.Empty<TSource>();
+        if (items.Length == count) return items;
+        TSource[] result = new TSource[count];
+        Array.Copy(items, 0, result, 0, count);
         return result;
     }
-    public static TSource Reduce<TSource>(this IEnumerable<TSource> source, Func<TSource, TSource, TSource> func)
+    public static List<TSource> ToList<TSource>(this IEnumerable<TSource> source)
+    {
+        List<TSource> result = new();
+        foreach (TSource item in source)
+            result.Add(item);
+        return result;
+    }
+
+    //Folds
+    public static TSource Fold<TSource>(this IEnumerable<TSource> source, Func<TSource, TSource, TSource> func)
     {
         var enumerator = source.GetEnumerator();
         TSource result;
@@ -42,17 +134,19 @@ public static class IEnumerableExtension
             result = func(result, enumerator.Current);
         return result;
     }
-    public static TAccumulate Reduce<TSource, TAccumulate>(this IEnumerable<TSource> source, TAccumulate initial, Func<TAccumulate, TSource, TAccumulate> func)
+    public static TAccumulate Fold<TSource, TAccumulate>(this IEnumerable<TSource> source, TAccumulate initial, Func<TAccumulate, TSource, TAccumulate> func)
     {
         TAccumulate result = initial;
         foreach (var item in source)
             result = func(result, item);
         return result;
     }
-    //public static TResult Reduce<TSource, TAccumulate, TResult>(this IEnumerable<TSource> source, TAccumulate initial, Func<TAccumulate, TSource, TAccumulate> func, Func<TAccumulate, TResult> resultSelector)
-    //{
-    //    throw new NotSupportedException();
-    //}
+    public static TResult Fold<TSource, TAccumulate, TResult>(this IEnumerable<TSource> source, TAccumulate initial, Func<TAccumulate, TSource, TAccumulate> func, Func<TAccumulate, TResult> resultSelector)
+    {
+        throw new NotSupportedException();
+    }
+
+    //Value finders
     public static TSource? Max<TSource>(this IEnumerable<TSource> source) where TSource : IComparisonOperators<TSource, TSource, bool>
     {
         var enumerator = source.GetEnumerator();
@@ -88,6 +182,24 @@ public static class IEnumerableExtension
             if (predicate(value))
                 return value;
         return default;
+    }
+
+    //Sorters
+    public static IOrderedEnumerable<TSource> OrderBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, IComparer<TKey>? comparer = null)
+    {
+        return new OrderedEnumerable<TSource, TKey>(source, keySelector, comparer ?? Comparer<TKey>.Default, false);
+    }
+    public static IOrderedEnumerable<TSource> ThenBy<TSource, TKey>(this IOrderedEnumerable<TSource> source, Func<TSource, TKey> keySelector, IComparer<TKey>? comparer = null)
+    {
+        return source.CreateOrderedEnumerable(keySelector, comparer ?? Comparer<TKey>.Default, false);
+    }
+    public static IOrderedEnumerable<TSource> OrderByDescending<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, IComparer<TKey>? comparer = null)
+    {
+        return new OrderedEnumerable<TSource, TKey>(source, keySelector, comparer ?? Comparer<TKey>.Default, true);
+    }
+    public static IOrderedEnumerable<TSource> ThenByDescending<TSource, TKey>(this IOrderedEnumerable<TSource> source, Func<TSource, TKey> keySelector, IComparer<TKey>? comparer = null)
+    {
+        return source.CreateOrderedEnumerable(keySelector, comparer ?? Comparer<TKey>.Default, true);
     }
 
 
@@ -269,7 +381,7 @@ public static class IEnumerableExtension
             return descending ? -c : c;
         }
     }
-    struct Buffer<TElement>
+    private struct Buffer<TElement>
     {
         internal TElement[] items;
         internal int count;
@@ -318,25 +430,5 @@ public static class IEnumerableExtension
             Array.Copy(items, 0, result, 0, count);
             return result;
         }
-    }
-
-    public static IOrderedEnumerable<TSource> OrderBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, IComparer<TKey>? comparer = null)
-    {
-        return new OrderedEnumerable<TSource, TKey>(source, keySelector, comparer ?? Comparer<TKey>.Default, false);
-    }
-
-    public static IOrderedEnumerable<TSource> ThenBy<TSource, TKey>(this IOrderedEnumerable<TSource> source, Func<TSource, TKey> keySelector, IComparer<TKey>? comparer = null)
-    {
-        return source.CreateOrderedEnumerable(keySelector, comparer ?? Comparer<TKey>.Default, false);
-    }
-
-    public static IOrderedEnumerable<TSource> OrderByDescending<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, IComparer<TKey>? comparer = null)
-    {
-        return new OrderedEnumerable<TSource, TKey>(source, keySelector, comparer ?? Comparer<TKey>.Default, true);
-    }
-
-    public static IOrderedEnumerable<TSource> ThenByDescending<TSource, TKey>(this IOrderedEnumerable<TSource> source, Func<TSource, TKey> keySelector, IComparer<TKey>? comparer = null)
-    {
-        return source.CreateOrderedEnumerable(keySelector, comparer ?? Comparer<TKey>.Default, true);
     }
 }
