@@ -191,4 +191,25 @@ public class Array<T> : IList<T>
     public IEnumerator<T> GetEnumerator() => throw new NotImplementedException();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    public static Array<T> operator +(Array<T> a, Array<T> b)
+    {
+        if (a.Count == 0) return b;
+        if (b.Count == 0) return a;
+
+        var result = new Array<T> { Count = a.Count + b.Count };
+
+        for (int i = 0; i < a.Count; i++)
+        {
+            result.data[i] = a[i];
+        }
+
+        for (int i = a.Count; i < result.Count; i++)
+        {
+            result.data[i] = b[i];
+        }
+
+        result.Count = result.Capacity;
+        return result;
+    }
 }
