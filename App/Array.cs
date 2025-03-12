@@ -155,9 +155,32 @@ public class Array<T> : IList<T>
 
     public void RemoveAt(int index) => throw new NotImplementedException();
 
-    public void Add(T item) => throw new NotImplementedException();
+    public void Add(T item)
+    {
+        if (Count == Capacity)
+        {
+            Reserve(GrowFactor(Capacity));
+        }
 
-    public void Clear() => throw new NotImplementedException();
+        data[Count++] = item;
+
+
+        static int GrowFactor(int capacity)
+        {
+            const int GrowThreshold = 256;
+            const int InitialCapacity = 32;
+
+            if (capacity == 0)
+                return InitialCapacity;
+
+            if (capacity < GrowThreshold)
+                return capacity + capacity;
+
+            return capacity + (capacity / 4);
+        }
+    }
+
+    public void Clear() => Count = 0;
 
     public bool Contains(T item) => throw new NotImplementedException();
 
