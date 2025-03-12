@@ -130,6 +130,7 @@ public class Array<T>
 
         for (int i = 0; i < Length; i++)
         {
+            if (i > 0) buffer.Append(", ");
             buffer.Append(data[i].ToString());
         }
 
