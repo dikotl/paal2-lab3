@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 namespace App;
@@ -6,39 +8,30 @@ namespace App;
 // Null dereference checker ignores function calls
 // and can't prove that the code is valid.
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8601 // Possible null reference assignment.
 
-public class Array<T>
+public class Array<T> : IList<T>
 {
     private T[]? data = null;
 
-    public int Length { get; private set; }
+    public int Count
+    {
+        get;
+        private set;
+    }
 
     public int Capacity
     {
-        get
-        {
-            return data.Length;
-        }
-        set
-        {
-            if (value == Capacity) return;
+        get => data?.Length ?? 0;
+        set => Resize(value);
+    }
 
-            if (value > Capacity)
-            {
-                var newData = new T[value];
+    public bool IsReadOnly => false;
 
-                for (int i = 0; i < Length; i++)
-                {
-                    newData[i] = data[i];
-                }
-
-                Length = value;
-                data = newData;
-            }
-            else
-            {
-            }
-        }
+    public T this[int index]
+    {
+        get => this[new Index(index)];
+        set => this[new Index(index)] = value;
     }
 
     public T this[Index index]
@@ -48,7 +41,7 @@ public class Array<T>
             if (index.IsFromEnd)
                 throw new NotImplementedException("Backward indexing is not implemented");
 
-            if (index.Value >= Length)
+            if (index.Value >= Count)
                 throw new IndexOutOfRangeException();
 
             return data[index];
@@ -58,7 +51,7 @@ public class Array<T>
             if (index.IsFromEnd)
                 throw new NotImplementedException("Backward indexing is not implemented");
 
-            if (index.Value >= Length)
+            if (index.Value >= Count)
                 throw new IndexOutOfRangeException();
 
             data[index] = value;
@@ -77,7 +70,8 @@ public class Array<T>
         }
     }
 
-    public Array() { }
+    public Array()
+    { }
 
     public Array(int capacity)
     {
@@ -86,7 +80,7 @@ public class Array<T>
 
     public Array(int length, T zero) : this(length)
     {
-        Length = length;
+        Count = length;
 
         for (int i = 0; i < length; i++)
         {
@@ -94,16 +88,16 @@ public class Array<T>
         }
     }
 
-    public void Resize(int newLength)
+    public void Resize(int newLength, T? zero = default)
     {
         // No need to change anything.
-        if (newLength == Length)
+        if (newLength == Count)
             return;
 
-        if (newLength < Length)
+        if (newLength < Count)
         {
             // Just trim the buffer.
-            data = data[..(Length - 1)];
+            data = data[..newLength];
         }
         // Buffer may not needed to be reallocated if there is enough capacity.
         else if (newLength > Capacity)
@@ -111,7 +105,7 @@ public class Array<T>
             // Allocate new buffer and copy all elements from old buffer to the new one.
             var newData = new T[newLength];
 
-            for (int i = 0; i < Length; i++)
+            for (int i = 0; i < Count; i++)
             {
                 newData[i] = data[i];
             }
@@ -119,7 +113,12 @@ public class Array<T>
             data = newData;
         }
 
-        Length = newLength;
+        for (int i = Count; i < newLength; i++)
+        {
+            data[i] = zero;
+        }
+
+        Count = newLength;
     }
 
     public override string ToString()
@@ -128,7 +127,7 @@ public class Array<T>
         var buffer = new StringBuilder();
         buffer.Append('[');
 
-        for (int i = 0; i < Length; i++)
+        for (int i = 0; i < Count; i++)
         {
             if (i > 0) buffer.Append(", ");
             buffer.Append(data[i].ToString());
@@ -137,4 +136,24 @@ public class Array<T>
         buffer.Append(']');
         return buffer.ToString();
     }
+
+    public int IndexOf(T item) => throw new NotImplementedException();
+
+    public void Insert(int index, T item) => throw new NotImplementedException();
+
+    public void RemoveAt(int index) => throw new NotImplementedException();
+
+    public void Add(T item) => throw new NotImplementedException();
+
+    public void Clear() => throw new NotImplementedException();
+
+    public bool Contains(T item) => throw new NotImplementedException();
+
+    public void CopyTo(T[] array, int arrayIndex) => throw new NotImplementedException();
+
+    public bool Remove(T item) => throw new NotImplementedException();
+
+    public IEnumerator<T> GetEnumerator() => throw new NotImplementedException();
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
