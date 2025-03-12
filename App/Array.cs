@@ -17,13 +17,42 @@ public class Array<T> : IList<T>
     public int Count
     {
         get;
-        private set;
+        set
+        {
+            if (value == Count)
+                return;
+
+            if (value == 0)
+            {
+                data = null;
+                field = 0;
+                return;
+            }
+
+            if (value < Count)
+            {
+                // Just trim the buffer.
+                data = data[..value];
+            }
+            // Buffer may not needed to be reallocated if there is enough capacity.
+            else if (value > Capacity)
+            {
+                Reserve(value);
+            }
+
+            for (int i = Count; i < value; i++)
+            {
+                data[i] = default;
+            }
+
+            field = value;
+        }
     }
 
     public int Capacity
     {
         get => data?.Length ?? 0;
-        set => Resize(value);
+        set => Reserve(value);
     }
 
     public bool IsReadOnly => false;
@@ -88,37 +117,20 @@ public class Array<T> : IList<T>
         }
     }
 
-    public void Resize(int newLength, T? zero = default)
+    public void Reserve(int capacity)
     {
-        // No need to change anything.
-        if (newLength == Count)
+        if (capacity <= Capacity)
             return;
 
-        if (newLength < Count)
-        {
-            // Just trim the buffer.
-            data = data[..newLength];
-        }
-        // Buffer may not needed to be reallocated if there is enough capacity.
-        else if (newLength > Capacity)
-        {
-            // Allocate new buffer and copy all elements from old buffer to the new one.
-            var newData = new T[newLength];
+        // Allocate new buffer and copy all elements from old buffer to the new one.
+        var newData = new T[capacity];
 
-            for (int i = 0; i < Count; i++)
-            {
-                newData[i] = data[i];
-            }
-
-            data = newData;
+        for (int i = 0; i < Count; i++)
+        {
+            newData[i] = data[i];
         }
 
-        for (int i = Count; i < newLength; i++)
-        {
-            data[i] = zero;
-        }
-
-        Count = newLength;
+        data = newData;
     }
 
     public override string ToString()
