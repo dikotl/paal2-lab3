@@ -147,11 +147,34 @@ public class Array<T> : IList<T>
         return buffer.ToString();
     }
 
-    public int IndexOf(T item) => throw new NotImplementedException();
+    public int IndexOf(T target)
+    {
+        for (int i = 0; i < Count; i++)
+        {
+            if (data[i].Equals(target)) return i;
+        }
+
+        return -1;
+    }
 
     public void Insert(int index, T item) => throw new NotImplementedException();
 
-    public void RemoveAt(int index) => throw new NotImplementedException();
+    public void RemoveAt(int index)
+    {
+        if (index < 0 || index >= Count)
+            throw new ArgumentOutOfRangeException(nameof(index));
+
+        // Set the element to default value so we don't hold any data in
+        // the baking buffer.
+        data[index] = default;
+        --Count;
+
+        // Shift all elements after the index by 1.
+        for (int i = index; i < Count; i++)
+        {
+            (data[i + 1], data[i]) = (data[i], data[i + 1]);
+        }
+    }
 
     public void Add(T item)
     {
@@ -178,17 +201,42 @@ public class Array<T> : IList<T>
         }
     }
 
-    public void Clear() => Count = 0;
+    public void Clear()
+    {
+        Count = 0;
+    }
 
-    public bool Contains(T item) => throw new NotImplementedException();
+    public bool Contains(T target)
+    {
+        return IndexOf(target) >= 0;
+    }
 
     public void CopyTo(T[] array, int arrayIndex) => throw new NotImplementedException();
 
-    public bool Remove(T item) => throw new NotImplementedException();
+    public bool Remove(T target)
+    {
+        int index = IndexOf(target);
 
-    public IEnumerator<T> GetEnumerator() => throw new NotImplementedException();
+        if (index >= 0)
+        {
+            RemoveAt(index);
+        }
 
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        return index >= 0;
+    }
+
+    public IEnumerator<T> GetEnumerator()
+    {
+        for (int i = 0; i < Count; i++)
+        {
+            yield return data[i];
+        }
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 
     public static Array<T> operator +(Array<T> a, Array<T> b)
     {
