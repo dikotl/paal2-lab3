@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Numerics;
 using System.Reflection;
 using System.Linq.Expressions;
@@ -38,6 +38,22 @@ public sealed class FeoBoolAggregations
         ]);
     [TestMethod]
     public void TestAll___Double() => FeoTestRealization.TestAll(ArrayGenerator.GetDoubleRandArray,
+        [
+            a => a < 0,
+            a => a > 0,
+            a => a == 0,
+            a => a - (int)a > 0.5,
+        ]);
+    [TestMethod]
+    public void TestAny___Int() => FeoTestRealization.TestAny(ArrayGenerator.GetIntRandArray,
+        [
+            a => a < 0,
+            a => a > 0,
+            a => a == 0,
+            a => a % 2 == 0,
+        ]);
+    [TestMethod]
+    public void TestAny___Double() => FeoTestRealization.TestAny(ArrayGenerator.GetDoubleRandArray,
         [
             a => a < 0,
             a => a > 0,
@@ -193,6 +209,19 @@ public static class FeoTestRealization
     {
         foreach (var predicate in predicates)
             for (var i = 0; i < repeatTime / predicates.Length * 20; i++)
+            {
+                var a = generateArray(15, 20);
+                var expected = string.Join(" ", System.Linq.Enumerable.All(a, predicate.Compile()));
+                var actual = string.Join(" ", a.All(predicate.Compile()));
+
+                Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} <{typeof(T)}> test target does not work correctly with {predicate.Body}");
+            }
+    }
+
+    public static void TestAny<T>(Func<int, uint, T[]> generateArray, Expression<Func<T, bool>>[] predicates)
+    {
+        foreach (var predicate in predicates)
+            for (var i = 0; i < repeatTime / predicates.Length * 70; i++)
             {
                 var a = generateArray(15, 20);
                 var expected = string.Join(" ", System.Linq.Enumerable.All(a, predicate.Compile()));
