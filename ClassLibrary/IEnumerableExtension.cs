@@ -170,19 +170,19 @@ public static class IEnumerableExtension
                 min = enumerator.Current;
         return min;
     }
-    public static TSource FirstOrDefault<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate, TSource defaultValue)
-    {
-        foreach (TSource value in source)
-            if (predicate(value))
-                return value;
-        return defaultValue;
-    }
     public static TSource? FirstOrDefault<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
     {
         foreach (TSource value in source)
             if (predicate(value))
                 return value;
         return default;
+    }
+    public static TSource FirstOrDefault<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate, TSource defaultValue)
+    {
+        foreach (TSource value in source)
+            if (predicate(value))
+                return value;
+        return defaultValue;
     }
 
     //Sorters
