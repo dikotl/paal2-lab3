@@ -105,8 +105,8 @@ public sealed class TestFeo
             var min = System.Linq.Enumerable.Min(a);
             var max = System.Linq.Enumerable.Max(a);
 
-            Assert.AreEqual(min, expectedMin, $"Feo.Min <{typeof(T)}> does not work correctly");
-            Assert.AreEqual(max, expectedMax, $"Feo.Max <{typeof(T)}> does not work correctly");
+            Assert.AreEqual(expectedMin, min, $"Feo.Min <{typeof(T)}> does not work correctly");
+            Assert.AreEqual(expectedMax, max, $"Feo.Max <{typeof(T)}> does not work correctly");
         }
     }
 
@@ -119,7 +119,7 @@ public sealed class TestFeo
             var expected = string.Join(" ", System.Linq.Enumerable.Skip(a, skipLen));
             var actual = string.Join(" ", a.Skip(skipLen));
 
-            Assert.AreEqual(actual, expected, $"Feo.Skip <{typeof(T)}> does not work correctly");
+            Assert.AreEqual(expected, actual, $"Feo.Skip <{typeof(T)}> does not work correctly");
         }
     }
 
@@ -132,7 +132,7 @@ public sealed class TestFeo
             var expected = string.Join(" ", System.Linq.Enumerable.Take(a, takeLen));
             var actual = string.Join(" ", a.Take(takeLen));
 
-            Assert.AreEqual(actual, expected, $"Feo.Take <{typeof(T)}> does not work correctly");
+            Assert.AreEqual(expected, actual, $"Feo.Take <{typeof(T)}> does not work correctly");
         }
     }
 
@@ -145,7 +145,7 @@ public sealed class TestFeo
                 var expected = string.Join(" ", System.Linq.Enumerable.FirstOrDefault(a, predicate.Compile()));
                 var actual = string.Join(" ", a.FirstOrDefault(predicate.Compile()));
 
-                Assert.AreEqual(actual, expected, $"Feo.Take <{typeof(T)}> does not work correctly with {predicate.Body}");
+                Assert.AreEqual(expected, actual, $"Feo.Take <{typeof(T)}> does not work correctly with {predicate.Body}");
             }
     }
 
@@ -161,7 +161,7 @@ public sealed class TestFeo
                 var expected = string.Join(" ", System.Linq.Enumerable.FirstOrDefault(a, predicate.Compile(), defaultValue));
                 var actual = string.Join(" ", a.FirstOrDefault(predicate.Compile(), defaultValue));
 
-                Assert.AreEqual(actual, expected, $"Feo.Take <{typeof(T)}> does not work correctly with {predicate.Body}");
+                Assert.AreEqual(expected, actual, $"Feo.Take <{typeof(T)}> does not work correctly with {predicate.Body}");
             }
     }
 }
