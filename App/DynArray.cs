@@ -23,43 +23,19 @@ public class DynArray<T> : IList<T>
 
     public T this[int index]
     {
-        get => this[new Index(index)];
-        set => this[new Index(index)] = value;
-    }
-
-    public T this[Index index]
-    {
         get
         {
-            if (index.IsFromEnd)
-                throw new NotImplementedException("Backward indexing is not implemented");
-
-            if (index.Value >= Count)
+            if (index >= Count)
                 throw new IndexOutOfRangeException();
 
             return data[index];
         }
         set
         {
-            if (index.IsFromEnd)
-                throw new NotImplementedException("Backward indexing is not implemented");
-
-            if (index.Value >= Count)
+            if (index >= Count)
                 throw new IndexOutOfRangeException();
 
             data[index] = value;
-        }
-    }
-
-    public DynArray<T> this[Range range]
-    {
-        get
-        {
-            throw new NotImplementedException("Slicing is not implemented");
-        }
-        set
-        {
-            throw new NotImplementedException("Slicing is not implemented");
         }
     }
 
@@ -79,6 +55,17 @@ public class DynArray<T> : IList<T>
         {
             data[i] = zero;
         }
+    }
+
+    public DynArray<T> Slice(int start, int length)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(start);
+        ArgumentOutOfRangeException.ThrowIfNegative(length);
+        ArgumentOutOfRangeException.ThrowIfLessThan(Count - start, length);
+
+        DynArray<T> slice = new(length) { Count = length };
+        Array.Copy(data, start, slice.data, 0, length);
+        return slice;
     }
 
     public void Reserve(int capacity)
