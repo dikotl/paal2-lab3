@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Numerics;
 using System.Collections;
 using System.Collections.Generic;
@@ -41,21 +41,21 @@ public static class IEnumerableExtension
     }
     public static IEnumerable<TSource> Skip<TSource>(this IEnumerable<TSource> source, int count)
     {
-        foreach(var item in source)
+        foreach (var item in source)
             if (count <= 0)
                 yield return item;
             else count--;
     }
-    public static IEnumerable<TSource> SkipWhile<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate) 
+    public static IEnumerable<TSource> SkipWhile<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
     {
         var enumerator = source.GetEnumerator();
         bool dontBroke = true;
         while (enumerator.MoveNext())
             if (dontBroke && predicate(enumerator.Current))
                 continue;
-            else 
-            { 
-                yield return enumerator.Current; 
+            else
+            {
+                yield return enumerator.Current;
                 dontBroke = false;
             }
     }
@@ -101,7 +101,7 @@ public static class IEnumerableExtension
                 }
                 else if (items.Length == count)
                 {
-                    TSource[] newItems = new TSource[count * 2];
+                    TSource[] newItems = new TSource[checked(count * 2)];
                     Array.Copy(items, 0, newItems, 0, count);
                     items = newItems;
                 }
@@ -120,7 +120,7 @@ public static class IEnumerableExtension
         return [.. source];
     }
     public static HashSet<TSource> ToSet<TSource>(this IEnumerable<TSource> source)
-            {
+    {
         return [.. source];
     }
 
