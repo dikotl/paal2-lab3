@@ -166,7 +166,7 @@ public class Array<T> : IList<T>
         static int GrowFactor(int capacity)
         {
             const int GrowThreshold = 256;
-            const int InitialCapacity = 32;
+            const int InitialCapacity = 4;
 
             if (capacity == 0)
                 return InitialCapacity;
