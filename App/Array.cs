@@ -10,7 +10,7 @@ namespace App;
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 #pragma warning disable CS8601 // Possible null reference assignment.
 
-public class Array<T> : IList<T>
+public class DynArray<T> : IList<T>
 {
     private T[]? data = null;
 
@@ -54,7 +54,7 @@ public class Array<T> : IList<T>
         }
     }
 
-    public Array<T> this[Range range]
+    public DynArray<T> this[Range range]
     {
         get
         {
@@ -66,15 +66,15 @@ public class Array<T> : IList<T>
         }
     }
 
-    public Array()
+    public DynArray()
     { }
 
-    public Array(int capacity)
+    public DynArray(int capacity)
     {
         data = new T[capacity];
     }
 
-    public Array(int length, T zero) : this(length)
+    public DynArray(int length, T zero) : this(length)
     {
         Count = length;
 
@@ -238,12 +238,12 @@ public class Array<T> : IList<T>
         return GetEnumerator();
     }
 
-    public static Array<T> operator +(Array<T> a, Array<T> b)
+    public static DynArray<T> operator +(DynArray<T> a, DynArray<T> b)
     {
         if (a.Count == 0) return b;
         if (b.Count == 0) return a;
 
-        var result = new Array<T> { Count = a.Count + b.Count };
+        var result = new DynArray<T> { Count = a.Count + b.Count };
 
         for (int i = 0; i < a.Count; i++)
         {
