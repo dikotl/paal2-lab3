@@ -41,6 +41,7 @@ public sealed class FeoBoolAggregations
             a => a == 0,
             a => a % 2 == 0,
         ]);
+
     [TestMethod]
     public void TestAll___Double() =>
         FeoTestImplementation.TestAll(ArrayGenerator.GetDoubleRandArray,
@@ -50,6 +51,7 @@ public sealed class FeoBoolAggregations
             a => a == 0,
             a => a - (int)a > 0.5,
         ]);
+
     [TestMethod]
     public void TestAny___Int() =>
         FeoTestImplementation.TestAny(ArrayGenerator.GetIntRandArray,
@@ -59,6 +61,7 @@ public sealed class FeoBoolAggregations
             a => a == 0,
             a => a % 2 == 0,
         ]);
+
     [TestMethod]
     public void TestAny___Double() =>
         FeoTestImplementation.TestAny(ArrayGenerator.GetDoubleRandArray,
@@ -73,7 +76,29 @@ public sealed class FeoBoolAggregations
 [TestClass]
 public sealed class FeoConvertors
 {
+    [TestMethod]
+    public void TestToArray___Int() =>
+        FeoTestImplementation.TestToArray(ArrayGenerator.GetIntRandArray);
 
+    [TestMethod]
+    public void TestToArray___Double() =>
+        FeoTestImplementation.TestToArray(ArrayGenerator.GetDoubleRandArray);
+
+    [TestMethod]
+    public void TestToList___Int() =>
+        FeoTestImplementation.TestToList(ArrayGenerator.GetIntRandArray);
+
+    [TestMethod]
+    public void TestToList___Double() =>
+        FeoTestImplementation.TestToList(ArrayGenerator.GetDoubleRandArray);
+
+    [TestMethod]
+    public void TestToSet___Int() =>
+        FeoTestImplementation.TestToSet(ArrayGenerator.GetIntRandArray);
+
+    [TestMethod]
+    public void TestToSet___Double() =>
+        FeoTestImplementation.TestToSet(ArrayGenerator.GetDoubleRandArray);
 }
 
 [TestClass]
@@ -254,6 +279,45 @@ public static class FeoTestImplementation
                 Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
                 $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
             }
+    }
+
+    public static void TestToArray<T>(Func<int, uint, T[]> generateArray)
+    {
+        for (var i = 0; i < RepeatTime; i++)
+        {
+            var a = generateArray(DefMaxSize * 3, DefElementBound * 2);
+            var expected = string.Join(" ", System.Linq.Enumerable.ToArray(a));
+            var actual = string.Join(" ", a.ToArray());
+
+            Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
+            $"<{typeof(T)}> test target does not work correctly");
+        }
+    }
+
+    public static void TestToList<T>(Func<int, uint, T[]> generateArray)
+    {
+        for (var i = 0; i < RepeatTime; i++)
+        {
+            var a = generateArray(DefMaxSize * 3, DefElementBound * 2);
+            var expected = string.Join(" ", System.Linq.Enumerable.ToList(a));
+            var actual = string.Join(" ", a.ToList());
+
+            Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
+            $"<{typeof(T)}> test target does not work correctly");
+        }
+    }
+
+    public static void TestToSet<T>(Func<int, uint, T[]> generateArray)
+    {
+        for (var i = 0; i < RepeatTime; i++)
+        {
+            var a = generateArray(DefMaxSize * 3, DefElementBound * 2);
+            var expected = string.Join(" ", System.Linq.Enumerable.ToHashSet(a));
+            var actual = string.Join(" ", a.ToSet());
+
+            Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
+            $"<{typeof(T)}> test target does not work correctly");
+        }
     }
 }
 
