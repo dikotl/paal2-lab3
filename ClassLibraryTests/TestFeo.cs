@@ -5,69 +5,65 @@ using System.Linq.Expressions;
 using FunctionalEnumerableOperations;
 using Feo = FunctionalEnumerableOperations;
 using static ClassLibraryTests.GlobalRandom;
+using static ClassLibraryTests.ConstValues;
 
 namespace ClassLibraryTests;
 
 [TestClass]
-public sealed class TestFeo
+public sealed class FeoTransforms
 {
-    const int repeatTime = 300;
-    const int defMaxSize = 600;
-    const int defElementBound = 10000;
-
-
-    private int[] GetIntRandArray(int maxSize, uint maxElementBound)
-    {
-        int size = Rand.Next(1, maxSize + 1);
-        int[] array = new int[size];
-
-        for (int i = 0; i < size; i++)
-            array[i] = Rand.Next(-(int)maxElementBound, (int)maxElementBound + 1);
-
-        return array;
-    }
-    private double[] GetDoubleRandArray(int maxSize, uint maxElementBound)
-    {
-        int size = Rand.Next(1, maxSize + 1);
-        double[] array = new double[size];
-
-        for (int i = 0; i < size; i++)
-            array[i] = Rand.Next(-(int)maxElementBound, (int)maxElementBound + 1) * Rand.NextDouble();
-
-        return array;
-    }
-
+    [TestMethod]
+    public void TestSkip___Int() => FeoTestRealization.TestSkip(ArrayGenerator.GetIntRandArray);
 
     [TestMethod]
-    public void TestMinMax___Int() => TestMinMax(GetIntRandArray);
+    public void TestSkip___Double() => FeoTestRealization.TestSkip(ArrayGenerator.GetDoubleRandArray);
 
     [TestMethod]
-    public void TestMinMax___Double() => TestMinMax(GetDoubleRandArray);
+    public void TestTake___Int() => FeoTestRealization.TestTake(ArrayGenerator.GetIntRandArray);
 
     [TestMethod]
-    public void TestSkip___Int() => TestSkip(GetIntRandArray);
+    public void TestTake___Double() => FeoTestRealization.TestTake(ArrayGenerator.GetDoubleRandArray);
+}
+
+[TestClass]
+public sealed class FeoBoolAggregations
+{
+
+}
+
+[TestClass]
+public sealed class FeoConvertors
+{
+
+}
+
+[TestClass]
+public sealed class FeoFolds
+{
+
+}
+
+[TestClass]
+public sealed class ValueFinders
+{
+    [TestMethod]
+    public void TestMinMax___Int() => FeoTestRealization.TestMinMax(ArrayGenerator.GetIntRandArray);
 
     [TestMethod]
-    public void TestSkip___Double() => TestSkip(GetDoubleRandArray);
+    public void TestMinMax___Double() => FeoTestRealization.TestMinMax(ArrayGenerator.GetDoubleRandArray);
 
     [TestMethod]
-    public void TestTake___Int() => TestTake(GetIntRandArray);
-
-    [TestMethod]
-    public void TestTake___Double() => TestTake(GetDoubleRandArray);
-
-    [TestMethod]
-    public void TestFirstOrDefault_1___Int() => TestFirstOrDefault_1(GetIntRandArray,
-        [
-            a => a < 0,
+    public void TestFirstOrDefault_1___Int() => FeoTestRealization.TestFirstOrDefault_1(ArrayGenerator.GetIntRandArray,
+       [
+           a => a < 0,
             a => a > 0,
             a => a % 2 == 0,
             a => a == 0,
             a => a > defElementBound / 2
-        ]);
+       ]);
 
     [TestMethod]
-    public void TestFirstOrDefault_1___Double() => TestFirstOrDefault_1(GetDoubleRandArray,
+    public void TestFirstOrDefault_1___Double() => FeoTestRealization.TestFirstOrDefault_1(ArrayGenerator.GetDoubleRandArray,
         [
             a => a < 0,
             a => a > 0,
@@ -77,7 +73,7 @@ public sealed class TestFeo
         ]);
 
     [TestMethod]
-    public void TestFirstOrDefault_2___Int() => TestFirstOrDefault_2(GetIntRandArray,
+    public void TestFirstOrDefault_2___Int() => FeoTestRealization.TestFirstOrDefault_2(ArrayGenerator.GetIntRandArray,
         [
             a => a < 0,
             a => a > 0,
@@ -87,7 +83,7 @@ public sealed class TestFeo
         ]);
 
     [TestMethod]
-    public void TestFirstOrDefault_2___Double() => TestFirstOrDefault_2(GetDoubleRandArray,
+    public void TestFirstOrDefault_2___Double() => FeoTestRealization.TestFirstOrDefault_2(ArrayGenerator.GetDoubleRandArray,
         [
             a => a < 0,
             a => a > 0,
@@ -97,7 +93,18 @@ public sealed class TestFeo
         ]);
 
 
-    private void TestMinMax<T>(Func<int, uint, T[]> generateArray) where T : IComparisonOperators<T, T, bool>
+}
+
+[TestClass]
+public sealed class Sorters
+{
+
+}
+
+
+public static class FeoTestRealization
+{
+    public static void TestMinMax<T>(Func<int, uint, T[]> generateArray) where T : IComparisonOperators<T, T, bool>
     {
         for (var i = 0; i < repeatTime; i++)
         {
@@ -112,7 +119,7 @@ public sealed class TestFeo
         }
     }
 
-    private void TestSkip<T>(Func<int, uint, T[]> generateArray)
+    public static void TestSkip<T>(Func<int, uint, T[]> generateArray)
     {
         for (var i = 0; i < repeatTime; i++)
         {
@@ -125,7 +132,7 @@ public sealed class TestFeo
         }
     }
 
-    private void TestTake<T>(Func<int, uint, T[]> generateArray)
+    public static void TestTake<T>(Func<int, uint, T[]> generateArray)
     {
         for (var i = 0; i < repeatTime; i++)
         {
@@ -138,7 +145,7 @@ public sealed class TestFeo
         }
     }
 
-    private void TestFirstOrDefault_1<T>(Func<int, uint, T[]> generateArray, Expression<Func<T, bool>>[] predicates)
+    public static void TestFirstOrDefault_1<T>(Func<int, uint, T[]> generateArray, Expression<Func<T, bool>>[] predicates)
     {
         foreach (var predicate in predicates)
             for (var i = 0; i < repeatTime / predicates.Length; i++)
@@ -151,7 +158,7 @@ public sealed class TestFeo
             }
     }
 
-    private void TestFirstOrDefault_2<T>(Func<int, uint, T[]> generateArray, Expression<Func<T, bool>>[] predicates)
+    public static void TestFirstOrDefault_2<T>(Func<int, uint, T[]> generateArray, Expression<Func<T, bool>>[] predicates)
         where T : IAdditionOperators<T, T, T>,
                   IDivisionOperators<T, T, T>
     {
@@ -166,6 +173,38 @@ public sealed class TestFeo
                 Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} <{typeof(T)}> test target does not work correctly with {predicate.Body}");
             }
     }
+}
+
+
+file static class ArrayGenerator
+{
+    public static int[] GetIntRandArray(int maxSize, uint maxElementBound)
+    {
+        int size = Rand.Next(1, maxSize + 1);
+        int[] array = new int[size];
+
+        for (int i = 0; i < size; i++)
+            array[i] = Rand.Next(-(int)maxElementBound, (int)maxElementBound + 1);
+
+        return array;
+    }
+    public static double[] GetDoubleRandArray(int maxSize, uint maxElementBound)
+    {
+        int size = Rand.Next(1, maxSize + 1);
+        double[] array = new double[size];
+
+        for (int i = 0; i < size; i++)
+            array[i] = Rand.Next(-(int)maxElementBound, (int)maxElementBound + 1) * Rand.NextDouble();
+
+        return array;
+    }
+}
+
+file static class ConstValues
+{
+    public const int repeatTime = 300;
+    public const int defMaxSize = 600;
+    public const int defElementBound = 10000;
 }
 
 file static class GlobalRandom
