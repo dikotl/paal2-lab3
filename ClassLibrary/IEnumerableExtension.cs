@@ -109,7 +109,7 @@ public static class IEnumerableExtension
                 count++;
             }
         }
-        if (count == 0) return Array.Empty<TSource>();
+        if (count == 0 || items == null) return [];
         if (items.Length == count) return items;
         TSource[] result = new TSource[count];
         Array.Copy(items, 0, result, 0, count);
@@ -206,7 +206,7 @@ public static class IEnumerableExtension
 
     public interface IOrderedEnumerable<out TElement> : IEnumerable<TElement>, IEnumerable
     {
-        IOrderedEnumerable<TElement> CreateOrderedEnumerable<TKey>(Func<TElement, TKey> keySelector, IComparer<TKey>? comparer, bool descending);
+        IOrderedEnumerable<TElement> CreateOrderedEnumerable<TKey>(Func<TElement, TKey> keySelector, IComparer<TKey> comparer, bool descending);
     }
     /*public class OrderedEnumerable<TSource, TKey> : IOrderedEnumerable<TSource>
     {
@@ -289,19 +289,20 @@ public static class IEnumerableExtension
             Buffer<TElement> buffer = new Buffer<TElement>(source);
             if (buffer.count > 0)
             {
-                EnumerableSorter<TElement> sorter = GetEnumerableSorter(null);
+                EnumerableSorter<TElement>? sorter = GetEnumerableSorter(null);
                 int[] map = sorter.Sort(buffer.items, buffer.count);
                 sorter = null;
                 for (int i = 0; i < buffer.count; i++) yield return buffer.items[map[i]];
             }
         }
 
-        internal abstract EnumerableSorter<TElement> GetEnumerableSorter(EnumerableSorter<TElement> next);
-
-        IEnumerator IEnumerable.GetEnumerator()
+        internal abstract EnumerableSorter<TElement> GetEnumerableSorter(EnumerableSorter<TElement>? next);
+        internal OrderedEnumerable(IEnumerable<TElement> source)
         {
-            return GetEnumerator();
+            this.source = source;
         }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         IOrderedEnumerable<TElement> IOrderedEnumerable<TElement>.CreateOrderedEnumerable<TKey>(Func<TElement, TKey> keySelector, IComparer<TKey> comparer, bool descending)
         {
@@ -312,21 +313,20 @@ public static class IEnumerableExtension
     }
     internal class OrderedEnumerable<TElement, TKey> : OrderedEnumerable<TElement>
     {
-        internal OrderedEnumerable<TElement> parent;
+        internal OrderedEnumerable<TElement>? parent;
         internal Func<TElement, TKey> keySelector;
         internal IComparer<TKey> comparer;
         internal bool descending;
 
-        internal OrderedEnumerable(IEnumerable<TElement> source, Func<TElement, TKey> keySelector, IComparer<TKey> comparer, bool descending)
+        internal OrderedEnumerable(IEnumerable<TElement> source, Func<TElement, TKey> keySelector, IComparer<TKey> comparer, bool descending) : base(source)
         {
-            this.source = source;
             this.parent = null;
             this.keySelector = keySelector;
             this.comparer = comparer != null ? comparer : Comparer<TKey>.Default;
             this.descending = descending;
         }
 
-        internal override EnumerableSorter<TElement> GetEnumerableSorter(EnumerableSorter<TElement> next)
+        internal override EnumerableSorter<TElement> GetEnumerableSorter(EnumerableSorter<TElement>? next)
         {
             EnumerableSorter<TElement> sorter = new EnumerableSorter<TElement, TKey>(keySelector, comparer, descending, next);
             if (parent != null) sorter = parent.GetEnumerableSorter(sorter);
@@ -353,10 +353,10 @@ public static class IEnumerableExtension
         internal Func<TElement, TKey> keySelector;
         internal IComparer<TKey> comparer;
         internal bool descending;
-        internal EnumerableSorter<TElement> next;
-        internal TKey[] keys;
+        internal EnumerableSorter<TElement>? next;
+        internal TKey[] keys = [];
 
-        internal EnumerableSorter(Func<TElement, TKey> keySelector, IComparer<TKey> comparer, bool descending, EnumerableSorter<TElement> next)
+        internal EnumerableSorter(Func<TElement, TKey> keySelector, IComparer<TKey> comparer, bool descending, EnumerableSorter<TElement>? next)
         {
             this.keySelector = keySelector;
             this.comparer = comparer;
@@ -419,13 +419,13 @@ public static class IEnumerableExtension
                     count++;
                 }
             }
-            this.items = items;
+            this.items = items ?? [];
             this.count = count;
         }
 
         internal TElement[] ToArray()
         {
-            if (count == 0) return new TElement[0];
+            if (count == 0) return [];
             if (items.Length == count) return items;
             TElement[] result = new TElement[count];
             Array.Copy(items, 0, result, 0, count);
