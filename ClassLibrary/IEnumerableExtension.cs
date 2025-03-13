@@ -286,13 +286,13 @@ public static class IEnumerableExtension
 
         public IEnumerator<TElement> GetEnumerator()
         {
-            Buffer<TElement> buffer = new Buffer<TElement>(source);
-            if (buffer.count > 0)
+            TElement[] buffer = source.ToArray();
+            if (buffer.Length > 0)
             {
                 EnumerableSorter<TElement>? sorter = GetEnumerableSorter(null);
-                int[] map = sorter.Sort(buffer.items, buffer.count);
+                int[] map = sorter.Sort(buffer, buffer.Length);
                 sorter = null;
-                for (int i = 0; i < buffer.count; i++) yield return buffer.items[map[i]];
+                for (int i = 0; i < buffer.Length; i++) yield return buffer[map[i]];
             }
         }
 
@@ -380,56 +380,6 @@ public static class IEnumerableExtension
                 return next.CompareKeys(index1, index2);
             }
             return descending ? -c : c;
-        }
-    }
-    private struct Buffer<TElement>
-    {
-        internal TElement[] items;
-        internal int count;
-
-        internal Buffer(IEnumerable<TElement> source)
-        {
-            TElement[]? items = null;
-            int count = 0;
-            ICollection<TElement> collection = (ICollection<TElement>)source;
-            if (collection != null)
-            {
-                count = collection.Count;
-                if (count > 0)
-                {
-                    items = new TElement[count];
-                    collection.CopyTo(items, 0);
-                }
-            }
-            else
-            {
-                foreach (TElement item in source)
-                {
-                    if (items == null)
-                    {
-                        items = new TElement[4];
-                    }
-                    else if (items.Length == count)
-                    {
-                        TElement[] newItems = new TElement[checked(count * 2)];
-                        Array.Copy(items, 0, newItems, 0, count);
-                        items = newItems;
-                    }
-                    items[count] = item;
-                    count++;
-                }
-            }
-            this.items = items ?? [];
-            this.count = count;
-        }
-
-        internal TElement[] ToArray()
-        {
-            if (count == 0) return [];
-            if (items.Length == count) return items;
-            TElement[] result = new TElement[count];
-            Array.Copy(items, 0, result, 0, count);
-            return result;
         }
     }
 }
