@@ -14,48 +14,15 @@ public class Array<T> : IList<T>
 {
     private T[]? data = null;
 
-    public int Count
-    {
-        get;
-        set
-        {
-            if (value == Count)
-                return;
+    public bool IsReadOnly => false;
 
-            if (value == 0)
-            {
-                data = null;
-                field = 0;
-                return;
-            }
-
-            if (value < Count)
-            {
-                // Just trim the buffer.
-                data = data[..value];
-            }
-            // Buffer may not needed to be reallocated if there is enough capacity.
-            else if (value > Capacity)
-            {
-                Reserve(value);
-            }
-
-            for (int i = Count; i < value; i++)
-            {
-                data[i] = default;
-            }
-
-            field = value;
-        }
-    }
+    public int Count { get; private set; }
 
     public int Capacity
     {
         get => data?.Length ?? 0;
         set => Reserve(value);
     }
-
-    public bool IsReadOnly => false;
 
     public T this[int index]
     {
@@ -131,6 +98,37 @@ public class Array<T> : IList<T>
         }
 
         data = newData;
+    }
+
+    public void Resize(int value)
+    {
+        if (value == Count)
+            return;
+
+        if (value == 0)
+        {
+            data = null;
+            Count = 0;
+            return;
+        }
+
+        if (value < Count)
+        {
+            // Just trim the buffer.
+            data = data[..value];
+        }
+        // Buffer may not needed to be reallocated if there is enough capacity.
+        else if (value > Capacity)
+        {
+            Reserve(value);
+        }
+
+        for (int i = Count; i < value; i++)
+        {
+            data[i] = default;
+        }
+
+        Count = value;
     }
 
     public override string ToString()
