@@ -129,22 +129,6 @@ public class DynArray<T> : IList<T>
         Count = value;
     }
 
-    public override string ToString()
-    {
-        // We don't know what length T.ToString() have.
-        var buffer = new StringBuilder();
-        buffer.Append('[');
-
-        for (int i = 0; i < Count; i++)
-        {
-            if (i > 0) buffer.Append(", ");
-            _ = buffer.Append(data[i]?.ToString());
-        }
-
-        buffer.Append(']');
-        return buffer.ToString();
-    }
-
     public int IndexOf(T target)
     {
         for (int i = 0; i < Count; i++)
@@ -246,6 +230,68 @@ public class DynArray<T> : IList<T>
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
+    }
+
+    public override string ToString()
+    {
+        // We don't know what length T.ToString() have.
+        var buffer = new StringBuilder();
+        buffer.Append('[');
+
+        for (int i = 0; i < Count; i++)
+        {
+            if (i > 0) buffer.Append(", ");
+            _ = buffer.Append(data[i]?.ToString());
+        }
+
+        buffer.Append(']');
+        return buffer.ToString();
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(this, obj))
+            return true;
+
+        if (obj is not DynArray<T> other || Count != other.Count)
+            return false;
+
+        for (int i = 0; i < Count; i++)
+        {
+            T? a = this[i];
+            T? b = other[i];
+
+            if (!ReferenceEquals(a, b) ||
+                !(a != null && a.Equals(b)) ||
+                !(b != null && b.Equals(a)))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public override int GetHashCode()
+    {
+        HashCode hash = new();
+
+        foreach (T item in this)
+        {
+            hash.Add(item);
+        }
+
+        return hash.ToHashCode();
+    }
+
+    public static bool operator ==(DynArray<T>? a, DynArray<T>? b)
+    {
+        return Equals(a, b);
+    }
+
+    public static bool operator !=(DynArray<T>? a, DynArray<T>? b)
+    {
+        return !Equals(a, b);
     }
 
     public static DynArray<T> operator +(DynArray<T> a, DynArray<T> b)
