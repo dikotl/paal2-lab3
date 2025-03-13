@@ -74,6 +74,27 @@ public sealed class TestFeo
             a => a > defElementBound / 2
         ]);
 
+    [TestMethod]
+    public void TestFirstOrDefault_2___Int() => TestFirstOrDefault_2(GetIntRandArray,
+        [
+            a => a < 0,
+            a => a > 0,
+            a => a % 2 == 0,
+            a => a == 0,
+            a => a > defElementBound / 2
+        ]);
+
+    [TestMethod]
+    public void TestFirstOrDefault_2___Double() => TestFirstOrDefault_2(GetDoubleRandArray,
+        [
+            a => a < 0,
+            a => a > 0,
+            a => a == 0,
+            a => a - (int)a > 0.5,
+            a => a > defElementBound / 2
+        ]);
+
+
     private void TestMinMax<T>(Func<int, uint, T[]> generateArray) where T : IComparisonOperators<T, T, bool>
     {
         for (var i = 0; i < repeatTime; i++)
@@ -123,6 +144,22 @@ public sealed class TestFeo
                 var a = generateArray(defMaxSize, defElementBound);
                 var expected = string.Join(" ", System.Linq.Enumerable.FirstOrDefault(a, predicate.Compile()));
                 var actual = string.Join(" ", a.FirstOrDefault(predicate.Compile()));
+
+                Assert.AreEqual(actual, expected, $"Feo.Take <{typeof(T)}> does not work correctly with {predicate.Body}");
+            }
+    }
+
+    private void TestFirstOrDefault_2<T>(Func<int, uint, T[]> generateArray, System.Linq.Expressions.Expression<Func<T, bool>>[] predicates)
+        where T : IAdditionOperators<T, T, T>,
+                  IDivisionOperators<T, T, T>
+    {
+        foreach (var predicate in predicates)
+            for (var i = 0; i < repeatTime / predicates.Length; i++)
+            {
+                var a = generateArray(defMaxSize, defElementBound);
+                T defaultValue = System.Linq.Enumerable.Aggregate(a, (a, b) => a + b) / (T)Convert.ChangeType(a.Length, typeof(T));
+                var expected = string.Join(" ", System.Linq.Enumerable.FirstOrDefault(a, predicate.Compile(), defaultValue));
+                var actual = string.Join(" ", a.FirstOrDefault(predicate.Compile(), defaultValue));
 
                 Assert.AreEqual(actual, expected, $"Feo.Take <{typeof(T)}> does not work correctly with {predicate.Body}");
             }
