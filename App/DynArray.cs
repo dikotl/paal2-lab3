@@ -5,14 +5,11 @@ using System.Text;
 
 namespace App;
 
-// Null dereference checker ignores function calls
-// and can't prove that the code is valid.
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
 #pragma warning disable CS8601 // Possible null reference assignment.
 
 public class DynArray<T> : IList<T>
 {
-    private T[]? data = null;
+    private T[] data = [];
 
     public bool IsReadOnly => false;
 
@@ -20,7 +17,7 @@ public class DynArray<T> : IList<T>
 
     public int Capacity
     {
-        get => data?.Length ?? 0;
+        get => data.Length;
         set => Reserve(value);
     }
 
@@ -100,6 +97,20 @@ public class DynArray<T> : IList<T>
         data = newData;
     }
 
+    private static int GrowFactor(int capacity)
+    {
+        const int GrowThreshold = 256;
+        const int InitialCapacity = 4;
+
+        if (capacity == 0)
+            return InitialCapacity;
+
+        if (capacity < GrowThreshold)
+            return capacity + capacity;
+
+        return capacity + (capacity / 4);
+    }
+
     public void Resize(int value)
     {
         if (value == Count)
@@ -107,7 +118,7 @@ public class DynArray<T> : IList<T>
 
         if (value == 0)
         {
-            data = null;
+            data = [];
             Count = 0;
             return;
         }
@@ -140,7 +151,7 @@ public class DynArray<T> : IList<T>
         for (int i = 0; i < Count; i++)
         {
             if (i > 0) buffer.Append(", ");
-            buffer.Append(data[i].ToString());
+            _ = buffer.Append(data[i]?.ToString());
         }
 
         buffer.Append(']');
@@ -151,18 +162,37 @@ public class DynArray<T> : IList<T>
     {
         for (int i = 0; i < Count; i++)
         {
-            if (data[i].Equals(target)) return i;
+            if (data[i]?.Equals(target) ?? false) return i;
         }
 
         return -1;
     }
 
-    public void Insert(int index, T item) => throw new NotImplementedException();
+    public void Insert(int index, T item)
+    {
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(index, Count);
+        ArgumentOutOfRangeException.ThrowIfLessThan(index, 0);
+
+        if (Count == Capacity)
+        {
+            Reserve(GrowFactor(Capacity));
+        }
+
+        ++Count;
+
+        // Shift all elements after the index by 1.
+        for (int i = Count; i > index; i--)
+        {
+            (data[i - 1], data[i]) = (data[i], data[i - 1]);
+        }
+
+        data[index] = item;
+    }
 
     public void RemoveAt(int index)
     {
-        if (index < 0 || index >= Count)
-            throw new ArgumentOutOfRangeException(nameof(index));
+        ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, Count);
+        ArgumentOutOfRangeException.ThrowIfLessThan(index, 0);
 
         // Set the element to default value so we don't hold any data in
         // the baking buffer.
@@ -184,21 +214,6 @@ public class DynArray<T> : IList<T>
         }
 
         data[Count++] = item;
-
-
-        static int GrowFactor(int capacity)
-        {
-            const int GrowThreshold = 256;
-            const int InitialCapacity = 4;
-
-            if (capacity == 0)
-                return InitialCapacity;
-
-            if (capacity < GrowThreshold)
-                return capacity + capacity;
-
-            return capacity + (capacity / 4);
-        }
     }
 
     public void Clear()
@@ -211,7 +226,15 @@ public class DynArray<T> : IList<T>
         return IndexOf(target) >= 0;
     }
 
-    public void CopyTo(T[] array, int arrayIndex) => throw new NotImplementedException();
+    public void CopyTo(T[] array, int arrayIndex)
+    {
+        ArgumentNullException.ThrowIfNull(array);
+
+        if (array != null && array.Rank != 1)
+            throw new RankException($"{typeof(DynArray<T>).Name}.CopyTo expects plain array as an argument");
+
+        Array.Copy(data, 0, array!, arrayIndex, Count);
+    }
 
     public bool Remove(T target)
     {
