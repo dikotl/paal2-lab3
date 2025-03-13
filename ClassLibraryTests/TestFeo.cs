@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Numerics;
+using System.Reflection;
+using System.Linq.Expressions;
 using FunctionalEnumerableOperations;
 using Feo = FunctionalEnumerableOperations;
 using static ClassLibraryTests.GlobalRandom;
-using System.Numerics;
 
 namespace ClassLibraryTests;
 
@@ -119,7 +121,7 @@ public sealed class TestFeo
             var expected = string.Join(" ", System.Linq.Enumerable.Skip(a, skipLen));
             var actual = string.Join(" ", a.Skip(skipLen));
 
-            Assert.AreEqual(expected, actual, $"Feo.Skip <{typeof(T)}> does not work correctly");
+            Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} <{typeof(T)}> test target does not work correctly");
         }
     }
 
@@ -132,11 +134,11 @@ public sealed class TestFeo
             var expected = string.Join(" ", System.Linq.Enumerable.Take(a, takeLen));
             var actual = string.Join(" ", a.Take(takeLen));
 
-            Assert.AreEqual(expected, actual, $"Feo.Take <{typeof(T)}> does not work correctly");
+            Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} <{typeof(T)}> test target does not work correctly");
         }
     }
 
-    private void TestFirstOrDefault_1<T>(Func<int, uint, T[]> generateArray, System.Linq.Expressions.Expression<Func<T, bool>>[] predicates)
+    private void TestFirstOrDefault_1<T>(Func<int, uint, T[]> generateArray, Expression<Func<T, bool>>[] predicates)
     {
         foreach (var predicate in predicates)
             for (var i = 0; i < repeatTime / predicates.Length; i++)
@@ -145,11 +147,11 @@ public sealed class TestFeo
                 var expected = string.Join(" ", System.Linq.Enumerable.FirstOrDefault(a, predicate.Compile()));
                 var actual = string.Join(" ", a.FirstOrDefault(predicate.Compile()));
 
-                Assert.AreEqual(expected, actual, $"Feo.Take <{typeof(T)}> does not work correctly with {predicate.Body}");
+                Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} <{typeof(T)}> test target does not work correctly with {predicate.Body}");
             }
     }
 
-    private void TestFirstOrDefault_2<T>(Func<int, uint, T[]> generateArray, System.Linq.Expressions.Expression<Func<T, bool>>[] predicates)
+    private void TestFirstOrDefault_2<T>(Func<int, uint, T[]> generateArray, Expression<Func<T, bool>>[] predicates)
         where T : IAdditionOperators<T, T, T>,
                   IDivisionOperators<T, T, T>
     {
@@ -161,7 +163,7 @@ public sealed class TestFeo
                 var expected = string.Join(" ", System.Linq.Enumerable.FirstOrDefault(a, predicate.Compile(), defaultValue));
                 var actual = string.Join(" ", a.FirstOrDefault(predicate.Compile(), defaultValue));
 
-                Assert.AreEqual(expected, actual, $"Feo.Take <{typeof(T)}> does not work correctly with {predicate.Body}");
+                Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} <{typeof(T)}> test target does not work correctly with {predicate.Body}");
             }
     }
 }
