@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Numerics;
 using System.Collections;
 using System.Collections.Generic;
@@ -117,10 +117,11 @@ public static class IEnumerableExtension
     }
     public static List<TSource> ToList<TSource>(this IEnumerable<TSource> source)
     {
-        List<TSource> result = new();
-        foreach (TSource item in source)
-            result.Add(item);
-        return result;
+        return [.. source];
+    }
+    public static HashSet<TSource> ToSet<TSource>(this IEnumerable<TSource> source)
+            {
+        return [.. source];
     }
 
     //Folds
