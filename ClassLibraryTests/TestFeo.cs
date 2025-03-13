@@ -54,6 +54,26 @@ public sealed class TestFeo
     [TestMethod]
     public void TestTake___Double() => TestTake(GetDoubleRandArray);
 
+    [TestMethod]
+    public void TestFirstOrDefault_1___Int() => TestFirstOrDefault_1(GetIntRandArray,
+        [
+            a => a < 0,
+            a => a > 0,
+            a => a % 2 == 0,
+            a => a == 0,
+            a => a > defElementBound / 2
+        ]);
+
+    [TestMethod]
+    public void TestFirstOrDefault_1___Double() => TestFirstOrDefault_1(GetDoubleRandArray,
+        [
+            a => a < 0,
+            a => a > 0,
+            a => a == 0,
+            a => a - (int)a > 0.5,
+            a => a > defElementBound / 2
+        ]);
+
     private void TestMinMax<T>(Func<int, uint, T[]> generateArray) where T : IComparisonOperators<T, T, bool>
     {
         for (var i = 0; i < repeatTime; i++)
@@ -93,6 +113,19 @@ public sealed class TestFeo
 
             Assert.AreEqual(actual, expected, $"Feo.Take <{typeof(T)}> does not work correctly");
         }
+    }
+
+    private void TestFirstOrDefault_1<T>(Func<int, uint, T[]> generateArray, System.Linq.Expressions.Expression<Func<T, bool>>[] predicates)
+    {
+        foreach (var predicate in predicates)
+            for (var i = 0; i < repeatTime / predicates.Length; i++)
+            {
+                var a = generateArray(defMaxSize, defElementBound);
+                var expected = string.Join(" ", System.Linq.Enumerable.FirstOrDefault(a, predicate.Compile()));
+                var actual = string.Join(" ", a.FirstOrDefault(predicate.Compile()));
+
+                Assert.AreEqual(actual, expected, $"Feo.Take <{typeof(T)}> does not work correctly with {predicate.Body}");
+            }
     }
 }
 
