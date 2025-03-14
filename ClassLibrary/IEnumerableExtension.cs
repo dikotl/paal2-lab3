@@ -142,10 +142,6 @@ public static class IEnumerableExtension
             result = func(result, item);
         return result;
     }
-    public static TResult Fold<TSource, TAccumulate, TResult>(this IEnumerable<TSource> source, TAccumulate initial, Func<TAccumulate, TSource, TAccumulate> func, Func<TAccumulate, TResult> resultSelector)
-    {
-        throw new NotSupportedException();
-    }
 
     //Value finders
     public static TSource? Max<TSource>(this IEnumerable<TSource> source) where TSource : IComparisonOperators<TSource, TSource, bool>
