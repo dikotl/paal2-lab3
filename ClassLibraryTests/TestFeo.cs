@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Numerics;
 using System.Reflection;
 using System.Linq.Expressions;
@@ -90,6 +90,32 @@ public sealed class FeoTransforms
             (a, i) => double.IsNaN(a) || i == 0,
             (a, i) => Math.Sin(a + i) > 0,
             (a, i) => a > 0 && Math.Log(a + i) > 1,
+        ]);
+
+    [TestMethod]
+    public void TestTakeWhile___Int() =>
+        FeoTestImplementation.TestTakeWhile(ArrayGenerator.GetIntRandArray, [
+            a => a > 0,
+            a => a % 2 == 0,
+            a => a < 100,
+            a => a != 0,
+            a => a % 10 != 7,
+            a => (a & 1) == 0,
+            a => a > -50 && a < 50,
+            a => a * a > 10000,
+        ]);
+
+
+    [TestMethod]
+    public void TestTakeWhile___Double() =>
+        FeoTestImplementation.TestTakeWhile(ArrayGenerator.GetDoubleRandArray, [
+            a => a > 0,
+            a => a < 100,
+            a => Math.Abs(a) > 0.1,
+            a => a % 1 != 0,
+            a => Math.Sin(a) >= 0,
+            a => Math.Log(Math.Abs(a) + 1) < 2,
+            a => a * a < 10000,
         ]);
 
 
@@ -510,6 +536,22 @@ public static class FeoTestImplementation
                 $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
             }
     }
+
+    public static void TestTakeWhile<T>(Func<int, uint, IEnumerable<T>> generateArray, Expression<Func<T, bool>>[] predicates)
+    {
+        foreach (var predicate in predicates)
+            for (var i = 0; i < RepeatTime / predicates.Length; i++)
+            {
+                var a = generateArray(DefMaxSize, DefElementBound);
+                var expected = string.Join(" ",
+                    System.Linq.Enumerable.TakeWhile(a, predicate.Compile()));
+                var actual = string.Join(" ", a.TakeWhile(predicate.Compile()));
+
+                Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
+                $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
+            }
+    }
+
 }
 
 
