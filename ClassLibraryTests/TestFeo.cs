@@ -105,7 +105,6 @@ public sealed class FeoTransforms
             a => a * a > 10000,
         ]);
 
-
     [TestMethod]
     public void TestTakeWhile___Double() =>
         FeoTestImplementation.TestTakeWhile(ArrayGenerator.GetDoubleRandArray, [
@@ -131,7 +130,6 @@ public sealed class FeoTransforms
             a => a * a > 10000,
         ]);
 
-
     [TestMethod]
     public void TestSkipWhile___Double() =>
         FeoTestImplementation.TestSkipWhile(ArrayGenerator.GetDoubleRandArray, [
@@ -142,6 +140,24 @@ public sealed class FeoTransforms
             a => Math.Sin(a) >= 0,
             a => Math.Log(Math.Abs(a) + 1) < 2,
             a => a * a < 10000,
+        ]);
+
+    [TestMethod]
+    public void TestMap___Int() =>
+        FeoTestImplementation.TestMap(ArrayGenerator.GetIntRandArray, [
+            x => x + 1,
+            x => x * 2,
+            x => x * x,
+            x => x > 10 ? x : 0
+        ]);
+
+    [TestMethod]
+    public void TestMap___Double() =>
+        FeoTestImplementation.TestMap(ArrayGenerator.GetDoubleRandArray, [
+        x => x + 0.5,
+        x => x * 3,
+        x => x * x,
+        x => Math.Round(x, 2)
         ]);
 
 }
@@ -586,6 +602,21 @@ public static class FeoTestImplementation
                 var expected = string.Join(" ",
                     System.Linq.Enumerable.SkipWhile(a, predicate.Compile()));
                 var actual = string.Join(" ", a.SkipWhile(predicate.Compile()));
+
+                Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
+                $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
+            }
+    }
+
+    public static void TestMap<T, TRes>(Func<int, uint, IEnumerable<T>> generateArray, Expression<Func<T, TRes>>[] predicates)
+    {
+        foreach (var predicate in predicates)
+            for (var i = 0; i < RepeatTime / predicates.Length; i++)
+            {
+                var a = generateArray(DefMaxSize, DefElementBound);
+                var expected = string.Join(" ",
+                    System.Linq.Enumerable.Select(a, predicate.Compile()));
+                var actual = string.Join(" ", a.Map(predicate.Compile()));
 
                 Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
                 $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
