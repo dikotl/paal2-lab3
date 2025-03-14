@@ -6,6 +6,8 @@ using FunctionalEnumerableOperations;
 using Feo = FunctionalEnumerableOperations;
 using static ClassLibraryTests.GlobalRandom;
 using static ClassLibraryTests.ConstValues;
+using System.Text;
+using System.Collections.Generic;
 
 namespace ClassLibraryTests;
 
@@ -104,7 +106,71 @@ public sealed class FeoConvertors
 [TestClass]
 public sealed class FeoFolds
 {
+    [TestMethod]
+    public void TestFold_1___Int() =>
+        FeoTestImplementation.TestFold_1<int>(ArrayGenerator.GetIntRandArray,
+        [
+            (acc, c) => acc + c,
+            (acc, c) => c < acc ? c : acc,
+            (acc, c) => c > acc ? c : acc,
+            (acc, c) => acc ^ c,
+            (acc, c) => acc * (c % 10 == 0 ? 1 : c),
+            (acc, c) => acc + (c % 2 == 0 ? c : -c),
+            (acc, c) => (acc * 31 + c) % 1000000007,
+        ]);
 
+    [TestMethod]
+    public void TestFold_1___Double() =>
+        FeoTestImplementation.TestFold_1<double>(ArrayGenerator.GetDoubleRandArray,
+        [
+            (acc, c) => acc + c,
+            (acc, c) => c < acc ? c : acc,
+            (acc, c) => c > acc ? c : acc,
+            (acc, c) => acc + Math.Sin(c),
+            (acc, c) => acc * Math.Exp(-Math.Abs(c)),
+            (acc, c) => acc + (c > 0 ? c : 0),
+            (acc, c) => Math.Max(acc, Math.Abs(c)),
+        ]);
+
+
+    [TestMethod]
+    public void TestFold_2___Int() =>
+        FeoTestImplementation.TestFold_2(ArrayGenerator.GetIntRandArray,
+        Rand.Next(DefElementBound),
+        [
+            (acc, c) => acc + c,
+            (acc, c) => c < acc ? c : acc,
+            (acc, c) => c > acc ? c : acc,
+            (acc, c) => acc ^ c,
+            (acc, c) => acc * (c % 10 == 0 ? 1 : c),
+            (acc, c) => acc + (c % 2 == 0 ? c : -c),
+            (acc, c) => (acc * 31 + c) % 1000000007,
+        ]);
+
+    [TestMethod]
+    public void TestFold_2___Double() =>
+        FeoTestImplementation.TestFold_2(ArrayGenerator.GetDoubleRandArray,
+        Rand.Next(DefElementBound) * Rand.NextDouble(),
+        [
+            (acc, c) => acc + c,
+            (acc, c) => c < acc ? c : acc,
+            (acc, c) => c > acc ? c : acc,
+            (acc, c) => acc + Math.Sin(c),
+            (acc, c) => acc * Math.Exp(-Math.Abs(c)),
+            (acc, c) => acc + (c > 0 ? c : 0),
+            (acc, c) => Math.Max(acc, Math.Abs(c)),
+        ]);
+
+    [TestMethod]
+    public void TestFold_2___String() =>
+        FeoTestImplementation.TestFold_2(ArrayGenerator.GetRandString,
+        String.Join("", ArrayGenerator.GetRandString(5, 0)),
+        [
+            (acc, c) => $"{c}{acc}",
+            (acc, c) => $"{acc}{int.Clamp(c + 1, 32, 126)}",
+            (acc, c) => $"{acc}{c}{acc}",
+            (acc, c) => acc.Contains(c) ? acc : acc + c,
+        ]);
 }
 
 [TestClass]
@@ -319,6 +385,41 @@ public static class FeoTestImplementation
             $"<{typeof(T)}> test target does not work correctly");
         }
     }
+
+    public static void TestFold_1<T>(Func<int, uint, IEnumerable<T>> generateArray, Expression<Func<T, T, T>>[] predicates)
+    {
+        foreach (var predicate in predicates)
+            for (var i = 0; i < RepeatTime / predicates.Length; i++)
+            {
+                var a = generateArray(DefMaxSize, DefElementBound);
+                var expected = string.Join(" ",
+                    System.Linq.Enumerable.Aggregate(a, predicate.Compile()));
+                var actual = string.Join(" ", a.Fold(predicate.Compile()));
+
+                Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
+                $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
+            }
+    }
+
+    public static void TestFold_2<T, TAcc>(Func<int, uint, IEnumerable<T>> generateArray, TAcc defVal, Expression<Func<TAcc, T, TAcc>>[] predicates)
+
+    {
+        foreach (var predicate in predicates)
+            for (var i = 0; i < RepeatTime / predicates.Length; i++)
+            {
+                var a = generateArray(typeof(TAcc) == typeof(string) ? 15 : DefMaxSize, DefElementBound);
+                var expected = string.Join(" ",
+                    System.Linq.Enumerable.Aggregate(a, defVal, predicate.Compile()));
+                var actual = string.Join(" ", a.Fold(defVal, predicate.Compile()));
+
+                Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
+                $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
+            }
+    }
+
+
+
+
 }
 
 
@@ -334,6 +435,7 @@ file static class ArrayGenerator
 
         return array;
     }
+
     public static double[] GetDoubleRandArray(int maxSize, uint maxElementBound)
     {
         int size = Rand.Next(1, maxSize + 1);
@@ -344,6 +446,17 @@ file static class ArrayGenerator
                                 (int)maxElementBound + 1) * Rand.NextDouble();
 
         return array;
+    }
+
+    public static IEnumerable<char> GetRandString(int maxSize, uint signatureNecesary)
+    {
+        int size = Rand.Next(1, maxSize + 1);
+        StringBuilder array = new StringBuilder();
+
+        for (int i = 0; i < size; i++)
+            array.Append((char)Rand.Next(32, 127));
+
+        return array.ToString();
     }
 }
 
