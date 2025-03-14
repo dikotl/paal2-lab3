@@ -29,6 +29,70 @@ public sealed class FeoTransforms
     [TestMethod]
     public void TestTake___Double() =>
         FeoTestImplementation.TestTake(ArrayGenerator.GetDoubleRandArray);
+
+    [TestMethod]
+    public void TestFilter_1___Int() =>
+        FeoTestImplementation.TestFilter_1(ArrayGenerator.GetIntRandArray, [
+            a => a < 0,
+            a => a > 0,
+            a => a % 2 == 0,
+            a => a > DefElementBound / 2,
+            a => a.ToString().Contains("7"),
+            a => Math.Sin(a) > 0,
+            a => Math.Cos(a) < 0,
+            a => Math.Log(a) > 1,
+            a => a > 0 && (a & 1) == 1,
+            a => a % 5 == 0,
+            a => a > 0 && Math.Sqrt(a) % 1 == 0,
+        ]);
+
+    [TestMethod]
+    public void TestFilter_1___Double() =>
+        FeoTestImplementation.TestFilter_1(ArrayGenerator.GetDoubleRandArray, [
+            a => a < 0,
+            a => a > 0,
+            a => a % 2 == 0,
+            a => a > DefElementBound / 2,
+            a => Math.Abs(a) < 1e-10,
+            a => a % 1 == 0,
+            a => a.ToString().Contains("7"),
+            a => Math.Sin(a) > 0,
+            a => Math.Cos(a) < 0,
+            a => Math.Log(a) > 1,
+            a => a % 5 == 0,
+        ]);
+
+    [TestMethod]
+    public void TestFilter_2___Int() =>
+        FeoTestImplementation.TestFilter_2(ArrayGenerator.GetIntRandArray, [
+            (a, i) => a % 2 == 0 && i % 2 == 0,
+            (a, i) => a % 2 != 0 && i % 2 != 0,
+            (a, i) => a == i,
+            (a, i) => a > i,
+            (a, i) => a < i,
+            (a, i) => (a + i) % 10 == 7,
+            (a, i) => (a & i) == 0,
+            (a, i) => (a | i) % 2 == 1,
+            (a, i) => i != 0 && a % i == 0,
+            (a, i) => i > 0 && a % i == i % 3,
+        ]);
+
+    [TestMethod]
+    public void TestFilter_2___Double() =>
+        FeoTestImplementation.TestFilter_2(ArrayGenerator.GetDoubleRandArray, [
+            (a, i) => a > 0 && i % 2 == 0,
+            (a, i) => a < 0 && i % 2 != 0,
+            (a, i) => Math.Abs(a) < i,
+            (a, i) => a > i * 2,
+            (a, i) => Math.Floor(a) == i,
+            (a, i) => i > 0 && Math.Pow(a, 1.0 / i) % 1 == 0,
+            (a, i) => i != 0 && a % i < 0.5,
+            (a, i) => double.IsNaN(a) || i == 0,
+            (a, i) => Math.Sin(a + i) > 0,
+            (a, i) => a > 0 && Math.Log(a + i) > 1,
+        ]);
+
+
 }
 
 [TestClass]
@@ -417,6 +481,35 @@ public static class FeoTestImplementation
             }
     }
 
+    public static void TestFilter_1<T>(Func<int, uint, IEnumerable<T>> generateArray, Expression<Func<T, bool>>[] predicates)
+    {
+        foreach (var predicate in predicates)
+            for (var i = 0; i < RepeatTime / predicates.Length; i++)
+            {
+                var a = generateArray(DefMaxSize, DefElementBound);
+                var expected = string.Join(" ",
+                    System.Linq.Enumerable.Where(a, predicate.Compile()));
+                var actual = string.Join(" ", a.Filter(predicate.Compile()));
+
+                Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
+                $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
+            }
+    }
+
+    public static void TestFilter_2<T>(Func<int, uint, IEnumerable<T>> generateArray, Expression<Func<T, int, bool>>[] predicates)
+    {
+        foreach (var predicate in predicates)
+            for (var i = 0; i < RepeatTime / predicates.Length; i++)
+            {
+                var a = generateArray(DefMaxSize, DefElementBound);
+                var expected = string.Join(" ",
+                    System.Linq.Enumerable.Where(a, predicate.Compile()));
+                var actual = string.Join(" ", a.Filter(predicate.Compile()));
+
+                Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
+                $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
+            }
+    }
 }
 
 
