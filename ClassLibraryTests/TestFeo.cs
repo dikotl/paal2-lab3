@@ -240,7 +240,7 @@ public sealed class Sorters
 
 public static class FeoTestImplementation
 {
-    public static void TestMinMax<T>(Func<int, uint, T[]> generateArray)
+    public static void TestMinMax<T>(Func<int, uint, IEnumerable<T>> generateArray)
         where T : IComparisonOperators<T, T, bool>
     {
         for (var i = 0; i < RepeatTime; i++)
@@ -256,12 +256,12 @@ public static class FeoTestImplementation
         }
     }
 
-    public static void TestSkip<T>(Func<int, uint, T[]> generateArray)
+    public static void TestSkip<T>(Func<int, uint, IEnumerable<T>> generateArray)
     {
         for (var i = 0; i < RepeatTime; i++)
         {
             var a = generateArray(DefMaxSize, DefElementBound);
-            var skipLen = Rand.Next(a.Length);
+            var skipLen = Rand.Next(System.Linq.Enumerable.ToArray(a).Length);
             var expected = string.Join(" ", System.Linq.Enumerable.Skip(a, skipLen));
             var actual = string.Join(" ", a.Skip(skipLen));
 
@@ -270,12 +270,12 @@ public static class FeoTestImplementation
         }
     }
 
-    public static void TestTake<T>(Func<int, uint, T[]> generateArray)
+    public static void TestTake<T>(Func<int, uint, IEnumerable<T>> generateArray)
     {
         for (var i = 0; i < RepeatTime; i++)
         {
             var a = generateArray(DefMaxSize, DefElementBound);
-            var takeLen = Rand.Next(a.Length);
+            var takeLen = Rand.Next(System.Linq.Enumerable.ToArray(a).Length);
             var expected = string.Join(" ", System.Linq.Enumerable.Take(a, takeLen));
             var actual = string.Join(" ", a.Take(takeLen));
 
@@ -284,7 +284,7 @@ public static class FeoTestImplementation
         }
     }
 
-    public static void TestFirstOrDefault_1<T>(Func<int, uint, T[]> generateArray, Expression<Func<T, bool>>[] predicates)
+    public static void TestFirstOrDefault_1<T>(Func<int, uint, IEnumerable<T>> generateArray, Expression<Func<T, bool>>[] predicates)
     {
         foreach (var predicate in predicates)
             for (var i = 0; i < RepeatTime / predicates.Length; i++)
@@ -299,7 +299,7 @@ public static class FeoTestImplementation
             }
     }
 
-    public static void TestFirstOrDefault_2<T>(Func<int, uint, T[]> generateArray, Expression<Func<T, bool>>[] predicates)
+    public static void TestFirstOrDefault_2<T>(Func<int, uint, IEnumerable<T>> generateArray, Expression<Func<T, bool>>[] predicates)
         where T : IAdditionOperators<T, T, T>,
                   IDivisionOperators<T, T, T>
     {
@@ -309,7 +309,7 @@ public static class FeoTestImplementation
                 var a = generateArray(DefMaxSize, DefElementBound);
                 T defaultValue =
                     System.Linq.Enumerable.Aggregate(a, (a, b) => a + b) /
-                    (T)Convert.ChangeType(a.Length, typeof(T));
+                    (T)Convert.ChangeType(System.Linq.Enumerable.ToArray(a).Length, typeof(T));
                 var expected = string.Join(" ",
                     System.Linq.Enumerable.FirstOrDefault(a, predicate.Compile(), defaultValue));
                 var actual = string.Join(" ", a.FirstOrDefault(predicate.Compile(), defaultValue));
@@ -319,7 +319,7 @@ public static class FeoTestImplementation
             }
     }
 
-    public static void TestAll<T>(Func<int, uint, T[]> generateArray, Expression<Func<T, bool>>[] predicates)
+    public static void TestAll<T>(Func<int, uint, IEnumerable<T>> generateArray, Expression<Func<T, bool>>[] predicates)
     {
         foreach (var predicate in predicates)
             for (var i = 0; i < RepeatTime / predicates.Length * 20; i++)
@@ -333,7 +333,7 @@ public static class FeoTestImplementation
             }
     }
 
-    public static void TestAny<T>(Func<int, uint, T[]> generateArray, Expression<Func<T, bool>>[] predicates)
+    public static void TestAny<T>(Func<int, uint, IEnumerable<T>> generateArray, Expression<Func<T, bool>>[] predicates)
     {
         foreach (var predicate in predicates)
             for (var i = 0; i < RepeatTime / predicates.Length * 70; i++)
@@ -347,7 +347,7 @@ public static class FeoTestImplementation
             }
     }
 
-    public static void TestToArray<T>(Func<int, uint, T[]> generateArray)
+    public static void TestToArray<T>(Func<int, uint, IEnumerable<T>> generateArray)
     {
         for (var i = 0; i < RepeatTime; i++)
         {
@@ -360,7 +360,7 @@ public static class FeoTestImplementation
         }
     }
 
-    public static void TestToList<T>(Func<int, uint, T[]> generateArray)
+    public static void TestToList<T>(Func<int, uint, IEnumerable<T>> generateArray)
     {
         for (var i = 0; i < RepeatTime; i++)
         {
@@ -373,7 +373,7 @@ public static class FeoTestImplementation
         }
     }
 
-    public static void TestToSet<T>(Func<int, uint, T[]> generateArray)
+    public static void TestToSet<T>(Func<int, uint, IEnumerable<T>> generateArray)
     {
         for (var i = 0; i < RepeatTime; i++)
         {
@@ -416,9 +416,6 @@ public static class FeoTestImplementation
                 $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
             }
     }
-
-
-
 
 }
 
