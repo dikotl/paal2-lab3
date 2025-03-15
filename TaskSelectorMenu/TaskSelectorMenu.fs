@@ -13,19 +13,21 @@ type TaskList = Action<Context> List
 let taskMenu () =
     let menu = new StringBuilder()
     let tasks = new TaskList()
+    let taskIndex = ref 0
 
     menu.Append "Available tasks" |> ignore
 
-    let inline writeTasksToMenu (block: Tasks) (blockNum: int) =
-        for pair, i in block.ToIndexedEnumerable() do
+    let inline writeTasksToMenu (block: Tasks) (blockNum: int) (i: int ref) =
+        for pair in block do
             let taskNum, taskInfo = pair.Deconstruct()
             let struct (task, desc) = taskInfo
 
-            menu.Append $"\n    {i + 1} - Task {blockNum}.{taskNum} {desc}" |> ignore
+            i.Value <- i.Value + 1
+            menu.Append $"\n    {i.Value} - Task {blockNum}.{taskNum} {desc}" |> ignore
             tasks.Add task
 
-    writeTasksToMenu Program.Block1Tasks 1
-    writeTasksToMenu Program.Block2Tasks 2
+    writeTasksToMenu Program.Block1Tasks 1 taskIndex
+    writeTasksToMenu Program.Block2Tasks 2 taskIndex
 
     menu.ToString(), tasks
 
