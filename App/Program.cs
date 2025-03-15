@@ -22,8 +22,26 @@ public static class Program
     };
 
     public static void Task10(Context context) => throw new NotImplementedException();
-    public static void Task15(Context context) => throw new NotImplementedException();
+    public static void Task15(Context context)
+    {
+        DynArray<int> input = context.RequestArray(() => Generator.Rand.Next(-999, 999));
+        DynArray<int> result = input
+            .ToIndexedEnumerable()
+            .Filter(e => e.item % 2 == 0)
+            .Map(e => e.i+1)
+            .Fold(input[..], WithInsert)
+            .ToDynArray();
 
+        context.WriteLine(result);
+
+
+        DynArray<int> WithInsert(DynArray<int> accumulator, int index)
+        {
+            int delta = accumulator.Count - input.Count;
+            accumulator.Insert(index + delta, 0);
+            return accumulator;
+        }
+    }
     public static void Task16(Context context)
     {
         DynArray<int> input = context.RequestArray(() => Generator.Rand.Next(-999, 999));
