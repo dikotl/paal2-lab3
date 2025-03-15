@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Numerics;
 using System.Collections;
 using System.Collections.Generic;
@@ -122,6 +122,10 @@ public static class IEnumerableExtension
         return result;
     }
     public static List<TSource> ToList<TSource>(this IEnumerable<TSource> source)
+    {
+        return [.. source];
+    }
+    public static DynArray<T> ToDynArray<T>(this IEnumerable<T> source)
     {
         return [.. source];
     }
