@@ -60,10 +60,10 @@ public static class IEnumerableExtension
                 dontBroke = false;
             }
     }
-    public static IEnumerable<(TSource,int)> ToIndexedEnumerable<TSource>(this IEnumerable<TSource> source)
+    public static IEnumerable<(TSource item, int i)> ToIndexedEnumerable<TSource>(this IEnumerable<TSource> source)
     {
         int k = 0;
-        foreach(var item in source)
+        foreach (var item in source)
             yield return (item, k++);
     }
     //Bool aggregations
