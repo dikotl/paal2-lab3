@@ -1,13 +1,13 @@
 ﻿using System;
+using System.Text;
 using System.Numerics;
 using System.Reflection;
 using System.Linq.Expressions;
+using System.Collections.Generic;
 using FunctionalEnumerableOperations;
 using Feo = FunctionalEnumerableOperations;
-using static ClassLibraryTests.GlobalRandom;
 using static ClassLibraryTests.ConstValues;
-using System.Text;
-using System.Collections.Generic;
+using static ClassLibraryTests.GlobalRandom;
 
 namespace ClassLibraryTests;
 
