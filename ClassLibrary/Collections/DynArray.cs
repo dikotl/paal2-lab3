@@ -47,13 +47,23 @@ public class DynArray<T> : IList<T>, ICloneable
         data = new T[capacity];
     }
 
-    public DynArray(int length, T zero) : this(length)
+    public DynArray(int length, T zero = default) : this(length)
     {
         Count = length;
 
         for (int i = 0; i < length; i++)
         {
             data[i] = zero;
+        }
+    }
+
+    public DynArray(int length, Func<T> getItem) : this(length)
+    {
+        Count = length;
+
+        for (int i = 0; i < length; i++)
+        {
+            data[i] = getItem();
         }
     }
 
@@ -284,7 +294,12 @@ public class DynArray<T> : IList<T>, ICloneable
         return hash.ToHashCode();
     }
 
-    public object Clone()
+    object ICloneable.Clone()
+    {
+        return this[..Count];
+    }
+
+    public DynArray<T> Clone()
     {
         return this[..Count];
     }
