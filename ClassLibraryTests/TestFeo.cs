@@ -263,7 +263,6 @@ public sealed class FeoFolds
             (acc, c) => Math.Max(acc, Math.Abs(c)),
         ]);
 
-
     [TestMethod]
     public void TestFold_2___Int() =>
         FeoTestImplementation.TestFold_2(ArrayGenerator.GetIntRandArray,
@@ -462,7 +461,8 @@ public sealed class Sorters
             a => a == 1 ? 0 : 1,
             a => a % 7 == 0 ? 0 : 1,
             a => a > 500 ? 0 : 1
-        ]);
+        ],
+        ArrayGenerator.GetIntComparersArray());
 
     [TestMethod]
     public void TestOrderBy_withComparer___Double() =>
@@ -484,7 +484,8 @@ public sealed class Sorters
             a => a == 1 ? 0 : 1,
             a => a % 7 == 0 ? 0 : 1,
             a => a > 500 ? 0 : 1
-        ]);
+        ],
+        ArrayGenerator.GetDoubleComparersArray());
 
     [TestMethod]
     public void TestOrderByDescending_withComparer___Int() =>
@@ -507,24 +508,7 @@ public sealed class Sorters
             a => a % 7 == 0 ? 0 : 1,
             a => a > 500 ? 0 : 1
         ],
-        [
-            Comparer<int>.Create((x, y) => y.CompareTo(x)),
-            Comparer<int>.Create((x, y) => x.CompareTo(y)),
-            Comparer<int>.Create((x, y) => (x % 2 == 0).CompareTo(y % 2 == 0)),
-            Comparer<int>.Create((x, y) => (x == 0).CompareTo(y == 0)),
-            Comparer<int>.Create((x, y) => (x > DefElementBound / 2).CompareTo(y > DefElementBound / 2)),
-            Comparer<int>.Create((x, y) => (x % 2 != 0).CompareTo(y % 2 != 0)),
-            Comparer<int>.Create((x, y) => (x < DefElementBound / 2).CompareTo(y < DefElementBound / 2)),
-            Comparer<int>.Create((x, y) => (x % 5 == 0).CompareTo(y % 5 == 0)),
-            Comparer<int>.Create((x, y) => (x > 100).CompareTo(y > 100)),
-            Comparer<int>.Create((x, y) => (x < -100).CompareTo(y < -100)),
-            Comparer<int>.Create((x, y) => (x == 10).CompareTo(y == 10)),
-            Comparer<int>.Create((x, y) => (x > 50 && x < 150).CompareTo(y > 50 && y < 150)),
-            Comparer<int>.Create((x, y) => (x % 3 == 0).CompareTo(y % 3 == 0)),
-            Comparer<int>.Create((x, y) => (x == 1).CompareTo(y == 1)),
-            Comparer<int>.Create((x, y) => (x % 7 == 0).CompareTo(y % 7 == 0)),
-            Comparer<int>.Create((x, y) => (x > 500).CompareTo(y > 500)),
-        ]);
+        ArrayGenerator.GetIntComparersArray());
 
     [TestMethod]
     public void TestOrderByDescending_withComparer___Double() =>
@@ -547,24 +531,119 @@ public sealed class Sorters
             a => a % 7 == 0 ? 0 : 1,
             a => a > 500 ? 0 : 1
         ],
+        ArrayGenerator.GetDoubleComparersArray());
+
+    [TestMethod]
+    public void TestThenBy___Int() =>
+        FeoTestImplementation.TestThenBy(ArrayGenerator.GetIntRandArray,
         [
-            Comparer<double>.Create((x, y) => y.CompareTo(x)),
-            Comparer<double>.Create((x, y) => x.CompareTo(y)),
-            Comparer<double>.Create((x, y) => (x % 2 == 0).CompareTo(y % 2 == 0)),
-            Comparer<double>.Create((x, y) => (x == 0).CompareTo(y == 0)),
-            Comparer<double>.Create((x, y) => (x > DefElementBound / 2).CompareTo(y > DefElementBound / 2)),
-            Comparer<double>.Create((x, y) => (x % 2 != 0).CompareTo(y % 2 != 0)),
-            Comparer<double>.Create((x, y) => (x < DefElementBound / 2).CompareTo(y < DefElementBound / 2)),
-            Comparer<double>.Create((x, y) => (x % 5 == 0).CompareTo(y % 5 == 0)),
-            Comparer<double>.Create((x, y) => (x > 100).CompareTo(y > 100)),
-            Comparer<double>.Create((x, y) => (x < -100).CompareTo(y < -100)),
-            Comparer<double>.Create((x, y) => (x == 10).CompareTo(y == 10)),
-            Comparer<double>.Create((x, y) => (x > 50 && x < 150).CompareTo(y > 50 && y < 150)),
-            Comparer<double>.Create((x, y) => (x % 3 == 0).CompareTo(y % 3 == 0)),
-            Comparer<double>.Create((x, y) => (x == 1).CompareTo(y == 1)),
-            Comparer<double>.Create((x, y) => (x % 7 == 0).CompareTo(y % 7 == 0)),
-            Comparer<double>.Create((x, y) => (x > 500).CompareTo(y > 500)),
+            a => a,
+            a => -a,
+            a => a % 2 == 0 ? 0 : 1,
+            a => a == 0 ? 0 : 1,
+            a => a > DefElementBound / 2 ? 0 : 1,
+            a => a % 2 != 0 ? 0 : 1,
+            a => a < DefElementBound / 2 ? 0 : 1,
+            a => a % 5 == 0 ? 0 : 1,
+            a => a > 100 ? 0 : 1,
+            a => a < -100 ? 0 : 1,
+            a => a == 10 ? 0 : 1,
+            a => a > 50 && a < 150 ? 0 : 1,
+            a => a % 3 == 0 ? 0 : 1,
+            a => a == 1 ? 0 : 1,
+            a => a % 7 == 0 ? 0 : 1,
+            a => a > 500 ? 0 : 1
         ]);
+
+    [TestMethod]
+    public void TestThenBy___Double() =>
+        FeoTestImplementation.TestThenBy(ArrayGenerator.GetDoubleRandArray,
+        [
+           a => a,
+            a => -a,
+            a => a % 2 == 0 ? 0 : 1,
+            a => a == 0 ? 0 : 1,
+            a => a > DefElementBound / 2 ? 0 : 1,
+            a => a % 2 != 0 ? 0 : 1,
+            a => a < DefElementBound / 2 ? 0 : 1,
+            a => a % 5 == 0 ? 0 : 1,
+            a => a > 100 ? 0 : 1,
+            a => a < -100 ? 0 : 1,
+            a => a == 10 ? 0 : 1,
+            a => a > 50 && a < 150 ? 0 : 1,
+            a => a % 3 == 0 ? 0 : 1,
+            a => a == 1 ? 0 : 1,
+            a => a % 7 == 0 ? 0 : 1,
+            a => a > 500 ? 0 : 1
+        ]);
+
+    [TestMethod]
+    public void TestThenByDescending___Int() =>
+        FeoTestImplementation.TestThenByDescending(ArrayGenerator.GetIntRandArray,
+        [
+            a => a,
+            a => -a,
+            a => a % 2 == 0 ? 0 : 1,
+            a => a == 0 ? 0 : 1,
+            a => a > DefElementBound / 2 ? 0 : 1,
+            a => a % 2 != 0 ? 0 : 1,
+            a => a < DefElementBound / 2 ? 0 : 1,
+            a => a % 5 == 0 ? 0 : 1,
+            a => a > 100 ? 0 : 1,
+            a => a < -100 ? 0 : 1,
+            a => a == 10 ? 0 : 1,
+            a => a > 50 && a < 150 ? 0 : 1,
+            a => a % 3 == 0 ? 0 : 1,
+            a => a == 1 ? 0 : 1,
+            a => a % 7 == 0 ? 0 : 1,
+            a => a > 500 ? 0 : 1
+        ]);
+
+    [TestMethod]
+    public void TestThenByDescending___Double() =>
+        FeoTestImplementation.TestThenByDescending(ArrayGenerator.GetDoubleRandArray,
+        [
+           a => a,
+            a => -a,
+            a => a % 2 == 0 ? 0 : 1,
+            a => a == 0 ? 0 : 1,
+            a => a > DefElementBound / 2 ? 0 : 1,
+            a => a % 2 != 0 ? 0 : 1,
+            a => a < DefElementBound / 2 ? 0 : 1,
+            a => a % 5 == 0 ? 0 : 1,
+            a => a > 100 ? 0 : 1,
+            a => a < -100 ? 0 : 1,
+            a => a == 10 ? 0 : 1,
+            a => a > 50 && a < 150 ? 0 : 1,
+            a => a % 3 == 0 ? 0 : 1,
+            a => a == 1 ? 0 : 1,
+            a => a % 7 == 0 ? 0 : 1,
+            a => a > 500 ? 0 : 1
+        ]);
+
+    [TestMethod]
+    public void TestThenBy_withComparer___Int() =>
+        FeoTestImplementation.TestOrderBy(ArrayGenerator.GetIntRandArray,
+        [
+            a => a,
+            a => -a,
+            a => a % 2 == 0 ? 0 : 1,
+            a => a == 0 ? 0 : 1,
+            a => a > DefElementBound / 2 ? 0 : 1,
+            a => a % 2 != 0 ? 0 : 1,
+            a => a < DefElementBound / 2 ? 0 : 1,
+            a => a % 5 == 0 ? 0 : 1,
+            a => a > 100 ? 0 : 1,
+            a => a < -100 ? 0 : 1,
+            a => a == 10 ? 0 : 1,
+            a => a > 50 && a < 150 ? 0 : 1,
+            a => a % 3 == 0 ? 0 : 1,
+            a => a == 1 ? 0 : 1,
+            a => a % 7 == 0 ? 0 : 1,
+            a => a > 500 ? 0 : 1
+        ],
+        ArrayGenerator.GetIntComparersArray());
+
 }
 
 
@@ -867,8 +946,98 @@ public static class FeoTestImplementation
                 }
         }
     }
+    
+    public static void TestThenBy<T, TKey>(Func<int, uint, IEnumerable<T>> generateArray, Expression<Func<T, TKey>>[] predicates, IComparer<TKey>[]? comparers = null)
+    {
+        IEnumerator<IComparer<TKey>>? revComparers = null;
+        if(comparers != null)
+            revComparers = 
+                System.Linq.Enumerable.Reverse(comparers).GetEnumerator();
+
+        IEnumerator<Expression<Func<T, TKey>>> revPredicates = 
+            System.Linq.Enumerable.Reverse(predicates).GetEnumerator();
 
 
+        if (comparers != null && revComparers != null)
+            foreach (var comparer in comparers)
+            {
+                revComparers.MoveNext();
+                Test(comparer, revComparers.Current);
+            }
+        else Test(null, null);
+
+        void Test(IComparer<TKey>? comparer, IComparer<TKey>? revComparer)
+        {
+            foreach (var predicate in predicates)
+            {
+                revPredicates.MoveNext();
+                for (var i = 0; i < RepeatTime / predicates.Length; i++)
+                {
+                    var a = generateArray(DefMaxSize, DefElementBound);
+
+                    var expected = string.Join(" ",
+                        System.Linq.Enumerable.ThenBy(
+                            System.Linq.Enumerable.OrderBy(a, predicate.Compile(), comparer), 
+                            revPredicates.Current.Compile(), revComparer) ?? 
+                            (System.Linq.IOrderedEnumerable<T>)new List<T>());
+
+                    var actual = string.Join(" ", 
+                        System.Linq.Enumerable.OrderBy(a, predicate.Compile(), comparer)
+                        .ThenBy(revPredicates.Current.Compile(), revComparer) ?? 
+                        (System.Linq.IOrderedEnumerable<T>)new List<T>());
+
+                    Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
+                    $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
+                }
+            }
+        }
+    }
+    
+    public static void TestThenByDescending<T, TKey>(Func<int, uint, IEnumerable<T>> generateArray, Expression<Func<T, TKey>>[] predicates, IComparer<TKey>[]? comparers = null)
+    {
+        IEnumerator<IComparer<TKey>>? revComparers = null;
+        if(comparers != null)
+            revComparers = 
+                System.Linq.Enumerable.Reverse(comparers).GetEnumerator();
+
+        IEnumerator<Expression<Func<T, TKey>>> revPredicates = 
+            System.Linq.Enumerable.Reverse(predicates).GetEnumerator();
+
+
+        if (comparers != null && revComparers != null)
+            foreach (var comparer in comparers)
+            {
+                revComparers.MoveNext();
+                Test(comparer, revComparers.Current);
+            }
+        else Test(null, null);
+
+        void Test(IComparer<TKey>? comparer, IComparer<TKey>? revComparer)
+        {
+            foreach (var predicate in predicates)
+            {
+                revPredicates.MoveNext();
+                for (var i = 0; i < RepeatTime / predicates.Length; i++)
+                {
+                    var a = generateArray(DefMaxSize, DefElementBound);
+
+                    var expected = string.Join(" ",
+                        System.Linq.Enumerable.ThenBy(
+                            System.Linq.Enumerable.OrderBy(a, predicate.Compile(), comparer), 
+                            revPredicates.Current.Compile(), revComparer)
+                            ?? (System.Linq.IOrderedEnumerable<T>)new List<T>());
+
+                    var actual = string.Join(" ", 
+                        System.Linq.Enumerable.OrderBy(a, predicate.Compile(), comparer)
+                        .ThenBy(revPredicates.Current.Compile(), revComparer)
+                        ?? (System.Linq.IOrderedEnumerable<T>)new List<T>());
+
+                    Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
+                    $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
+                }
+            }
+        }
+    }
 }
 
 
@@ -906,6 +1075,51 @@ file static class ArrayGenerator
             array.Append((char)Rand.Next(32, 127));
 
         return array.ToString();
+    }
+
+    public static IComparer<int>[] GetIntComparersArray()
+    {
+        return
+            [
+                Comparer<int>.Create((x, y) => y.CompareTo(x)),
+                Comparer<int>.Create((x, y) => x.CompareTo(y)),
+                Comparer<int>.Create((x, y) => (x % 2 == 0).CompareTo(y % 2 == 0)),
+                Comparer<int>.Create((x, y) => (x == 0).CompareTo(y == 0)),
+                Comparer<int>.Create((x, y) => (x > DefElementBound / 2).CompareTo(y > DefElementBound / 2)),
+                Comparer<int>.Create((x, y) => (x % 2 != 0).CompareTo(y % 2 != 0)),
+                Comparer<int>.Create((x, y) => (x < DefElementBound / 2).CompareTo(y < DefElementBound / 2)),
+                Comparer<int>.Create((x, y) => (x % 5 == 0).CompareTo(y % 5 == 0)),
+                Comparer<int>.Create((x, y) => (x > 100).CompareTo(y > 100)),
+                Comparer<int>.Create((x, y) => (x < -100).CompareTo(y < -100)),
+                Comparer<int>.Create((x, y) => (x == 10).CompareTo(y == 10)),
+                Comparer<int>.Create((x, y) => (x > 50 && x < 150).CompareTo(y > 50 && y < 150)),
+                Comparer<int>.Create((x, y) => (x % 3 == 0).CompareTo(y % 3 == 0)),
+                Comparer<int>.Create((x, y) => (x == 1).CompareTo(y == 1)),
+                Comparer<int>.Create((x, y) => (x % 7 == 0).CompareTo(y % 7 == 0)),
+                Comparer<int>.Create((x, y) => (x > 500).CompareTo(y > 500)),
+            ];
+    }
+    public static IComparer<double>[] GetDoubleComparersArray()
+    {
+        return
+            [
+                Comparer<double>.Create((x, y) => y.CompareTo(x)),
+                Comparer<double>.Create((x, y) => x.CompareTo(y)),
+                Comparer<double>.Create((x, y) => (x % 2 == 0).CompareTo(y % 2 == 0)),
+                Comparer<double>.Create((x, y) => (x == 0).CompareTo(y == 0)),
+                Comparer<double>.Create((x, y) => (x > DefElementBound / 2).CompareTo(y > DefElementBound / 2)),
+                Comparer<double>.Create((x, y) => (x % 2 != 0).CompareTo(y % 2 != 0)),
+                Comparer<double>.Create((x, y) => (x < DefElementBound / 2).CompareTo(y < DefElementBound / 2)),
+                Comparer<double>.Create((x, y) => (x % 5 == 0).CompareTo(y % 5 == 0)),
+                Comparer<double>.Create((x, y) => (x > 100).CompareTo(y > 100)),
+                Comparer<double>.Create((x, y) => (x < -100).CompareTo(y < -100)),
+                Comparer<double>.Create((x, y) => (x == 10).CompareTo(y == 10)),
+                Comparer<double>.Create((x, y) => (x > 50 && x < 150).CompareTo(y > 50 && y < 150)),
+                Comparer<double>.Create((x, y) => (x % 3 == 0).CompareTo(y % 3 == 0)),
+                Comparer<double>.Create((x, y) => (x == 1).CompareTo(y == 1)),
+                Comparer<double>.Create((x, y) => (x % 7 == 0).CompareTo(y % 7 == 0)),
+                Comparer<double>.Create((x, y) => (x > 500).CompareTo(y > 500)),
+            ];
     }
 }
 
