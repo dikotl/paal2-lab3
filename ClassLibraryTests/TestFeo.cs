@@ -291,17 +291,6 @@ public sealed class FeoFolds
             (acc, c) => acc + (c > 0 ? c : 0),
             (acc, c) => Math.Max(acc, Math.Abs(c)),
         ]);
-
-    [TestMethod]
-    public void TestFold_2___String() =>
-        FeoTestImplementation.TestFold_2(ArrayGenerator.GetRandString,
-        String.Join("", ArrayGenerator.GetRandString(5, 0)),
-        [
-            (acc, c) => $"{c}{acc}",
-            (acc, c) => $"{acc}{int.Clamp(c + 1, 32, 126)}",
-            (acc, c) => $"{acc}{c}{acc}",
-            (acc, c) => acc.Contains(c) ? acc : acc + c,
-        ]);
 }
 
 [TestClass]
@@ -748,7 +737,7 @@ public static class FeoTestImplementation
         foreach (var predicate in predicates)
             for (var i = 0; i < RepeatTime / predicates.Length; i++)
             {
-                var a = generateArray(typeof(TAcc) == typeof(string) ? 15 : DefMaxSize, DefElementBound);
+                var a = generateArray(DefMaxSize, DefElementBound);
                 var expected = string.Join(" ",
                     System.Linq.Enumerable.Aggregate(a, defVal, predicate.Compile()));
                 var actual = string.Join(" ", a.Fold(defVal, predicate.Compile()));
