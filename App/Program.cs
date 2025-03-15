@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using ClassLibrary.Collections;
+using ClassLibrary.FunctionalEnumerableOperations;
 
 namespace App;
 
@@ -21,9 +23,34 @@ public static class Program
 
     public static void Task10(Context context) => throw new NotImplementedException();
     public static void Task15(Context context) => throw new NotImplementedException();
-    public static void Task16(Context context) => throw new NotImplementedException();
+
+    public static void Task16(Context context)
+    {
+        DynArray<int> input = context.RequestArray(GetRandomInt);
+        DynArray<int> result = input
+            .ToIndexedEnumerable()
+            .Filter(e => e.item % 2 == 0)
+            .Map(e => e.i)
+            .Fold(input[..], WithInsert)
+            .ToDynArray();
+
+        context.WriteLine(result);
+
+
+        DynArray<int> WithInsert(DynArray<int> accumulator, int index)
+        {
+            int delta = accumulator.Count - input.Count;
+            accumulator.Insert(index + delta, 1);
+            return accumulator;
+        }
+    }
 
     public static void Task11(Context context) => throw new NotImplementedException();
     public static void Task13(Context context) => throw new NotImplementedException();
     public static void Task14(Context context) => throw new NotImplementedException();
+
+    private static int GetRandomInt()
+    {
+        return Generator.Rand.Next(-999, 999);
+    }
 }
