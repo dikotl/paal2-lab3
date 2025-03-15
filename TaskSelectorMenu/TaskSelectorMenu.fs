@@ -1,46 +1,53 @@
 ﻿open System
+open System.Collections.Generic
 open System.IO
+open System.Text
 open App
+open ClassLibrary.FunctionalEnumerableOperations
 
 
-let rec selectTask (reader: TextReader) (writer: TextWriter) talkToUser =
-    if talkToUser then
-        eprintfn
-            """Select task:
-    1 - ...
-    2 - ...
-    3 - ..."""
+type Tasks = Dictionary<int, struct (Action<Context> * string)>
+type TaskList = Action<Context> List
 
-    let input =
-        let rec getTaskNumber () : int =
-            if talkToUser then
-                eprintf "Task: "
 
-            let parsed, result =
-                reader //
-                |> _.ReadLine()
-                |> _.Trim()
-                |> Int32.TryParse
+let taskMenu () =
+    let menu = new StringBuilder()
+    let tasks = new TaskList()
 
-            if parsed then
-                result
-            else
-                if talkToUser then
-                    eprintfn "Error! Invalid input"
+    menu.Append "Available tasks" |> ignore
 
+    let inline writeTasksToMenu (block: Tasks) (blockNum: int) =
+        for pair, i in block.ToIndexedEnumerable() do
+            let taskNum, taskInfo = pair.Deconstruct()
+            let task, desc = taskInfo.ToTuple()
+
+            menu.Append $"\n    {i + 1} - Task {blockNum}.{taskNum} {desc}" |> ignore
+            tasks.Add task
+
+    writeTasksToMenu Program.Block1Tasks 1
+    writeTasksToMenu Program.Block2Tasks 2
+
+    menu.ToString(), tasks
+
+
+let rec selectTask (tasks: TaskList) (context: Context) =
+    let taskIndex =
+        let rec getTaskNumber () =
+            try
+                context.Request<int> "Select task"
+            with
+            | :? FormatException
+            | :? OverflowException ->
+                context.PrintLine "Error! Invalid input"
                 getTaskNumber ()
 
-        getTaskNumber ()
+        getTaskNumber () - 1
 
-    match input with
-    | 1 -> Program.Task1
-    | 2 -> Program.Task2
-    | 3 -> Program.Task3
-    | _ ->
-        if talkToUser then
-            eprintfn "Error! Unknown task"
-
-        selectTask reader writer talkToUser
+    if taskIndex >= tasks.Count || taskIndex < 0 then
+        context.PrintLine "Error! Unknown task"
+        selectTask tasks context
+    else
+        tasks[taskIndex]
 
 
 [<EntryPoint>]
@@ -57,7 +64,23 @@ let main args =
         else
             Console.Out
 
-    let task = selectTask reader writer (args.Length = 0)
-    task (reader, writer)
+    let context = Context(reader, writer, args.Length = 0)
+    let menu, tasks = taskMenu ()
 
+    let rec runTaskSelector () =
+        try
+            context.PrintLine menu
+
+            let task = selectTask tasks context
+
+            context.PrintLine "To return to the menu, type 'menu'"
+            context.PrintLine "To exit the program, type 'exit'"
+            task.Invoke context
+
+            runTaskSelector ()
+        with
+        | :? ExitToMenuException -> runTaskSelector ()
+        | :? ExitProgramException -> ()
+
+    runTaskSelector ()
     0
