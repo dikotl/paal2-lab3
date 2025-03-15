@@ -152,7 +152,7 @@ public class DynArray<T> : IList<T>, ICloneable
         ++Count;
 
         // Shift all elements after the index by 1.
-        for (int i = Count; i > index; i--)
+        for (int i = int.Min(Count, Capacity - 1); i > index; i--)
         {
             (data[i - 1], data[i]) = (data[i], data[i - 1]);
         }
