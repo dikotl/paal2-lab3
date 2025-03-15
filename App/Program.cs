@@ -26,7 +26,7 @@ public static class Program
 
     public static void Task16(Context context)
     {
-        DynArray<int> input = context.RequestArray(GetRandomInt);
+        DynArray<int> input = context.RequestArray(() => Generator.Rand.Next(-999, 999));
         DynArray<int> result = input
             .ToIndexedEnumerable()
             .Filter(e => e.item % 2 == 0)
@@ -48,9 +48,4 @@ public static class Program
     public static void Task11(Context context) => throw new NotImplementedException();
     public static void Task13(Context context) => throw new NotImplementedException();
     public static void Task14(Context context) => throw new NotImplementedException();
-
-    private static int GetRandomInt()
-    {
-        return Generator.Rand.Next(-999, 999);
-    }
 }
