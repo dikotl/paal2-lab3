@@ -5,11 +5,9 @@ using System.Text;
 
 namespace ClassLibrary.Collections;
 
-#pragma warning disable CS8601 // Possible null reference assignment.
-
 public class DynArray<T> : IList<T>, ICloneable
 {
-    private T[] data = [];
+    private T?[] data = [];
 
     public bool IsReadOnly => false;
 
@@ -25,14 +23,14 @@ public class DynArray<T> : IList<T>, ICloneable
     {
         get
         {
-            if (index >= Count)
+            if (index >= Count || index < 0)
                 throw new IndexOutOfRangeException();
 
-            return data[index];
+            return data[index]!;
         }
         set
         {
-            if (index >= Count)
+            if (index >= Count || index < 0)
                 throw new IndexOutOfRangeException();
 
             data[index] = value;
@@ -47,13 +45,23 @@ public class DynArray<T> : IList<T>, ICloneable
         data = new T[capacity];
     }
 
-    public DynArray(int length, T zero) : this(length)
+    public DynArray(int length, T? zero = default) : this(length)
     {
         Count = length;
 
         for (int i = 0; i < length; i++)
         {
             data[i] = zero;
+        }
+    }
+
+    public DynArray(int length, Func<T> getItem) : this(length)
+    {
+        Count = length;
+
+        for (int i = 0; i < length; i++)
+        {
+            data[i] = getItem();
         }
     }
 
@@ -78,7 +86,7 @@ public class DynArray<T> : IList<T>, ICloneable
 
         for (int i = 0; i < Count; i++)
         {
-            newData[i] = data[i];
+            newData[i] = data[i]!;
         }
 
         data = newData;
@@ -152,7 +160,7 @@ public class DynArray<T> : IList<T>, ICloneable
         ++Count;
 
         // Shift all elements after the index by 1.
-        for (int i = Count; i > index; i--)
+        for (int i = int.Min(Count, Capacity - 1); i > index; i--)
         {
             (data[i - 1], data[i]) = (data[i], data[i - 1]);
         }
@@ -223,7 +231,7 @@ public class DynArray<T> : IList<T>, ICloneable
     {
         for (int i = 0; i < Count; i++)
         {
-            yield return data[i];
+            yield return data[i]!;
         }
     }
 
@@ -284,7 +292,12 @@ public class DynArray<T> : IList<T>, ICloneable
         return hash.ToHashCode();
     }
 
-    public object Clone()
+    object ICloneable.Clone()
+    {
+        return this[..Count];
+    }
+
+    public DynArray<T> Clone()
     {
         return this[..Count];
     }

@@ -1,11 +1,29 @@
 using System;
-using System.IO;
+using System.Collections.Generic;
 
 namespace App;
 
 public static class Program
 {
-    public static void Task1(TextReader reader, TextWriter writer) => throw new NotImplementedException();
-    public static void Task2(TextReader reader, TextWriter writer) => throw new NotImplementedException();
-    public static void Task3(TextReader reader, TextWriter writer) => throw new NotImplementedException();
+    public static readonly Dictionary<int, (Action<Context> task, string description)> Block1Tasks = new()
+    {
+        [10] = (Task10, "Знищити всі елементи між першим із мінімальних за значенням і останнім із максимальних за значенням; самі перший з мінімальних та останній з максимальних лишити (не знищувати); врахувати, що невідомо, який з них записано в масиві раніше"),
+        [15] = (Task15, "Вставити після кожного парного елемента елемент із значенням 0"),
+        [16] = (Task16, "Вставити перед кожним парним елементом елемент із значенням 1"),
+    };
+
+    public static readonly Dictionary<int, (Action<Context> task, string description)> Block2Tasks = new()
+    {
+        [11] = (Task11, "Додати рядок після рядка, що містить максимальний елемент (якщо у різних місцях є кілька елементів з однаковим максимальним значенням, то брати перший з них)"),
+        [13] = (Task13, "Додати рядок перед рядком, що містить мінімальний елемент (якщо у різних місцях є кілька елементів з однаковим мінімальним значенням, то брати перший з них)"),
+        [14] = (Task14, "Додати рядок після рядка, що містить мінімальний елемент (якщо у різних місцях є кілька елементів з однаковим мінімальним значенням, то брати останній з них)"),
+    };
+
+    public static void Task10(Context context) => throw new NotImplementedException();
+    public static void Task15(Context context) => throw new NotImplementedException();
+    public static void Task16(Context context) => throw new NotImplementedException();
+
+    public static void Task11(Context context) => throw new NotImplementedException();
+    public static void Task13(Context context) => throw new NotImplementedException();
+    public static void Task14(Context context) => throw new NotImplementedException();
 }

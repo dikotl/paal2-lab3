@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Numerics;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
+using ClassLibrary.Collections;
 
 namespace ClassLibrary.FunctionalEnumerableOperations;
 
@@ -60,10 +61,10 @@ public static class IEnumerableExtension
                 dontBroke = false;
             }
     }
-    public static IEnumerable<(TSource,int)> ToIndexedEnumerable<TSource>(this IEnumerable<TSource> source)
+    public static IEnumerable<(TSource item, int i)> ToIndexedEnumerable<TSource>(this IEnumerable<TSource> source)
     {
         int k = 0;
-        foreach(var item in source)
+        foreach (var item in source)
             yield return (item, k++);
     }
     //Bool aggregations
@@ -122,6 +123,10 @@ public static class IEnumerableExtension
         return result;
     }
     public static List<TSource> ToList<TSource>(this IEnumerable<TSource> source)
+    {
+        return [.. source];
+    }
+    public static DynArray<T> ToDynArray<T>(this IEnumerable<T> source)
     {
         return [.. source];
     }
@@ -207,36 +212,36 @@ public static class IEnumerableExtension
 
 }
 internal abstract class OrderedEnumerable<TElement> : System.Linq.IOrderedEnumerable<TElement>
+{
+    internal IEnumerable<TElement> source;
+
+    public IEnumerator<TElement> GetEnumerator()
     {
-        internal IEnumerable<TElement> source;
-
-        public IEnumerator<TElement> GetEnumerator()
+        TElement[] buffer = source.ToArray();
+        if (buffer.Length > 0)
         {
-            TElement[] buffer = source.ToArray();
-            if (buffer.Length > 0)
-            {
-                EnumerableSorter<TElement>? sorter = GetEnumerableSorter(null);
-                int[] map = sorter.Sort(buffer, buffer.Length);
-                sorter = null;
-                for (int i = 0; i < buffer.Length; i++) yield return buffer[map[i]];
-            }
-        }
-
-        internal abstract EnumerableSorter<TElement> GetEnumerableSorter(EnumerableSorter<TElement>? next);
-        internal OrderedEnumerable(IEnumerable<TElement> source)
-        {
-            this.source = source;
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-        System.Linq.IOrderedEnumerable<TElement> System.Linq.IOrderedEnumerable<TElement>.CreateOrderedEnumerable<TKey>(Func<TElement, TKey> keySelector, IComparer<TKey>? comparer, bool descending)
-        {
-            OrderedEnumerable<TElement, TKey> result = new OrderedEnumerable<TElement, TKey>(source, keySelector, comparer, descending);
-            result.parent = this;
-            return result;
+            EnumerableSorter<TElement>? sorter = GetEnumerableSorter(null);
+            int[] map = sorter.Sort(buffer, buffer.Length);
+            sorter = null;
+            for (int i = 0; i < buffer.Length; i++) yield return buffer[map[i]];
         }
     }
+
+    internal abstract EnumerableSorter<TElement> GetEnumerableSorter(EnumerableSorter<TElement>? next);
+    internal OrderedEnumerable(IEnumerable<TElement> source)
+    {
+        this.source = source;
+    }
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    System.Linq.IOrderedEnumerable<TElement> System.Linq.IOrderedEnumerable<TElement>.CreateOrderedEnumerable<TKey>(Func<TElement, TKey> keySelector, IComparer<TKey>? comparer, bool descending)
+    {
+        OrderedEnumerable<TElement, TKey> result = new OrderedEnumerable<TElement, TKey>(source, keySelector, comparer, descending);
+        result.parent = this;
+        return result;
+    }
+}
 internal class OrderedEnumerable<TElement, TKey> : OrderedEnumerable<TElement>
 {
     internal OrderedEnumerable<TElement>? parent;
