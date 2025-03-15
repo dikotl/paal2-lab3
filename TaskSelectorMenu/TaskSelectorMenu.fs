@@ -33,9 +33,9 @@ let rec selectTask (reader: TextReader) (writer: TextWriter) talkToUser =
         getTaskNumber ()
 
     match input with
-    | 1 -> App.Task1
-    | 2 -> App.Task2
-    | 3 -> App.Task3
+    | 1 -> Program.Task1
+    | 2 -> Program.Task2
+    | 3 -> Program.Task3
     | _ ->
         if talkToUser then
             eprintfn "Error! Unknown task"
