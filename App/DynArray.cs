@@ -7,7 +7,7 @@ namespace App;
 
 #pragma warning disable CS8601 // Possible null reference assignment.
 
-public class DynArray<T> : IList<T>
+public class DynArray<T> : IList<T>, ICloneable
 {
     private T[] data = [];
 
@@ -282,6 +282,11 @@ public class DynArray<T> : IList<T>
         }
 
         return hash.ToHashCode();
+    }
+
+    public object Clone()
+    {
+        return this[..Count];
     }
 
     public static bool operator ==(DynArray<T>? a, DynArray<T>? b)
