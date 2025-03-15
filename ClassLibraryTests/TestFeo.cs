@@ -159,7 +159,6 @@ public sealed class FeoTransforms
         x => x * x,
         x => Math.Round(x, 2)
         ]);
-
 }
 
 [TestClass]
@@ -232,6 +231,14 @@ public sealed class FeoConvertors
     [TestMethod]
     public void TestToSet___Double() =>
         FeoTestImplementation.TestToSet(ArrayGenerator.GetDoubleRandArray);
+
+    [TestMethod]
+    public void TestToIndexedEnumerable___Int() =>
+        FeoTestImplementation.TestToIndexedEnumerable(ArrayGenerator.GetIntRandArray);
+
+    [TestMethod]
+    public void TestToIndexedEnumerable___Double() =>
+        FeoTestImplementation.TestToIndexedEnumerable(ArrayGenerator.GetDoubleRandArray);
 }
 
 [TestClass]
@@ -649,6 +656,20 @@ public sealed class Sorters
 
 public static class FeoTestImplementation
 {
+    public static void TestToIndexedEnumerable<T>(Func<int, uint, IEnumerable<T>> generateArray)
+    {
+        for (var i = 0; i < RepeatTime; i++)
+        {
+            var a = generateArray(DefMaxSize, DefElementBound);
+            var k = 0;
+            var expected = string.Join(" ", System.Linq.Enumerable.Select(a, a=>(a,k++)));
+            var actual = string.Join(" ", a.ToIndexedEnumerable());
+
+            Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
+            $"<{typeof(T)}> test target does not work correctly");
+        }
+    }
+
     public static void TestMinMax<T>(Func<int, uint, IEnumerable<T>> generateArray)
         where T : IComparisonOperators<T, T, bool>
     {
