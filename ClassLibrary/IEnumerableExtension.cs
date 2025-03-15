@@ -59,7 +59,12 @@ public static class IEnumerableExtension
                 dontBroke = false;
             }
     }
-
+    public static IEnumerable<(TSource,int)> ToIndexedEnumerable<TSource>(this IEnumerable<TSource> source)
+    {
+        int k = 0;
+        foreach(var item in source)
+            yield return (item, k++);
+    }
     //Bool aggregations
     public static bool All<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
     {
