@@ -5,11 +5,9 @@ using System.Text;
 
 namespace ClassLibrary.Collections;
 
-#pragma warning disable CS8601 // Possible null reference assignment.
-
 public class DynArray<T> : IList<T>, ICloneable
 {
-    private T[] data = [];
+    private T?[] data = [];
 
     public bool IsReadOnly => false;
 
@@ -25,14 +23,14 @@ public class DynArray<T> : IList<T>, ICloneable
     {
         get
         {
-            if (index >= Count)
+            if (index >= Count || index < 0)
                 throw new IndexOutOfRangeException();
 
-            return data[index];
+            return data[index]!;
         }
         set
         {
-            if (index >= Count)
+            if (index >= Count || index < 0)
                 throw new IndexOutOfRangeException();
 
             data[index] = value;
@@ -47,7 +45,7 @@ public class DynArray<T> : IList<T>, ICloneable
         data = new T[capacity];
     }
 
-    public DynArray(int length, T zero = default) : this(length)
+    public DynArray(int length, T? zero = default) : this(length)
     {
         Count = length;
 
@@ -88,7 +86,7 @@ public class DynArray<T> : IList<T>, ICloneable
 
         for (int i = 0; i < Count; i++)
         {
-            newData[i] = data[i];
+            newData[i] = data[i]!;
         }
 
         data = newData;
@@ -233,7 +231,7 @@ public class DynArray<T> : IList<T>, ICloneable
     {
         for (int i = 0; i < Count; i++)
         {
-            yield return data[i];
+            yield return data[i]!;
         }
     }
 
