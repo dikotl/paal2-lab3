@@ -1,13 +1,15 @@
 ﻿using System;
-using System.Text;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Numerics;
 using System.Reflection;
-using System.Linq.Expressions;
-using System.Collections.Generic;
-using FunctionalEnumerableOperations;
-using Feo = FunctionalEnumerableOperations;
+using System.Text;
+using ClassLibrary.FunctionalEnumerableOperations;
+
 using static ClassLibraryTests.ConstValues;
 using static ClassLibraryTests.GlobalRandom;
+
+using Feo = ClassLibrary.FunctionalEnumerableOperations;
 
 namespace ClassLibraryTests;
 
@@ -662,7 +664,7 @@ public static class FeoTestImplementation
         {
             var a = generateArray(DefMaxSize, DefElementBound);
             var k = 0;
-            var expected = string.Join(" ", System.Linq.Enumerable.Select(a, a=>(a,k++)));
+            var expected = string.Join(" ", System.Linq.Enumerable.Select(a, a => (a, k++)));
             var actual = string.Join(" ", a.ToIndexedEnumerable());
 
             Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
@@ -967,15 +969,15 @@ public static class FeoTestImplementation
                 }
         }
     }
-    
+
     public static void TestThenBy<T, TKey>(Func<int, uint, IEnumerable<T>> generateArray, Expression<Func<T, TKey>>[] predicates, IComparer<TKey>[]? comparers = null)
     {
         IEnumerator<IComparer<TKey>>? revComparers = null;
-        if(comparers != null)
-            revComparers = 
+        if (comparers != null)
+            revComparers =
                 System.Linq.Enumerable.Reverse(comparers).GetEnumerator();
 
-        IEnumerator<Expression<Func<T, TKey>>> revPredicates = 
+        IEnumerator<Expression<Func<T, TKey>>> revPredicates =
             System.Linq.Enumerable.Reverse(predicates).GetEnumerator();
 
 
@@ -998,13 +1000,13 @@ public static class FeoTestImplementation
 
                     var expected = string.Join(" ",
                         System.Linq.Enumerable.ThenBy(
-                            System.Linq.Enumerable.OrderBy(a, predicate.Compile(), comparer), 
-                            revPredicates.Current.Compile(), revComparer) ?? 
+                            System.Linq.Enumerable.OrderBy(a, predicate.Compile(), comparer),
+                            revPredicates.Current.Compile(), revComparer) ??
                             (System.Linq.IOrderedEnumerable<T>)new List<T>());
 
-                    var actual = string.Join(" ", 
+                    var actual = string.Join(" ",
                         System.Linq.Enumerable.OrderBy(a, predicate.Compile(), comparer)
-                        .ThenBy(revPredicates.Current.Compile(), revComparer) ?? 
+                        .ThenBy(revPredicates.Current.Compile(), revComparer) ??
                         (System.Linq.IOrderedEnumerable<T>)new List<T>());
 
                     Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
@@ -1013,15 +1015,15 @@ public static class FeoTestImplementation
             }
         }
     }
-    
+
     public static void TestThenByDescending<T, TKey>(Func<int, uint, IEnumerable<T>> generateArray, Expression<Func<T, TKey>>[] predicates, IComparer<TKey>[]? comparers = null)
     {
         IEnumerator<IComparer<TKey>>? revComparers = null;
-        if(comparers != null)
-            revComparers = 
+        if (comparers != null)
+            revComparers =
                 System.Linq.Enumerable.Reverse(comparers).GetEnumerator();
 
-        IEnumerator<Expression<Func<T, TKey>>> revPredicates = 
+        IEnumerator<Expression<Func<T, TKey>>> revPredicates =
             System.Linq.Enumerable.Reverse(predicates).GetEnumerator();
 
 
@@ -1044,11 +1046,11 @@ public static class FeoTestImplementation
 
                     var expected = string.Join(" ",
                         System.Linq.Enumerable.ThenBy(
-                            System.Linq.Enumerable.OrderBy(a, predicate.Compile(), comparer), 
+                            System.Linq.Enumerable.OrderBy(a, predicate.Compile(), comparer),
                             revPredicates.Current.Compile(), revComparer)
                             ?? (System.Linq.IOrderedEnumerable<T>)new List<T>());
 
-                    var actual = string.Join(" ", 
+                    var actual = string.Join(" ",
                         System.Linq.Enumerable.OrderBy(a, predicate.Compile(), comparer)
                         .ThenBy(revPredicates.Current.Compile(), revComparer)
                         ?? (System.Linq.IOrderedEnumerable<T>)new List<T>());

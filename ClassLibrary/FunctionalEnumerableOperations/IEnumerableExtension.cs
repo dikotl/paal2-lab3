@@ -3,7 +3,8 @@ using System.Numerics;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace FunctionalEnumerableOperations;
+namespace ClassLibrary.FunctionalEnumerableOperations;
+
 public static class IEnumerableExtension
 {
     //Transforms

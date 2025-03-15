@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace App;
+namespace ClassLibrary.Collections;
 
 #pragma warning disable CS8601 // Possible null reference assignment.
 
