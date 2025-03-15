@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.IO;
 using ClassLibrary.Collections;
 using ClassLibrary.FunctionalEnumerableOperations;
@@ -6,30 +7,86 @@ using ClassLibrary.FunctionalEnumerableOperations;
 namespace App;
 
 public class ExitToMenuException : Exception;
+
 public class ExitProgramException : Exception;
 
+/// <summary>
+/// Specifies a style of the request. Used in <see cref="Context.Request"/> method.
+/// </summary>
+public enum RequestStyle
+{
+    /// <summary>
+    /// A request message is placed in the previous line.
+    ///
+    /// <code>Request message
+    /// > |
+    /// </code>
+    /// </summary>
+    Default,
+
+    /// <summary>
+    /// The request message is placed on the same line.
+    ///
+    /// <code>Request message: |</code>
+    /// </summary>
+    Inline,
+
+    /// <summary>
+    /// Just a regular <see cref="Console.ReadLine"/>.
+    /// </summary>
+    Bare,
+}
+
+/// <summary>
+/// Program\Task context. Should be used for correct IO operations. Contains helper method
+/// to read a data from the user.
+/// </summary>
+/// <param name="Reader">Input data stream.</param>
+/// <param name="Writer">Output data stream.</param>
+/// <param name="TalkToUser">Specifies whether to talk to the user via stderr.</param>
 public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
 {
+    /// <summary>
+    /// Prints a message to the user, but doesn't print it as a program output.
+    /// </summary>
+    /// <param name="message">A message to be printed.</param>
     public void Print(object message)
     {
         if (TalkToUser) Console.Error.Write(message);
     }
 
+    /// <summary>
+    /// Prints a message to the user, but doesn't print it as a program output.
+    /// Inserts a new line and the end.
+    /// </summary>
+    /// <param name="message">A message to be printed.</param>
     public void PrintLine(object message)
     {
         if (TalkToUser) Console.Error.WriteLine(message);
     }
 
+    /// <summary>
+    /// Writes a data to the the program output.
+    /// </summary>
+    /// <param name="message">An object to be written.</param>
     public void Write(object message)
     {
         if (TalkToUser) Writer.Write(message);
     }
 
+    /// <summary>
+    /// Writes a data to the the program output. Inserts a new line and the end.
+    /// </summary>
+    /// <param name="message">An object to be written.</param>
     public void WriteLine(object message)
     {
         if (TalkToUser) Writer.WriteLine(message);
     }
 
+    /// <summary>
+    /// Prints a message to the user as error. Inserts a new line and the end.
+    /// </summary>
+    /// <param name="message">An error to be printed.</param>
     public void Error(string? message = null)
     {
         var oldColor = Console.ForegroundColor;
@@ -43,17 +100,25 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
         Console.ForegroundColor = oldColor;
     }
 
-    public T Request<T>(
-            Converter<string, T> converter,
-            string? message = null,
-            bool inline = false,
-            bool bare = false)
+    /// <summary>
+    /// Requests input data of a specific type from the user, reading it from the input stream.
+    /// If a <see cref="FormatException"/> or <see cref="ExitProgramException"/> is thrown, an error
+    /// will be displayed and the request will be retried.
+    /// </summary>
+    /// <typeparam name="T">Requested value type.</typeparam>
+    /// <param name="converter">A function to be invoked on the input string to convert it to the value.</param>
+    /// <param name="message">A message describing what the user is supposed to type in.</param>
+    /// <param name="style">Specifies a style of the <paramref name="message"/>.</param>
+    /// <returns>A value typed by the user and converted by the <paramref name="converter"/>.</returns>
+    /// <exception cref="ExitToMenuException"></exception>
+    /// <exception cref="ExitProgramException"></exception>
+    public T Request<T>(Converter<string, T> converter, string? message = null, RequestStyle style = RequestStyle.Default)
     {
         while (true)
         {
             try
             {
-                return converter(Request(message, inline, bare));
+                return converter(Request(message, style));
             }
             catch (FormatException e)
             {
@@ -66,30 +131,49 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
         }
     }
 
-    public T Request<T>(string? message = null, bool inline = false, bool bare = false)
+    /// <summary>
+    /// Requests input data of a specific type from the user, reading it from the input stream.
+    /// If a <see cref="FormatException"/> or <see cref="ExitProgramException"/> is thrown, an error
+    /// will be displayed and the request will be retried.
+    /// </summary>
+    /// <typeparam name="T">Requested value type, that can be parsed from a string.</typeparam>
+    /// <param name="message">A message describing what the user is supposed to type in.</param>
+    /// <param name="style">Specifies a style of the <paramref name="message"/>.</param>
+    /// <returns>A value typed by the user and converted by the <paramref name="converter"/>.</returns>
+    /// <exception cref="ExitToMenuException"></exception>
+    /// <exception cref="ExitProgramException"></exception>
+    public T Request<T>(string? message = null, RequestStyle style = RequestStyle.Default)
         where T : IParsable<T>
     {
-        return Request(input => T.Parse(input, null), message, inline, bare);
+        return Request(input => T.Parse(input, null), message, style);
     }
 
-    public string Request(string? message = null, bool inline = false, bool bare = false)
+    /// <summary>
+    /// Requests input data of a specific type from the user, reading it from the input stream.
+    /// If a <see cref="FormatException"/> or <see cref="ExitProgramException"/> is thrown, an error
+    /// will be displayed and the request will be retried.
+    /// </summary>
+    /// <param name="message">A message describing what the user is supposed to type in.</param>
+    /// <param name="style">Specifies a style of the <paramref name="message"/>.</param>
+    /// <returns>A string, typed by the user</returns>
+    /// <exception cref="ExitToMenuException"></exception>
+    /// <exception cref="ExitProgramException"></exception>
+    public string Request(string? message = null, RequestStyle style = RequestStyle.Default)
     {
-        if (!bare)
+        switch (style)
         {
-            if (inline)
-            {
-                if (message != null)
-                    Print($"{message}: ");
-                else
-                    Print($": ");
-            }
-            else
-            {
-                if (message != null)
-                    Print($"{message}\n> ");
-                else
-                    Print($"\n> ");
-            }
+            case RequestStyle.Default:
+                if (message != null) Print(message);
+                Print("\n> ");
+                break;
+            case RequestStyle.Inline:
+                if (message != null) Print(message);
+                Print(": ");
+                break;
+            case RequestStyle.Bare:
+                break;
+            default:
+                throw new InvalidEnumArgumentException(nameof(style), (int)style, typeof(RequestStyle));
         }
 
         string input = Reader.ReadLine() ?? "";
@@ -104,18 +188,44 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
         return input;
     }
 
-    public DynArray<T> ReadArrayRandom<T>(
-            Func<T> getItem)
-        where T : IParsable<T>
+    /// <summary>
+    /// Requests the number of items from the user and generates an array with random items as
+    /// defined by <paramref name="getRandomItem"/>.
+    /// </summary>
+    /// <typeparam name="T">Requested value type.</typeparam>
+    /// <param name="getRandomItem">Random elements generation function.</param>
+    /// <returns>Generated array with the size specified by the user.</returns>
+    public DynArray<T> ReadArrayRandom<T>(Func<T> getRandomItem)
     {
         var size = Request<int>("Input number of elements");
-        var generatedArray = Generator.GetRandomDynArray(size..size, getItem);
+        var generatedArray = Generator.GetRandomDynArray(size..size, getRandomItem);
 
         PrintLine($"Generated array: {generatedArray}");
         return generatedArray;
     }
 
-    public DynArray<T> ReadArrayOneLine<T>()
+    /// <summary>
+    /// Requests elements from the user and collects them into an array element by element as
+    /// defined by the converter <paramref name="converter"/>.
+    /// </summary>
+    /// <typeparam name="T">Requested value type.</typeparam>
+    /// <param name="converter">A function to be invoked on the input string to convert it to the value.</param>
+    /// <returns>An array of values typed by the user.</returns>
+    public DynArray<T> ReadArrayInline<T>(Converter<string, T> converter)
+    {
+        return Reader
+            .ReadLine()!
+            .Split()
+            .Map(input => converter(input))
+            .ToDynArray();
+    }
+
+    /// <summary>
+    /// Requests elements from the user and collects them into an array element by element.
+    /// </summary>
+    /// <typeparam name="T">Requested value type, that can be parsed from a string.</typeparam>
+    /// <returns>An array of values typed by the user.</returns>
+    public DynArray<T> ReadArrayInline<T>()
         where T : IParsable<T>
     {
         return Reader
@@ -125,27 +235,56 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
             .ToDynArray();
     }
 
-    public DynArray<T> RequestArray<T>(
-            Func<T> getItem)
+    /// <summary>
+    /// Requests the user to specify which input method to use to enter the array.
+    /// </summary>
+    /// <typeparam name="T">Requested value type, that can be parsed from a string.</typeparam>
+    /// <param name="getRandomItem">Random elements generation function.</param>
+    /// <returns>An array of values typed by the user.</returns>
+    public DynArray<T> RequestArray<T>(Func<T> getRandomItem)
         where T : IParsable<T>
     {
-        const string message = """
-            Select array input method:
-                1. Random
-                2. One line
-            """;
+        return RequestArray(input => T.Parse(input, null), getRandomItem);
+    }
 
-        while (true) try
+    /// <summary>
+    /// Requests the user to specify which input method to use to enter the array.
+    /// </summary>
+    /// <typeparam name="T">Requested value type.</typeparam>
+    /// <param name="converter">A function to be invoked on the input string to convert it to the value.</param>
+    /// <param name="getRandomItem">Random elements generation function.</param>
+    /// <returns>An array of values typed by the user.</returns>
+    public DynArray<T> RequestArray<T>(Converter<string, T> converter, Func<T> getRandomItem)
+    {
+        while (true)
+        {
+            try
             {
-                return Request<int>(message) switch
+                var arrayInputStyle = Request<int>("""
+                        Select array input method:
+                            1. Random
+                            2. One line
+                        """);
+
+                switch (arrayInputStyle)
                 {
-                    1 => ReadArrayRandom(getItem),
-                    2 => ReadArrayOneLine<T>(),
-                    var x => throw new ArgumentException($"Unknown option: {x}"),
-                };
+                    case 1:
+                        return ReadArrayRandom(getRandomItem);
+                    case 2:
+                        return ReadArrayInline(converter);
+                    default:
+                        Error($"Unknown option: {arrayInputStyle}");
+                        continue;
+                }
             }
-            catch (ArgumentException e) { Error(e.Message); }
-            catch (OverflowException e) { Error(e.Message); }
-            catch (FormatException e) { Error(e.Message); }
+            catch (FormatException e)
+            {
+                Error(e.Message);
+            }
+            catch (OverflowException e)
+            {
+                Error(e.Message);
+            }
+        }
     }
 }
