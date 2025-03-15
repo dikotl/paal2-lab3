@@ -19,7 +19,7 @@ let taskMenu () =
     let inline writeTasksToMenu (block: Tasks) (blockNum: int) =
         for pair, i in block.ToIndexedEnumerable() do
             let taskNum, taskInfo = pair.Deconstruct()
-            let task, desc = taskInfo.ToTuple()
+            let struct (task, desc) = taskInfo
 
             menu.Append $"\n    {i + 1} - Task {blockNum}.{taskNum} {desc}" |> ignore
             tasks.Add task
