@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
@@ -67,6 +67,11 @@ public static class IEnumerableExtension
         foreach (var item in source)
             yield return (item, k++);
     }
+    public static TResult Let<TSource, TResult>(this TSource value, Func<TSource, TResult> func) 
+    {
+        return func(value);
+    }
+    
     //Bool aggregations
     public static bool All<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
     {
