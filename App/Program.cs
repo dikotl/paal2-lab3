@@ -22,6 +22,7 @@ public static class Program
     };
 
     public static void Task10(Context context) => throw new NotImplementedException();
+    
     public static void Task15(Context context)
     {
         DynArray<int> input = context.RequestArray(() => Generator.Rand.Next(-999, 999));
@@ -42,6 +43,7 @@ public static class Program
             return accumulator;
         }
     }
+    
     public static void Task16(Context context)
     {
         DynArray<int> input = context.RequestArray(() => Generator.Rand.Next(-999, 999));
@@ -63,10 +65,12 @@ public static class Program
         }
     }
 
+
     public static void Task11(Context context) => throw new NotImplementedException();
+    
     public static void Task13(Context context)
     {
-       var arr = context.RequestMatrix(() => Generator.Rand.Next(-20, 20));
+       var arr = context.RequestMatrix(int.Parse, () => Generator.Rand.Next(-20, 20));
         
         var rowWithMinItem = arr.ToIndexedEnumerable()
                                 .Map(x=>(x.item.Min(),x.i))
@@ -79,9 +83,10 @@ public static class Program
             foreach(var item in arr)
                 context.WriteLine(item);
     }
+    
     public static void Task14(Context context)
     {
-        var arr = context.RequestMatrix(() => Generator.Rand.Next(-20, 20));
+        var arr = context.RequestMatrix(int.Parse,() => Generator.Rand.Next(-20, 20));
         
         var rowWithMinItem = arr.ToIndexedEnumerable()
                                 .Map(x=>(x.item.Min(),x.i))

@@ -289,52 +289,21 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     }
 
     /// <summary>
-    /// Requests a matrix of dynamic arrays, using a random item generator.
-    /// </summary>
-    /// <typeparam name="T">The type of elements in the matrix, constrained to be parsable.</typeparam>
-    /// <param name="getRandomItem">A function that generates random items of type T.</param>
-    /// <returns>A dynamically sized matrix (array of arrays) with randomly generated elements.</returns>
-    public DynArray<DynArray<T>> RequestMatrix<T>(Func<T> getRandomItem)
-        where T : IParsable<T>
-    {
-        return RequestMatrix(input => T.Parse(input, null), getRandomItem);
-    }
-
-    /// <summary>
     /// Requests a matrix of dynamic arrays, using a specified converter and random item generator.
     /// </summary>
     /// <typeparam name="T">The type of elements in the matrix, constrained to be parsable.</typeparam>
     /// <param name="converter">A converter that parses a string input into an element of type T.</param>
     /// <param name="getRandomItem">A function that generates random items of type T.</param>
     /// <returns>A dynamically sized matrix (array of arrays) with parsed or randomly generated elements.</returns>
-    public DynArray<DynArray<T>> RequestMatrix<T>(Converter<string, T> converter,Func<T> getRandomItem)
+    public DynArray<DynArray<T>> RequestMatrix<T>(Converter<string, T> converter, Func<T> getRandomItem)
         where T : IParsable<T>
     {
         var size = Request<int>("Input number of sub-arrays");
+
         DynArray<DynArray<T>> result = new(length:size);
 
-        bool doChoose()
-        {
-            const string message = 
-                """
-                Select matrix input method:
-                    1. Random
-                    2. Line by line
-                """;
-            while (true)
-            {
-                switch(Request(message))
-                {
-                    case "1": return true;
-                    case "2": return false;
-                }
-                Error($"Unknown option");
-            }
-        }
-
-        //Idk how to name this var with 2 purpose
-        bool idk = doChoose();
-        if(idk)
+        bool isRandomInputAndOutputRequired = doChoose();
+        if(isRandomInputAndOutputRequired)
         {
             var maxsize = Request<int>("Input max number of elements")-1;
             for (var i = 0; i < size; i++)
@@ -347,15 +316,34 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
                 {
                     Error(e.Message);
                     i--;
-                    idk = true;
+                    isRandomInputAndOutputRequired = true;
                 }
 
-        if(idk)
+        if(isRandomInputAndOutputRequired)
         {
             PrintLine($"Gotten array:");
             foreach(var item in result)
                 WriteLine(item);            
         }
         return result;
+
+        bool doChoose()
+        {
+            const string message = 
+                """
+                Select matrix input method:
+                    1. Random
+                    2. Line by line
+                """;
+            while (true)
+            {
+                switch(Request(message).Trim())
+                {
+                    case "1": return true;
+                    case "2": return false;
+                }
+                Error("Unknown option");
+            }
+        }
     }
 }
