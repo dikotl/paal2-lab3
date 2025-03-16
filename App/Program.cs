@@ -67,47 +67,7 @@ public static class Program
     public static void Task13(Context context) => throw new NotImplementedException();
     public static void Task14(Context context)
     {
-        var size = context.Request<int>("Input number of sub-arrays");
-        DynArray<DynArray<int>> arr = new(length:size);
-
-        bool doChoose()
-        {
-            const string message = 
-                """
-                Select array input method:
-                    1. Random
-                    2. One line
-                """;
-            while (true) try
-                {
-                    return context.Request<int>(message) switch
-                    {
-                        1 => true,
-                        2 => false,
-                        var x => throw new ArgumentException($"Unknown option: {x}"),
-                    };
-                }
-                catch (ArgumentException e) { context.Error(e.Message); }
-                catch (OverflowException e) { context.Error(e.Message); }
-                catch (FormatException e)   { context.Error(e.Message); }
-        }
-
-        if(doChoose())
-        {
-            var maxsize = context.Request<int>("Input max number of elements")-1;
-            for (var i = 0; i < size; i++)
-            {
-                arr[i] = Generator.GetRandomDynArray(
-                    1..maxsize, 
-                    ()=>Generator.Rand.Next(-20, 20));
-            }
-            context.PrintLine($"Generated array:");
-            foreach(var item in arr)
-                context.PrintLine(item);
-        }
-        else
-            for (var i = 0; i < size; i++)
-                arr[i] = context.ReadArrayInline<int>();
+        var arr = context.RequestMatrix(() => Generator.Rand.Next(-20, 20));
         
         var rowWithMinItem = arr.ToIndexedEnumerable()
                                 .Map(x=>(x.item.Min(),x.i))
@@ -115,7 +75,7 @@ public static class Program
                                 .ThenByDescending(x=>x.i)
                                 .FirstOrDefault(x=>true);
 
-        arr.Insert(rowWithMinItem.i+1,new(1){rowWithMinItem.Item1});
+        arr.Insert(rowWithMinItem.i+1, [rowWithMinItem.Item1]);
         context.PrintLine($"Result:");
             foreach(var item in arr)
                 context.PrintLine(item);
