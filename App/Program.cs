@@ -64,7 +64,21 @@ public static class Program
     }
 
     public static void Task11(Context context) => throw new NotImplementedException();
-    public static void Task13(Context context) => throw new NotImplementedException();
+    public static void Task13(Context context)
+    {
+       var arr = context.RequestMatrix(() => Generator.Rand.Next(-20, 20));
+        
+        var rowWithMinItem = arr.ToIndexedEnumerable()
+                                .Map(x=>(x.item.Min(),x.i))
+                                .OrderBy(x=>x.Item1)
+                                .ThenBy(x=>x.i)
+                                .FirstOrDefault(x=>true);
+
+        arr.Insert(rowWithMinItem.i, [rowWithMinItem.Item1]);
+        context.PrintLine($"Result:");
+            foreach(var item in arr)
+                context.WriteLine(item);
+    }
     public static void Task14(Context context)
     {
         var arr = context.RequestMatrix(() => Generator.Rand.Next(-20, 20));
