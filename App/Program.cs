@@ -78,6 +78,6 @@ public static class Program
         arr.Insert(rowWithMinItem.i+1, [rowWithMinItem.Item1]);
         context.PrintLine($"Result:");
             foreach(var item in arr)
-                context.PrintLine(item);
+                context.WriteLine(item);
     }
 }

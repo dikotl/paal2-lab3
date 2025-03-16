@@ -354,7 +354,7 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
         {
             PrintLine($"Gotten array:");
             foreach(var item in result)
-                PrintLine(item);            
+                WriteLine(item);            
         }
         return result;
     }
