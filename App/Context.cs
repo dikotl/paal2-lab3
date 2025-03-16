@@ -287,4 +287,63 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
             }
         }
     }
+
+    /// <summary>
+    /// Requests a matrix of dynamic arrays, using a specified converter and random item generator.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the matrix, constrained to be parsable.</typeparam>
+    /// <param name="converter">A converter that parses a string input into an element of type T.</param>
+    /// <param name="getRandomItem">A function that generates random items of type T.</param>
+    /// <returns>A dynamically sized matrix (array of arrays) with parsed or randomly generated elements.</returns>
+    public DynArray<DynArray<T>> RequestMatrix<T>(Converter<string, T> converter, Func<T> getRandomItem)
+        where T : IParsable<T>
+    {
+        var size = Request<int>("Input number of sub-arrays");
+
+        DynArray<DynArray<T>> result = new(length:size);
+
+        bool isRandomInputAndOutputRequired = doChoose();
+        if(isRandomInputAndOutputRequired)
+        {
+            var maxsize = Request<int>("Input max number of elements")-1;
+            for (var i = 0; i < size; i++)
+                result[i] = Generator.GetRandomDynArray(2..maxsize, getRandomItem);
+        }
+        else
+            for (var i = 0; i < size; i++)
+                try { result[i] = ReadArrayInline(converter); }
+                catch (Exception e) when (e is FormatException or OverflowException)
+                {
+                    Error(e.Message);
+                    i--;
+                    isRandomInputAndOutputRequired = true;
+                }
+
+        if(isRandomInputAndOutputRequired)
+        {
+            PrintLine($"Gotten array:");
+            foreach(var item in result)
+                WriteLine(item);            
+        }
+        return result;
+
+        bool doChoose()
+        {
+            const string message = 
+                """
+                Select matrix input method:
+                    1. Random
+                    2. Line by line
+                """;
+            while (true)
+            {
+                switch(Request(message).Trim())
+                {
+                    case "1": return true;
+                    case "2": return false;
+                }
+                Error("Unknown option");
+            }
+        }
+    }
 }

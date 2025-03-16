@@ -67,6 +67,11 @@ public static class IEnumerableExtension
         foreach (var item in source)
             yield return (item, k++);
     }
+    public static TResult Let<TSource, TResult>(this TSource value, Func<TSource, TResult> func) 
+    {
+        return func(value);
+    }
+    
     //Bool aggregations
     public static bool All<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
     {
@@ -126,7 +131,7 @@ public static class IEnumerableExtension
     {
         return [.. source];
     }
-    public static DynArray<T> ToDynArray<T>(this IEnumerable<T> source)
+    public static DynArray<TSource> ToDynArray<TSource>(this IEnumerable<TSource> source)
     {
         return [.. source];
     }
