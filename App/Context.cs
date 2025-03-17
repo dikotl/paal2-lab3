@@ -310,13 +310,14 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     }
 
     /// <summary>
-    /// 
+    /// Reads and returns a matrix represented as a dynamic array of rows,  
+    /// where each row is a dynamic array of elements of type <typeparamref name="T"/>.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="size"></param>
-    /// <param name="converter"></param>
-    /// <param name="show"></param>
-    /// <returns></returns>
+    /// <typeparam name="T">The type of elements in the matrix.</typeparam>
+    /// <param name="size">The number of rows in the matrix.</param>
+    /// <param name="converter">A converter function to transform input strings into type <typeparamref name="T"/>.</param>
+    /// <param name="show">Outputs a flag indicating whether an error occurred during input processing.</param>
+    /// <returns>A dynamic array of dynamic arrays representing the matrix.</returns>
     private DynArray<DynArray<T>> RequestMatrixInline<T>(int size, Converter<string, T> converter, out bool show)
     {
         var typed = new DynArray<DynArray<T>>(length: size);
@@ -338,6 +339,15 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
 
         return typed;
     }
+
+    /// <summary>
+    /// Generates and returns a matrix represented as a dynamic array of rows,  
+    /// where each row is a dynamic array of randomly generated elements of type <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the matrix.</typeparam>
+    /// <param name="rows">The number of rows in the matrix.</param>
+    /// <param name="getRandomItem">A function that generates a random item of type <typeparamref name="T"/>.</param>
+    /// <returns>A dynamic array of dynamic arrays representing the randomly generated matrix.</returns>
 
     private DynArray<DynArray<T>> RequestMatrixRandom<T>(int rows, Func<T> getRandomItem)
     {
