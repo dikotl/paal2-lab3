@@ -120,11 +120,7 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
             {
                 return converter(Request(message, style));
             }
-            catch (FormatException e)
-            {
-                Error(e.Message);
-            }
-            catch (OverflowException e)
+            catch (Exception e) when (e is FormatException or OverflowException)
             {
                 Error(e.Message);
             }
@@ -256,36 +252,32 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     /// <returns>An array of values typed by the user.</returns>
     public DynArray<T> RequestArray<T>(Converter<string, T> converter, Func<T> getRandomItem)
     {
-        while (true)
-        {
-            try
-            {
-                var arrayInputStyle = Request<int>("""
-                        Select array input method:
-                            1. Random
-                            2. One line
-                        """);
+        bool isRandom = ChooseInputMethod();
 
-                switch (arrayInputStyle)
+        if (isRandom)
+        {
+            return ReadArrayRandom(getRandomItem);
+        }
+        else
+        {
+            while (true)
+            {
+                try
                 {
-                    case 1:
-                        return ReadArrayRandom(getRandomItem);
-                    case 2:
-                        return ReadArrayInline(converter);
-                    default:
-                        Error($"Unknown option: {arrayInputStyle}");
-                        continue;
+                    return ReadArrayInline(converter);
+                }
+                catch (Exception e) when (e is FormatException or OverflowException)
+                {
+                    Error(e.Message);
                 }
             }
-            catch (FormatException e)
-            {
-                Error(e.Message);
-            }
-            catch (OverflowException e)
-            {
-                Error(e.Message);
-            }
         }
+    }
+
+    public DynArray<DynArray<T>> RequestMatrix<T>(Func<T> getRandomItem)
+        where T : IParsable<T>
+    {
+        return RequestMatrix(input => T.Parse(input, null), getRandomItem);
     }
 
     /// <summary>
@@ -296,54 +288,92 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     /// <param name="getRandomItem">A function that generates random items of type T.</param>
     /// <returns>A dynamically sized matrix (array of arrays) with parsed or randomly generated elements.</returns>
     public DynArray<DynArray<T>> RequestMatrix<T>(Converter<string, T> converter, Func<T> getRandomItem)
-        where T : IParsable<T>
     {
         var size = Request<int>("Input number of sub-arrays");
+        bool isRandomOrWasError = ChooseInputMethod();
 
-        DynArray<DynArray<T>> result = new(length:size);
+        var result = isRandomOrWasError
+            ? RequestMatrixRandom(size, getRandomItem)
+            : RequestMatrixInline(size, converter, out isRandomOrWasError);
 
-        bool isRandomInputAndOutputRequired = doChoose();
-        if(isRandomInputAndOutputRequired)
+        if (isRandomOrWasError)
         {
-            var maxsize = Request<int>("Input max number of elements")-1;
-            for (var i = 0; i < size; i++)
-                result[i] = Generator.GetRandomDynArray(2..maxsize, getRandomItem);
-        }
-        else
-            for (var i = 0; i < size; i++)
-                try { result[i] = ReadArrayInline(converter); }
-                catch (Exception e) when (e is FormatException or OverflowException)
-                {
-                    Error(e.Message);
-                    i--;
-                    isRandomInputAndOutputRequired = true;
-                }
+            PrintLine("Gotten matrix:");
 
-        if(isRandomInputAndOutputRequired)
-        {
-            PrintLine($"Gotten array:");
-            foreach(var item in result)
-                WriteLine(item);            
-        }
-        return result;
-
-        bool doChoose()
-        {
-            const string message = 
-                """
-                Select matrix input method:
-                    1. Random
-                    2. Line by line
-                """;
-            while (true)
+            foreach (DynArray<T> item in result)
             {
-                switch(Request(message).Trim())
-                {
-                    case "1": return true;
-                    case "2": return false;
-                }
-                Error("Unknown option");
+                WriteLine(item);
             }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="size"></param>
+    /// <param name="converter"></param>
+    /// <param name="show"></param>
+    /// <returns></returns>
+    private DynArray<DynArray<T>> RequestMatrixInline<T>(int size, Converter<string, T> converter, out bool show)
+    {
+        var typed = new DynArray<DynArray<T>>(length: size);
+        show = false;
+
+        for (int i = 0; i < size; i++)
+        {
+            try
+            {
+                typed[i] = ReadArrayInline(converter);
+            }
+            catch (Exception e) when (e is FormatException or OverflowException)
+            {
+                Error(e.Message);
+                i--;
+                show = true;
+            }
+        }
+
+        return typed;
+    }
+
+    private DynArray<DynArray<T>> RequestMatrixRandom<T>(int rows, Func<T> getRandomItem)
+    {
+        // TODO: handle invalid number range.
+        var maxColumnSize = Request<int>("Input max number of elements") - 1;
+        var generated = new DynArray<DynArray<T>>(length: rows);
+
+        for (int row = 0; row < rows; row++)
+        {
+            generated[row] = Generator.GetRandomDynArray(2..maxColumnSize, getRandomItem);
+        }
+
+        return generated;
+    }
+
+    /// <summary>
+    /// Requests from the user what input method should be used.
+    /// </summary>
+    /// <returns>Is input method random.</returns>
+    private bool ChooseInputMethod()
+    {
+        const string message =
+            """
+            Select input method:
+                1. Random
+                2. Line by line
+            """;
+
+        while (true)
+        {
+            switch (Request(message).Trim())
+            {
+                case "1": return true;
+                case "2": return false;
+            }
+            Error("Unknown option");
         }
     }
 }
