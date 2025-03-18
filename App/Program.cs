@@ -22,14 +22,14 @@ public static class Program
     };
 
     public static void Task10(Context context) => throw new NotImplementedException();
-    
+
     public static void Task15(Context context)
     {
         DynArray<int> input = context.RequestArray(() => Generator.Rand.Next(-999, 999));
         DynArray<int> result = input
-            .ToIndexedEnumerable()
+            .Enumerate()
             .Filter(e => e.item % 2 == 0)
-            .Map(e => e.i+1)
+            .Map(e => e.i + 1)
             .Fold(input[..], WithInsert)
             .ToDynArray();
 
@@ -43,12 +43,12 @@ public static class Program
             return accumulator;
         }
     }
-    
+
     public static void Task16(Context context)
     {
         DynArray<int> input = context.RequestArray(() => Generator.Rand.Next(-999, 999));
         DynArray<int> result = input
-            .ToIndexedEnumerable()
+            .Enumerate()
             .Filter(e => e.item % 2 == 0)
             .Map(e => e.i)
             .Fold(input[..], WithInsert)
@@ -67,36 +67,36 @@ public static class Program
 
 
     public static void Task11(Context context) => throw new NotImplementedException();
-    
+
     public static void Task13(Context context)
     {
-       var arr = context.RequestMatrix(int.Parse, () => Generator.Rand.Next(-20, 20));
-        
-        var rowWithMinItem = arr.ToIndexedEnumerable()
-                                .Map(x=>(x.item.Min(),x.i))
-                                .OrderBy(x=>x.Item1)
-                                .ThenBy(x=>x.i)
-                                .FirstOrDefault(x=>true);
+        var arr = context.RequestMatrix(int.Parse, () => Generator.Rand.Next(-20, 20));
+
+        var rowWithMinItem = arr.Enumerate()
+                                .Map(x => (x.item.Min(), x.i))
+                                .OrderBy(x => x.Item1)
+                                .ThenBy(x => x.i)
+                                .FirstOrDefault(x => true);
 
         arr.Insert(rowWithMinItem.i, [rowWithMinItem.Item1]);
         context.PrintLine($"Result:");
-            foreach(var item in arr)
-                context.WriteLine(item);
+        foreach (var item in arr)
+            context.WriteLine(item);
     }
-    
+
     public static void Task14(Context context)
     {
-        var arr = context.RequestMatrix(int.Parse,() => Generator.Rand.Next(-20, 20));
-        
-        var rowWithMinItem = arr.ToIndexedEnumerable()
-                                .Map(x=>(x.item.Min(),x.i))
-                                .OrderBy(x=>x.Item1)
-                                .ThenByDescending(x=>x.i)
-                                .FirstOrDefault(x=>true);
+        var arr = context.RequestMatrix(int.Parse, () => Generator.Rand.Next(-20, 20));
 
-        arr.Insert(rowWithMinItem.i+1, [rowWithMinItem.Item1]);
+        var rowWithMinItem = arr.Enumerate()
+                                .Map(x => (x.item.Min(), x.i))
+                                .OrderBy(x => x.Item1)
+                                .ThenByDescending(x => x.i)
+                                .FirstOrDefault(x => true);
+
+        arr.Insert(rowWithMinItem.i + 1, [rowWithMinItem.Item1]);
         context.PrintLine($"Result:");
-            foreach(var item in arr)
-                context.WriteLine(item);
+        foreach (var item in arr)
+            context.WriteLine(item);
     }
 }
