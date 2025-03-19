@@ -24,14 +24,14 @@ public class DynArray<T> : IList<T>, ICloneable
         get
         {
             if (index >= Count || index < 0)
-                throw new IndexOutOfRangeException();
+                throw new IndexOutOfRangeException($"Index {index} was outside the bounds of the array (length = {Count - 1}).");
 
             return data[index]!;
         }
         set
         {
             if (index >= Count || index < 0)
-                throw new IndexOutOfRangeException();
+                throw new IndexOutOfRangeException($"Index {index} was outside the bounds of the array (length = {Count - 1}).");
 
             data[index] = value;
         }
@@ -327,7 +327,7 @@ public class DynArray<T> : IList<T>, ICloneable
         if (a.Count == 0) return b;
         if (b.Count == 0) return a;
 
-        var result = new DynArray<T> { Count = a.Count + b.Count };
+        var result = new DynArray<T>(length: a.Count + b.Count);
 
         for (int i = 0; i < a.Count; i++)
         {
@@ -336,7 +336,7 @@ public class DynArray<T> : IList<T>, ICloneable
 
         for (int i = a.Count; i < result.Count; i++)
         {
-            result.data[i] = b[i];
+            result.data[i] = b[i - a.Count];
         }
 
         result.Count = result.Capacity;
