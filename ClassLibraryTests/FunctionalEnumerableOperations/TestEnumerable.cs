@@ -13,7 +13,7 @@ using Feo = ClassLibrary.FunctionalEnumerableOperations;
 namespace ClassLibraryTests.FunctionalEnumerableOperations.Enumerable;
 
 [TestClass]
-public sealed class FeoTransforms
+public sealed class Transforms
 {
     [TestMethod]
     public void TestSkip___Int() =>
@@ -163,7 +163,7 @@ public sealed class FeoTransforms
 }
 
 [TestClass]
-public sealed class FeoBoolAggregations
+public sealed class BoolAggregations
 {
     [TestMethod]
     public void TestAll___Int() =>
@@ -207,7 +207,7 @@ public sealed class FeoBoolAggregations
 }
 
 [TestClass]
-public sealed class FeoConvertors
+public sealed class Convertors
 {
     [TestMethod]
     public void TestToArray___Int() =>
@@ -243,7 +243,7 @@ public sealed class FeoConvertors
 }
 
 [TestClass]
-public sealed class FeoFolds
+public sealed class Folds
 {
     [TestMethod]
     public void TestFold_1___Int() =>
@@ -375,8 +375,6 @@ public sealed class ValueFinders
             a => a - (int)a > 0.5,
             a => a > DefElementBound / 2
         ]);
-
-
 }
 
 [TestClass]
@@ -491,7 +489,7 @@ public sealed class Sorters
             a => a % 7 == 0 ? 0 : 1,
             a => a > 500 ? 0 : 1
         ],
-        GetComparers.GetIntComparersArray());
+        Comparers.GetIntComparersArray());
 
     [TestMethod]
     public void TestOrderBy_withComparer___Double() =>
@@ -514,7 +512,7 @@ public sealed class Sorters
             a => a % 7 == 0 ? 0 : 1,
             a => a > 500 ? 0 : 1
         ],
-        GetComparers.GetDoubleComparersArray());
+        Comparers.GetDoubleComparersArray());
 
     [TestMethod]
     public void TestOrderByDescending_withComparer___Int() =>
@@ -537,7 +535,7 @@ public sealed class Sorters
             a => a % 7 == 0 ? 0 : 1,
             a => a > 500 ? 0 : 1
         ],
-        GetComparers.GetIntComparersArray());
+        Comparers.GetIntComparersArray());
 
     [TestMethod]
     public void TestOrderByDescending_withComparer___Double() =>
@@ -560,7 +558,7 @@ public sealed class Sorters
             a => a % 7 == 0 ? 0 : 1,
             a => a > 500 ? 0 : 1
         ],
-        GetComparers.GetDoubleComparersArray());
+        Comparers.GetDoubleComparersArray());
 
     [TestMethod]
     public void TestThenBy___Int() =>
@@ -671,10 +669,9 @@ public sealed class Sorters
             a => a % 7 == 0 ? 0 : 1,
             a => a > 500 ? 0 : 1
         ],
-        GetComparers.GetIntComparersArray());
+        Comparers.GetIntComparersArray());
 
 }
-
 
 public static class FeoTestImplementation
 {
@@ -1115,8 +1112,7 @@ public static class FeoTestImplementation
     }
 }
 
-
-file static class GetComparers
+file static class Comparers
 {
     public static IComparer<int>[] GetIntComparersArray()
     {
@@ -1140,6 +1136,7 @@ file static class GetComparers
                 Comparer<int>.Create((x, y) => (x > 500).CompareTo(y > 500)),
             ];
     }
+
     public static IComparer<double>[] GetDoubleComparersArray()
     {
         return
