@@ -24,14 +24,14 @@ public class DynArray<T> : IList<T>, ICloneable
         get
         {
             if (index >= Count || index < 0)
-                throw new IndexOutOfRangeException();
+                throw new IndexOutOfRangeException($"Index {index} was outside the bounds of the array (0..{Count - 1}).");
 
             return data[index]!;
         }
         set
         {
             if (index >= Count || index < 0)
-                throw new IndexOutOfRangeException();
+                throw new IndexOutOfRangeException($"Index {index} was outside the bounds of the array (0..{Count - 1}).");
 
             data[index] = value;
         }
