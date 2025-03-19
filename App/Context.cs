@@ -394,7 +394,7 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
         var size = int.Parse(input);
 
         if (size < 1)
-            throw new FormatException($"Value {size} is not in valid range (1..∞)");
+            throw new FormatException($"Value {size} is not in valid range (1..{int.MaxValue})");
 
         return size;
     }
