@@ -96,10 +96,7 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
         var oldColor = Console.ForegroundColor;
         Console.ForegroundColor = ConsoleColor.Red;
 
-        if (message != null)
-            PrintLine($"Error! {message}");
-        else
-            PrintLine($"Error!");
+        PrintLine("Error! " + message ?? "");
 
         Console.ForegroundColor = oldColor;
     }
