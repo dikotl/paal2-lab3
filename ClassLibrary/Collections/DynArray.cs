@@ -59,7 +59,7 @@ public class DynArray<T> : IList<T>, ICloneable
     }
 
     /// <summary>
-    /// Initializes a dynamic array with the specified length and fills it with <paramref name="zero"></paramref>.
+    /// Initializes a dynamic array with the specified length and fills it with <paramref name="zero"/>.
     /// </summary>
     /// <param name="length">The length of the array.</param>
     /// <param name="zero">The default value for each element in the array. Defaults to null for reference types.</param>
@@ -74,7 +74,7 @@ public class DynArray<T> : IList<T>, ICloneable
     }
 
     /// <summary>
-    /// Initializes a dynamic array with the specified lengthand fills it using provided <paramref name="getItem"></paramref> function.
+    /// Initializes a dynamic array with the specified length and fills it using provided <paramref name="getItem"/> function.
     /// </summary>
     /// <param name="length">The length of the array.</param>
     /// <param name="getItem">A function that generates the value for each element.</param>
