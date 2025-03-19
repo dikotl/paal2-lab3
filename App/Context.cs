@@ -17,7 +17,7 @@ public class ExitToMenuException : Exception;
 public class ExitProgramException : Exception;
 
 /// <summary>
-/// Specifies a style for the request message in the Context.Request* methods.
+/// Specifies a style for the request message in the <see cref="Context.Request"/> method.
 /// </summary>
 public enum RequestStyle
 {
@@ -189,7 +189,7 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     /// <returns>An array of randomly generated elements of type T.</returns>
     public DynArray<T> ReadArrayRandom<T>(Func<T> getRandomItem)
     {
-        var size = Request<int>("Input number of elements");
+        var size = Request(SizeInt, "Input number of elements");
         var generatedArray = Generator.GetRandomDynArray(size..size, getRandomItem);
 
         PrintLine($"Generated array: {generatedArray}");
@@ -290,7 +290,7 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     /// <returns>A dynamically sized matrix (array of arrays) with parsed or randomly generated elements.</returns>
     public DynArray<DynArray<T>> RequestMatrix<T>(Converter<string, T> converter, Func<T> getRandomItem)
     {
-        var size = Request<int>("Input number of sub-arrays");
+        var size = Request(SizeInt, "Input number of sub-arrays");
         bool isRandomOrWasError = ChooseInputMethod();
 
         var result = isRandomOrWasError
@@ -349,13 +349,12 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     /// <returns>A dynamic array of dynamic arrays representing the randomly generated matrix.</returns>
     private DynArray<DynArray<T>> RequestMatrixRandom<T>(int rows, Func<T> getRandomItem)
     {
-        // TODO: handle invalid number range.
-        var maxColumnSize = Request<int>("Input max number of elements") - 1;
+        var maxColumnSize = Request(SizeInt, "Input max number of elements");
         var generated = new DynArray<DynArray<T>>(length: rows);
 
         for (int row = 0; row < rows; row++)
         {
-            generated[row] = Generator.GetRandomDynArray(2..maxColumnSize, getRandomItem);
+            generated[row] = Generator.GetRandomDynArray(1..maxColumnSize, getRandomItem);
         }
 
         return generated;
@@ -383,5 +382,20 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
             }
             Error("Unknown option");
         }
+    }
+
+    /// <summary>
+    /// Parses <paramref name="input"/> as int and ensures it's positive.
+    /// </summary>
+    /// <param name="input">The user input as a string.</param>
+    /// <returns>A valid array size.</returns>
+    private static int SizeInt(string input)
+    {
+        var size = int.Parse(input);
+
+        if (size < 1)
+            throw new FormatException($"Value {size} is not in valid range (1..∞)");
+
+        return size;
     }
 }
