@@ -327,7 +327,7 @@ public class DynArray<T> : IList<T>, ICloneable
         if (a.Count == 0) return b;
         if (b.Count == 0) return a;
 
-        var result = new DynArray<T> { Count = a.Count + b.Count };
+        var result = new DynArray<T>(length: a.Count + b.Count);
 
         for (int i = 0; i < a.Count; i++)
         {
