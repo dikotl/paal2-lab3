@@ -147,6 +147,16 @@ public class DynArray<T> : IList<T>, ICloneable
         return -1;
     }
 
+    public int LastIndexOf(T target)
+    {
+        for (int i = Count - 1; i >= 0; i--)
+        {
+            if (data[i]?.Equals(target) ?? false) return i;
+        }
+
+        return -1;
+    }
+
     public void Insert(int index, T item)
     {
         ArgumentOutOfRangeException.ThrowIfGreaterThan(index, Count);
