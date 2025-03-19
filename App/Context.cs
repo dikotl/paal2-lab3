@@ -347,7 +347,6 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     /// <param name="rows">The number of rows in the matrix.</param>
     /// <param name="getRandomItem">A function that generates a random item of type <typeparamref name="T"/>.</param>
     /// <returns>A dynamic array of dynamic arrays representing the randomly generated matrix.</returns>
-
     private DynArray<DynArray<T>> RequestMatrixRandom<T>(int rows, Func<T> getRandomItem)
     {
         // TODO: handle invalid number range.
