@@ -6,12 +6,18 @@ using ClassLibrary.FunctionalEnumerableOperations;
 
 namespace App;
 
+/// <summary>
+/// Exception thrown to indicate the program should exit to the menu.
+/// </summary>
 public class ExitToMenuException : Exception;
 
+/// <summary>
+/// Exception thrown to indicate the program should exit completely.
+/// </summary>
 public class ExitProgramException : Exception;
 
 /// <summary>
-/// Specifies a style of the request. Used in <see cref="Context.Request"/> method.
+/// Specifies a style for the request message in the Context.Request* methods.
 /// </summary>
 public enum RequestStyle
 {
@@ -38,80 +44,74 @@ public enum RequestStyle
 }
 
 /// <summary>
-/// Program\Task context. Should be used for correct IO operations. Contains helper method
-/// to read a data from the user.
+/// Represents the context for program I/O operations. It includes methods to read and write data from/to the user.
 /// </summary>
-/// <param name="Reader">Input data stream.</param>
-/// <param name="Writer">Output data stream.</param>
-/// <param name="TalkToUser">Specifies whether to talk to the user via stderr.</param>
+/// <param name="Reader">The input data stream.</param>
+/// <param name="Writer">The output data stream.</param>
+/// <param name="TalkToUser">Indicates whether to communicate with the user through stderr.</param>
 public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
 {
     /// <summary>
-    /// Prints a message to the user, but doesn't print it as a program output.
+    /// Prints a message to the user without printing it as a program output.
     /// </summary>
-    /// <param name="message">A message to be printed.</param>
+    /// <param name="message">The message to be printed.</param>
     public void Print(object message)
     {
         if (TalkToUser) Console.Error.Write(message);
     }
 
     /// <summary>
-    /// Prints a message to the user, but doesn't print it as a program output.
-    /// Inserts a new line and the end.
+    /// Prints a message to the user, appending a new line at the end.
     /// </summary>
-    /// <param name="message">A message to be printed.</param>
+    /// <param name="message">The message to be printed.</param>
     public void PrintLine(object message)
     {
         if (TalkToUser) Console.Error.WriteLine(message);
     }
 
     /// <summary>
-    /// Writes a data to the the program output.
+    /// Writes a message to the program output.
     /// </summary>
-    /// <param name="message">An object to be written.</param>
+    /// <param name="message">The message to be written.</param>
     public void Write(object message)
     {
         if (TalkToUser) Writer.Write(message);
     }
 
     /// <summary>
-    /// Writes a data to the the program output. Inserts a new line and the end.
+    /// Writes a message to the program output, appending a new line at the end.
     /// </summary>
-    /// <param name="message">An object to be written.</param>
+    /// <param name="message">The message to be written.</param>
     public void WriteLine(object message)
     {
         if (TalkToUser) Writer.WriteLine(message);
     }
 
     /// <summary>
-    /// Prints a message to the user as error. Inserts a new line and the end.
+    /// Prints an error message to the user, appending a new line at the end.
     /// </summary>
-    /// <param name="message">An error to be printed.</param>
+    /// <param name="message">The error message to be printed.</param>
     public void Error(string? message = null)
     {
         var oldColor = Console.ForegroundColor;
         Console.ForegroundColor = ConsoleColor.Red;
 
-        if (message != null)
-            PrintLine($"Error! {message}");
-        else
-            PrintLine($"Error!");
+        PrintLine("Error! " + message ?? "");
 
         Console.ForegroundColor = oldColor;
     }
 
     /// <summary>
-    /// Requests input data of a specific type from the user, reading it from the input stream.
-    /// If a <see cref="FormatException"/> or <see cref="ExitProgramException"/> is thrown, an error
-    /// will be displayed and the request will be retried.
+    /// Requests input from the user, attempting to convert it to a specific type.
+    /// If an exception occurs, an error message is shown and the request is retried.
     /// </summary>
-    /// <typeparam name="T">Requested value type.</typeparam>
-    /// <param name="converter">A function to be invoked on the input string to convert it to the value.</param>
-    /// <param name="message">A message describing what the user is supposed to type in.</param>
-    /// <param name="style">Specifies a style of the <paramref name="message"/>.</param>
-    /// <returns>A value typed by the user and converted by the <paramref name="converter"/>.</returns>
-    /// <exception cref="ExitToMenuException"></exception>
-    /// <exception cref="ExitProgramException"></exception>
+    /// <typeparam name="T">The type of the requested value.</typeparam>
+    /// <param name="converter">A function that converts the input string into the requested type.</param>
+    /// <param name="message">A message that guides the user on what to input.</param>
+    /// <param name="style">The style of the request message.</param>
+    /// <returns>The user input converted to the specified type.</returns>
+    /// <exception cref="ExitToMenuException">Thrown when the user chooses to return to the menu.</exception>
+    /// <exception cref="ExitProgramException">Thrown when the user chooses to exit the program.</exception>
     public T Request<T>(Converter<string, T> converter, string? message = null, RequestStyle style = RequestStyle.Default)
     {
         while (true)
@@ -120,11 +120,7 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
             {
                 return converter(Request(message, style));
             }
-            catch (FormatException e)
-            {
-                Error(e.Message);
-            }
-            catch (OverflowException e)
+            catch (Exception e) when (e is FormatException or OverflowException)
             {
                 Error(e.Message);
             }
@@ -132,16 +128,15 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     }
 
     /// <summary>
-    /// Requests input data of a specific type from the user, reading it from the input stream.
-    /// If a <see cref="FormatException"/> or <see cref="ExitProgramException"/> is thrown, an error
-    /// will be displayed and the request will be retried.
+    /// Requests input from the user, attempting to convert it to a specified type that implements IParsable.
+    /// If an exception occurs, an error message is shown and the request is retried.
     /// </summary>
-    /// <typeparam name="T">Requested value type, that can be parsed from a string.</typeparam>
-    /// <param name="message">A message describing what the user is supposed to type in.</param>
-    /// <param name="style">Specifies a style of the <paramref name="message"/>.</param>
-    /// <returns>A value typed by the user and converted by the <paramref name="converter"/>.</returns>
-    /// <exception cref="ExitToMenuException"></exception>
-    /// <exception cref="ExitProgramException"></exception>
+    /// <typeparam name="T">The type of the requested value, constrained to be IParsable.</typeparam>
+    /// <param name="message">A message that guides the user on what to input.</param>
+    /// <param name="style">The style of the request message.</param>
+    /// <returns>The user input converted to the specified type.</returns>
+    /// <exception cref="ExitToMenuException">Thrown when the user chooses to return to the menu.</exception>
+    /// <exception cref="ExitProgramException">Thrown when the user chooses to exit the program.</exception>
     public T Request<T>(string? message = null, RequestStyle style = RequestStyle.Default)
         where T : IParsable<T>
     {
@@ -149,15 +144,13 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     }
 
     /// <summary>
-    /// Requests input data of a specific type from the user, reading it from the input stream.
-    /// If a <see cref="FormatException"/> or <see cref="ExitProgramException"/> is thrown, an error
-    /// will be displayed and the request will be retried.
+    /// Requests a string input from the user and returns it.
     /// </summary>
-    /// <param name="message">A message describing what the user is supposed to type in.</param>
-    /// <param name="style">Specifies a style of the <paramref name="message"/>.</param>
-    /// <returns>A string, typed by the user</returns>
-    /// <exception cref="ExitToMenuException"></exception>
-    /// <exception cref="ExitProgramException"></exception>
+    /// <param name="message">A message that guides the user on what to input.</param>
+    /// <param name="style">The style of the request message.</param>
+    /// <returns>The user input as a string.</returns>
+    /// <exception cref="ExitToMenuException">Thrown when the user chooses to return to the menu.</exception>
+    /// <exception cref="ExitProgramException">Thrown when the user chooses to exit the program.</exception>
     public string Request(string? message = null, RequestStyle style = RequestStyle.Default)
     {
         switch (style)
@@ -189,12 +182,11 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     }
 
     /// <summary>
-    /// Requests the number of items from the user and generates an array with random items as
-    /// defined by <paramref name="getRandomItem"/>.
+    /// Requests the number of elements from the user and generates an array of random elements.
     /// </summary>
-    /// <typeparam name="T">Requested value type.</typeparam>
-    /// <param name="getRandomItem">Random elements generation function.</param>
-    /// <returns>Generated array with the size specified by the user.</returns>
+    /// <typeparam name="T">The type of the elements in the array.</typeparam>
+    /// <param name="getRandomItem">A function that generates random elements of type T.</param>
+    /// <returns>An array of randomly generated elements of type T.</returns>
     public DynArray<T> ReadArrayRandom<T>(Func<T> getRandomItem)
     {
         var size = Request<int>("Input number of elements");
@@ -205,12 +197,11 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     }
 
     /// <summary>
-    /// Requests elements from the user and collects them into an array element by element as
-    /// defined by the converter <paramref name="converter"/>.
+    /// Requests elements from the user and collects them into an array.
     /// </summary>
-    /// <typeparam name="T">Requested value type.</typeparam>
-    /// <param name="converter">A function to be invoked on the input string to convert it to the value.</param>
-    /// <returns>An array of values typed by the user.</returns>
+    /// <typeparam name="T">The type of the elements in the array.</typeparam>
+    /// <param name="converter">A function that converts each input string into the requested type.</param>
+    /// <returns>An array of elements of type T entered by the user.</returns>
     public DynArray<T> ReadArrayInline<T>(Converter<string, T> converter)
     {
         return Reader
@@ -221,10 +212,10 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     }
 
     /// <summary>
-    /// Requests elements from the user and collects them into an array element by element.
+    /// Requests elements from the user and collects them into an array.
     /// </summary>
-    /// <typeparam name="T">Requested value type, that can be parsed from a string.</typeparam>
-    /// <returns>An array of values typed by the user.</returns>
+    /// <typeparam name="T">The type of the elements in the array, constrained to be IParsable.</typeparam>
+    /// <returns>An array of elements of type T entered by the user.</returns>
     public DynArray<T> ReadArrayInline<T>()
         where T : IParsable<T>
     {
@@ -236,11 +227,11 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     }
 
     /// <summary>
-    /// Requests the user to specify which input method to use to enter the array.
+    /// Requests the user to specify the input method for entering an array.
     /// </summary>
-    /// <typeparam name="T">Requested value type, that can be parsed from a string.</typeparam>
-    /// <param name="getRandomItem">Random elements generation function.</param>
-    /// <returns>An array of values typed by the user.</returns>
+    /// <typeparam name="T">The type of the elements in the array, constrained to be IParsable.</typeparam>
+    /// <param name="getRandomItem">A function that generates random elements of type T.</param>
+    /// <returns>An array of elements of type T entered by the user.</returns>
     public DynArray<T> RequestArray<T>(Func<T> getRandomItem)
         where T : IParsable<T>
     {
@@ -248,102 +239,149 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     }
 
     /// <summary>
-    /// Requests the user to specify which input method to use to enter the array.
+    /// Requests the user to specify the input method for entering an array.
     /// </summary>
-    /// <typeparam name="T">Requested value type.</typeparam>
-    /// <param name="converter">A function to be invoked on the input string to convert it to the value.</param>
-    /// <param name="getRandomItem">Random elements generation function.</param>
-    /// <returns>An array of values typed by the user.</returns>
+    /// <typeparam name="T">The type of the elements in the array.</typeparam>
+    /// <param name="converter">A function that converts each input string into the requested type.</param>
+    /// <param name="getRandomItem">A function that generates random elements of type T.</param>
+    /// <returns>An array of elements of type T entered by the user.</returns>
     public DynArray<T> RequestArray<T>(Converter<string, T> converter, Func<T> getRandomItem)
     {
-        while (true)
-        {
-            try
-            {
-                var arrayInputStyle = Request<int>("""
-                        Select array input method:
-                            1. Random
-                            2. One line
-                        """);
+        bool isRandom = ChooseInputMethod();
 
-                switch (arrayInputStyle)
+        if (isRandom)
+        {
+            return ReadArrayRandom(getRandomItem);
+        }
+        else
+        {
+            while (true)
+            {
+                try
                 {
-                    case 1:
-                        return ReadArrayRandom(getRandomItem);
-                    case 2:
-                        return ReadArrayInline(converter);
-                    default:
-                        Error($"Unknown option: {arrayInputStyle}");
-                        continue;
+                    return ReadArrayInline(converter);
                 }
-            }
-            catch (FormatException e)
-            {
-                Error(e.Message);
-            }
-            catch (OverflowException e)
-            {
-                Error(e.Message);
+                catch (Exception e) when (e is FormatException or OverflowException)
+                {
+                    Error(e.Message);
+                }
             }
         }
     }
 
     /// <summary>
-    /// Requests a matrix of dynamic arrays, using a specified converter and random item generator.
+    /// Requests a two-dimensional matrix of elements of type T, where T implements IParsable.
     /// </summary>
-    /// <typeparam name="T">The type of elements in the matrix, constrained to be parsable.</typeparam>
-    /// <param name="converter">A converter that parses a string input into an element of type T.</param>
     /// <param name="getRandomItem">A function that generates random items of type T.</param>
-    /// <returns>A dynamically sized matrix (array of arrays) with parsed or randomly generated elements.</returns>
-    public DynArray<DynArray<T>> RequestMatrix<T>(Converter<string, T> converter, Func<T> getRandomItem)
+    /// <typeparam name="T">The type of the elements in the matrix, constrained to be IParsable.</typeparam>
+    /// <returns>A dynamically sized matrix (array of arrays) with elements of type T.</returns>
+    public DynArray<DynArray<T>> RequestMatrix<T>(Func<T> getRandomItem)
         where T : IParsable<T>
     {
+        return RequestMatrix(input => T.Parse(input, null), getRandomItem);
+    }
+
+    /// <summary>
+    /// Requests a matrix of elements, using a specified converter and random item generator.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the matrix, constrained to be parsable.</typeparam>
+    /// <param name="converter">A function that converts each input string into the requested type.</param>
+    /// <param name="getRandomItem">A function that generates random elements of type T.</param>
+    /// <returns>A dynamically sized matrix (array of arrays) with parsed or randomly generated elements.</returns>
+    public DynArray<DynArray<T>> RequestMatrix<T>(Converter<string, T> converter, Func<T> getRandomItem)
+    {
         var size = Request<int>("Input number of sub-arrays");
+        bool isRandomOrWasError = ChooseInputMethod();
 
-        DynArray<DynArray<T>> result = new(length:size);
+        var result = isRandomOrWasError
+            ? RequestMatrixRandom(size, getRandomItem)
+            : RequestMatrixInline(size, converter, out isRandomOrWasError);
 
-        bool isRandomInputAndOutputRequired = doChoose();
-        if(isRandomInputAndOutputRequired)
+        if (isRandomOrWasError)
         {
-            var maxsize = Request<int>("Input max number of elements")-1;
-            for (var i = 0; i < size; i++)
-                result[i] = Generator.GetRandomDynArray(2..maxsize, getRandomItem);
-        }
-        else
-            for (var i = 0; i < size; i++)
-                try { result[i] = ReadArrayInline(converter); }
-                catch (Exception e) when (e is FormatException or OverflowException)
-                {
-                    Error(e.Message);
-                    i--;
-                    isRandomInputAndOutputRequired = true;
-                }
+            PrintLine("Gotten matrix:");
 
-        if(isRandomInputAndOutputRequired)
-        {
-            PrintLine($"Gotten array:");
-            foreach(var item in result)
-                WriteLine(item);            
-        }
-        return result;
-
-        bool doChoose()
-        {
-            const string message = 
-                """
-                Select matrix input method:
-                    1. Random
-                    2. Line by line
-                """;
-            while (true)
+            foreach (DynArray<T> item in result)
             {
-                switch(Request(message).Trim())
-                {
-                    case "1": return true;
-                    case "2": return false;
-                }
-                Error("Unknown option");
+                WriteLine(item);
             }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Reads and returns a matrix as a dynamic array of rows, each row being a dynamic array of elements of type T.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the matrix.</typeparam>
+    /// <param name="size">The number of rows in the matrix.</param>
+    /// <param name="converter">A function that converts input strings to the desired type T.</param>
+    /// <param name="show">Outputs a flag indicating if any error occurred during input processing.</param>
+    /// <returns>A dynamic array of dynamic arrays representing the matrix.</returns>
+    private DynArray<DynArray<T>> RequestMatrixInline<T>(int size, Converter<string, T> converter, out bool show)
+    {
+        var typed = new DynArray<DynArray<T>>(length: size);
+        show = false;
+
+        for (int i = 0; i < size; i++)
+        {
+            try
+            {
+                typed[i] = ReadArrayInline(converter);
+            }
+            catch (Exception e) when (e is FormatException or OverflowException)
+            {
+                Error(e.Message);
+                i--;
+                show = true;
+            }
+        }
+
+        return typed;
+    }
+
+    /// <summary>
+    /// Reads and returns a matrix of random elements based on the given size and generator function.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the matrix.</typeparam>
+    /// <param name="rows">The number of rows in the matrix.</param>
+    /// <param name="getRandomItem">A function that generates a random item of type <typeparamref name="T"/>.</param>
+    /// <returns>A dynamic array of dynamic arrays representing the randomly generated matrix.</returns>
+    private DynArray<DynArray<T>> RequestMatrixRandom<T>(int rows, Func<T> getRandomItem)
+    {
+        // TODO: handle invalid number range.
+        var maxColumnSize = Request<int>("Input max number of elements") - 1;
+        var generated = new DynArray<DynArray<T>>(length: rows);
+
+        for (int row = 0; row < rows; row++)
+        {
+            generated[row] = Generator.GetRandomDynArray(2..maxColumnSize, getRandomItem);
+        }
+
+        return generated;
+    }
+
+    /// <summary>
+    /// Prompts the user to choose between inputting elements manually or generating them randomly.
+    /// </summary>
+    /// <returns>A boolean indicating whether the random input method was chosen.</returns>
+    private bool ChooseInputMethod()
+    {
+        const string message =
+            """
+            Select input method:
+                1. Random
+                2. Line by line
+            """;
+
+        while (true)
+        {
+            switch (Request(message).Trim())
+            {
+                case "1": return true;
+                case "2": return false;
+            }
+            Error("Unknown option");
         }
     }
 }
