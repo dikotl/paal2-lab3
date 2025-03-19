@@ -1,17 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Numerics;
 using System.Reflection;
-using System.Linq.Expressions;
 using ClassLibrary.Collections;
-using System.Collections.Generic;
 using ClassLibrary.FunctionalEnumerableOperations;
 
-using static ClassLibraryTests.ConstValues;
-using static ClassLibrary.Collections.Generator;
+using static ClassLibraryTests.FunctionalEnumerableOperations.Enumerable.ConstValues;
 
 using Feo = ClassLibrary.FunctionalEnumerableOperations;
 
-namespace ClassLibraryTests;
+namespace ClassLibraryTests.FunctionalEnumerableOperations.Enumerable;
 
 [TestClass]
 public sealed class FeoTransforms
@@ -275,7 +274,7 @@ public sealed class FeoFolds
     [TestMethod]
     public void TestFold_2___Int() =>
         FeoTestImplementation.TestFold_2(Generator.GetRandomIntArray,
-        Rand.Next(DefElementBound),
+        Generator.Rand.Next(DefElementBound),
         [
             (acc, c) => acc + c,
             (acc, c) => c < acc ? c : acc,
@@ -289,7 +288,7 @@ public sealed class FeoFolds
     [TestMethod]
     public void TestFold_2___Double() =>
         FeoTestImplementation.TestFold_2(Generator.GetRandomDoubleArray,
-        Rand.Next(DefElementBound) * Rand.NextDouble(),
+        Generator.Rand.Next(DefElementBound) * Generator.Rand.NextDouble(),
         [
             (acc, c) => acc + c,
             (acc, c) => c < acc ? c : acc,
@@ -731,7 +730,7 @@ public static class FeoTestImplementation
         for (var i = 0; i < RepeatTime; i++)
         {
             var a = generateArray(DefMaxSize, DefElementBound);
-            var skipLen = Rand.Next(System.Linq.Enumerable.ToArray(a).Length);
+            var skipLen = Generator.Rand.Next(System.Linq.Enumerable.ToArray(a).Length);
             var expected = string.Join(" ", System.Linq.Enumerable.Skip(a, skipLen));
             var actual = string.Join(" ", Feo.Enumerable.Skip(a, skipLen));
 
@@ -745,7 +744,7 @@ public static class FeoTestImplementation
         for (var i = 0; i < RepeatTime; i++)
         {
             var a = generateArray(DefMaxSize, DefElementBound);
-            var takeLen = Rand.Next(System.Linq.Enumerable.ToArray(a).Length);
+            var takeLen = Generator.Rand.Next(System.Linq.Enumerable.ToArray(a).Length);
             var expected = string.Join(" ", System.Linq.Enumerable.Take(a, takeLen));
             var actual = string.Join(" ", Feo.Enumerable.Take(a, takeLen));
 
