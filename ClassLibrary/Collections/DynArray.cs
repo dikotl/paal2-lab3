@@ -326,7 +326,7 @@ public class DynArray<T> : IList<T>, ICloneable
 
         for (int i = a.Count; i < result.Count; i++)
         {
-            result.data[i] = b[i];
+            result.data[i] = b[i - a.Count];
         }
 
         result.Count = result.Capacity;
