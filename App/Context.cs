@@ -17,7 +17,7 @@ public class ExitToMenuException : Exception;
 public class ExitProgramException : Exception;
 
 /// <summary>
-/// Specifies a style for the request message in the <see cref="Context.Request"/> method.
+/// Specifies a style for the request message in the Context.Request* methods.
 /// </summary>
 public enum RequestStyle
 {
