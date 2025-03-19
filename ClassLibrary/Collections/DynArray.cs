@@ -59,7 +59,7 @@ public class DynArray<T> : IList<T>, ICloneable
     }
 
     /// <summary>
-    /// Initializes a dynamic array with the specified length and optional default value for each element.
+    /// Initializes a dynamic array with the specified length and fills it with <paramref name="zero"></paramref>.
     /// </summary>
     /// <param name="length">The length of the array.</param>
     /// <param name="zero">The default value for each element in the array. Defaults to null for reference types.</param>
@@ -74,7 +74,7 @@ public class DynArray<T> : IList<T>, ICloneable
     }
 
     /// <summary>
-    /// Initializes a dynamic array with the specified length and uses a function to generate the values for each element.
+    /// Initializes a dynamic array with the specified lengthand fills it using provided <paramref name="getItem"></paramref> function.
     /// </summary>
     /// <param name="length">The length of the array.</param>
     /// <param name="getItem">A function that generates the value for each element.</param>
@@ -93,7 +93,7 @@ public class DynArray<T> : IList<T>, ICloneable
     /// </summary>
     /// <param name="start">The starting index of the slice.</param>
     /// <param name="length">The length of the slice.</param>
-    /// <returns>A new `DynArray<T>` containing the sliced portion of the array.</returns>
+    /// <returns>A new `DynArray` containing the sliced portion of the array.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the start or length is negative, or if the slice exceeds the current array bounds.</exception>
     public DynArray<T> Slice(int start, int length)
     {
@@ -415,7 +415,7 @@ public class DynArray<T> : IList<T>, ICloneable
     /// <summary>
     /// Creates a copy of the array.
     /// </summary>
-    /// <returns>A new `DynArray<T>` with the same elements as the current array.</returns>
+    /// <returns>A new `DynArray` with the same elements as the current array.</returns>
     object ICloneable.Clone()
     {
         return this[..Count];
@@ -424,7 +424,7 @@ public class DynArray<T> : IList<T>, ICloneable
     /// <summary>
     /// Creates a copy of the array.
     /// </summary>
-    /// <returns>A new `DynArray<T>` with the same elements as the current array.</returns>
+    /// <returns>A new `DynArray` with the same elements as the current array.</returns>
     public DynArray<T> Clone()
     {
         return this[..Count];
@@ -457,7 +457,7 @@ public class DynArray<T> : IList<T>, ICloneable
     /// </summary>
     /// <param name="a">The first array.</param>
     /// <param name="b">The second array.</param>
-    /// <returns>A new `DynArray<T>` containing the elements of both arrays.</returns>
+    /// <returns>A new `DynArray` containing the elements of both arrays.</returns>
     public static DynArray<T> operator +(DynArray<T> a, DynArray<T> b)
     {
         if (a.Count == 0) return b;
