@@ -1,3 +1,8 @@
+using System;
+using ClassLibrary.Collections;
+using ClassLibrary.FunctionalEnumerableOperations;
+using static ClassLibraryTests.Collections.DynArray.ConstValues;
+
 namespace ClassLibraryTests.Collections.DynArray;
 
 [TestClass]
@@ -138,4 +143,14 @@ public sealed class Other
     public void TestClone()
     {
     }
+
+}
+
+
+file static class ConstValues
+{
+    public static readonly Range DefMaxSize = ..600;
+
+    public const int RepeatTime = 3000;
+    public const int DefElementBound = 10000;
 }
