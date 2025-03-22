@@ -45,11 +45,37 @@ public sealed class ListOps
     [TestMethod]
     public void TestIndexOf()
     {
+        for (int i = 0; i < RepeatTime; i++)
+        {
+            var mainArr = Generator.GetRandomDoubleArray(DefMaxSize, DefElementBound).ToList();
+            DynArray<double> dynArr = mainArr.ToDynArray(); // ToDynArray must pass the test in Feo tests
+            for (int j = 0; j < mainArr.Count; j++)
+                Assert.AreEqual(mainArr[mainArr.IndexOf(mainArr[j])], dynArr[dynArr.IndexOf(dynArr[j])]);
+        }
     }
 
     [TestMethod]
     public void TestInsert()
     {
+        for (int i = 0; i < RepeatTime; i++)
+        {
+            var mainArr = Generator.GetRandomDoubleArray(DefMaxSize, DefElementBound).ToList();
+            DynArray<double> dynArr = mainArr.ToDynArray(); // ToDynArray must pass the test in Feo tests
+            for (int j = 0; j < RepeatTime / 10 + 1; j++)
+            {
+                var valToInsert =
+                    Generator.Rand.NextDouble() *
+                    Generator.Rand.Next(-DefElementBound, DefElementBound);
+
+                var indexToInsert = Generator.Rand.Next(0, mainArr.Count - 1);
+
+                mainArr.Insert(indexToInsert, valToInsert);
+                dynArr.Insert(indexToInsert, valToInsert);
+
+                for (int k = 0; k < mainArr.Count; k++)
+                    Assert.AreEqual(mainArr[k], dynArr[k]);
+            }
+        }
     }
 
     [TestMethod]
@@ -60,16 +86,49 @@ public sealed class ListOps
     [TestMethod]
     public void TestAdd()
     {
+        for (int i = 0; i < RepeatTime; i++)
+        {
+            var mainArr = Generator.GetRandomDoubleArray(DefMaxSize, DefElementBound).ToList();
+            DynArray<double> dynArr = mainArr.ToDynArray(); // ToDynArray must pass the test in Feo tests
+            for (int j = 0; j < RepeatTime / 10 + 1; j++)
+            {
+                var valToAdd =
+                    Generator.Rand.NextDouble() *
+                    Generator.Rand.Next(-DefElementBound, DefElementBound);
+
+
+                mainArr.Add(valToAdd);
+                dynArr.Add(valToAdd);
+
+                for (int k = 0; k < mainArr.Count; k++)
+                    Assert.AreEqual(mainArr[k], dynArr[k]);
+            }
+        }
     }
 
     [TestMethod]
     public void TestClear()
     {
+        for (int i = 0; i < RepeatTime * 10; i++)
+        {
+            // ToDynArray must pass the test in Feo tests
+            DynArray<double> dynArr = Generator.GetRandomDoubleArray(DefMaxSize, DefElementBound).ToDynArray();
+            dynArr.Clear();
+            Assert.AreEqual([], dynArr);
+        }
     }
 
     [TestMethod]
     public void TestContains()
     {
+        for (int i = 0; i < RepeatTime / 30 + 1; i++)
+        {
+            var mainArr = Generator.GetRandomIntArray(DefMaxSize, DefElementBound).ToList();
+            DynArray<int> dynArr = mainArr.ToDynArray(); // ToDynArray must pass the test in Feo tests
+            var mainArrMax = mainArr.Max();
+            for (int j = mainArr.Min(); j < mainArrMax; j++)
+                Assert.AreEqual(mainArr.Contains(j), dynArr.Contains(j));
+        }
     }
 }
 
