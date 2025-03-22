@@ -197,6 +197,22 @@ public sealed class Ops
     [TestMethod]
     public void TestOpEquals()
     {
+        for (int i = 0; i < RepeatTime; i++)
+        {
+            // ToDynArray must pass the test in Feo tests
+            DynArray<double> dynArr1 =
+                Generator.GetRandomDoubleArray(DefMaxSize, DefElementBound).ToDynArray();
+            DynArray<double> dynArr2;
+
+            bool mustBeNotSame = (bool)Convert.ChangeType(Generator.Rand.Next(0, 2), typeof(bool));
+
+            if (mustBeNotSame)
+                dynArr2 = dynArr1.ToDynArray();
+            else
+                dynArr2 = dynArr1;
+
+            Assert.AreEqual(mustBeNotSame, dynArr1 != dynArr2);
+        }
     }
 
     [TestMethod]
