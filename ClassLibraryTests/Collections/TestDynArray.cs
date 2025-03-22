@@ -232,6 +232,14 @@ public sealed class Other
     [TestMethod]
     public void TestToString()
     {
+        for (int i = 0; i < RepeatTime; i++)
+        {
+            var dynArr = Generator.GetRandomIntArray(DefMaxSize, DefElementBound).ToDynArray();
+            System.Text.StringBuilder sb = new System.Text.StringBuilder().Append("[");
+            sb.Append(String.Join(", ", dynArr));
+            sb.Append(']');
+            Assert.AreEqual(sb.ToString(), dynArr.ToString());
+        }
     }
 
     [TestMethod]
