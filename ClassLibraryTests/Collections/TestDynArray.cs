@@ -11,11 +11,24 @@ public sealed class Basics
     [TestMethod]
     public void TestGetSetIndex()
     {
+        for (int i = 0; i < RepeatTime; i++)
+        {
+            var mainArr = Generator.GetRandomDoubleArray(DefMaxSize, DefElementBound);
+            DynArray<double> dynArr = mainArr.ToDynArray(); // ToDynArray must pass the test in Feo tests
+            for (int j = 0; j < mainArr.Length; j++)
+                Assert.AreEqual(mainArr[j], dynArr[j]);
+        }
     }
 
     [TestMethod]
     public void TestGetCount()
     {
+        for (int i = 0; i < RepeatTime; i++)
+        {
+            var mainArr = Generator.GetRandomDoubleArray(DefMaxSize, DefElementBound);
+            DynArray<double> dynArr = mainArr.ToDynArray(); // ToDynArray must pass the test in Feo tests
+            Assert.AreEqual(mainArr.Length, dynArr.Count);
+        }
     }
 
     [TestMethod]
@@ -26,6 +39,18 @@ public sealed class Basics
     [TestMethod]
     public void TestGetEnumerator()
     {
+        for (int i = 0; i < RepeatTime; i++)
+        {
+            var mainArr = Generator.GetRandomDoubleArray(DefMaxSize, DefElementBound);
+            DynArray<double> dynArr = mainArr.ToDynArray(); // ToDynArray must pass the test in Feo tests
+            var dynEnumerator = dynArr.GetEnumerator();
+
+            foreach (var j in mainArr)
+            {
+                dynEnumerator.MoveNext();
+                Assert.AreEqual(j, dynEnumerator.Current);
+            }
+        }
     }
 
     [TestMethod]
