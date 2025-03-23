@@ -14,7 +14,7 @@ public sealed class Basics
         for (int i = 0; i < RepeatTime; i++)
         {
             var mainArr = Generator.GetRandomDoubleArray(DefMaxSize, DefElementBound);
-            DynArray<double> dynArr = mainArr.ToDynArray(); // ToDynArray must pass the test in Feo tests
+            DynArray<double> dynArr = mainArr.ToDynArray();
             for (int j = 0; j < mainArr.Length; j++)
                 Assert.AreEqual(mainArr[j], dynArr[j]);
         }
@@ -26,7 +26,7 @@ public sealed class Basics
         for (int i = 0; i < RepeatTime; i++)
         {
             var mainArr = Generator.GetRandomDoubleArray(DefMaxSize, DefElementBound);
-            DynArray<double> dynArr = mainArr.ToDynArray(); // ToDynArray must pass the test in Feo tests
+            DynArray<double> dynArr = mainArr.ToDynArray();
             Assert.AreEqual(mainArr.Length, dynArr.Count);
         }
     }
@@ -42,7 +42,7 @@ public sealed class Basics
         for (int i = 0; i < RepeatTime; i++)
         {
             var mainArr = Generator.GetRandomDoubleArray(DefMaxSize, DefElementBound);
-            DynArray<double> dynArr = mainArr.ToDynArray(); // ToDynArray must pass the test in Feo tests
+            DynArray<double> dynArr = mainArr.ToDynArray();
             var dynEnumerator = dynArr.GetEnumerator();
 
             foreach (var j in mainArr)
@@ -73,7 +73,7 @@ public sealed class ListOps
         for (int i = 0; i < RepeatTime; i++)
         {
             var mainArr = Generator.GetRandomDoubleArray(DefMaxSize, DefElementBound).ToList();
-            DynArray<double> dynArr = mainArr.ToDynArray(); // ToDynArray must pass the test in Feo tests
+            DynArray<double> dynArr = mainArr.ToDynArray();
             for (int j = 0; j < mainArr.Count; j++)
                 Assert.AreEqual(mainArr[mainArr.IndexOf(mainArr[j])], dynArr[dynArr.IndexOf(dynArr[j])]);
         }
@@ -85,7 +85,7 @@ public sealed class ListOps
         for (int i = 0; i < RepeatTime; i++)
         {
             var mainArr = Generator.GetRandomDoubleArray(DefMaxSize, DefElementBound).ToList();
-            DynArray<double> dynArr = mainArr.ToDynArray(); // ToDynArray must pass the test in Feo tests
+            DynArray<double> dynArr = mainArr.ToDynArray();
             for (int j = 0; j < RepeatTime / 10 + 1; j++)
             {
                 var valToInsert =
@@ -114,7 +114,7 @@ public sealed class ListOps
         for (int i = 0; i < RepeatTime; i++)
         {
             var mainArr = Generator.GetRandomDoubleArray(DefMaxSize, DefElementBound).ToList();
-            DynArray<double> dynArr = mainArr.ToDynArray(); // ToDynArray must pass the test in Feo tests
+            DynArray<double> dynArr = mainArr.ToDynArray();
             for (int j = 0; j < RepeatTime / 10 + 1; j++)
             {
                 var valToAdd =
@@ -136,7 +136,7 @@ public sealed class ListOps
     {
         for (int i = 0; i < RepeatTime * 10; i++)
         {
-            // ToDynArray must pass the test in Feo tests
+
             DynArray<double> dynArr = Generator.GetRandomDoubleArray(DefMaxSize, DefElementBound).ToDynArray();
             dynArr.Clear();
             Assert.AreEqual([], dynArr);
@@ -149,7 +149,7 @@ public sealed class ListOps
         for (int i = 0; i < RepeatTime / 30 + 1; i++)
         {
             var mainArr = Generator.GetRandomIntArray(DefMaxSize, DefElementBound).ToList();
-            DynArray<int> dynArr = mainArr.ToDynArray(); // ToDynArray must pass the test in Feo tests
+            DynArray<int> dynArr = mainArr.ToDynArray();
             var mainArrMax = mainArr.Max();
             for (int j = mainArr.Min(); j < mainArrMax; j++)
                 Assert.AreEqual(mainArr.Contains(j), dynArr.Contains(j));
@@ -199,7 +199,7 @@ public sealed class Ops
     {
         for (int i = 0; i < RepeatTime; i++)
         {
-            // ToDynArray must pass the test in Feo tests
+
             DynArray<double> dynArr1 =
                 Generator.GetRandomDoubleArray(DefMaxSize, DefElementBound).ToDynArray();
             DynArray<double> dynArr2;
