@@ -272,13 +272,41 @@ public sealed class Other
     [TestMethod]
     public void TestEquals()
     {
+        for (int i = 0; i < RepeatTime * 10; i++)
+        {
+
+            DynArray<double> dynArr1 =
+                Generator.GetRandomDoubleArray(DefMaxSize, DefElementBound).ToDynArray();
+            DynArray<double> dynArr2;
+
+            bool mustBeNotSame = (bool)Convert.ChangeType(Generator.Rand.Next(0, 2), typeof(bool));
+
+            if (mustBeNotSame)
+                dynArr2 = dynArr1.ToDynArray();
+            else
+                dynArr2 = dynArr1;
+
+            Assert.AreEqual(!mustBeNotSame, dynArr1.Equals(dynArr2));
+        }
     }
 
     [TestMethod]
     public void TestClone()
     {
+        for (int i = 0; i < RepeatTime; i++)
+        {
+            var mainArr = Generator.GetRandomDoubleArray(DefMaxSize, DefElementBound);
+            DynArray<double> dynArr = mainArr.ToDynArray();
+            var mainCopy = (double[])mainArr.Clone();
+            var dynCopy = dynArr.Clone();
+            var mainEnumerator = mainCopy.GetEnumerator();
+            foreach (var k in dynCopy)                  // GetEnumerator must pass the test
+            {
+                mainEnumerator.MoveNext();
+                Assert.AreEqual(k, mainEnumerator.Current);
+            }
+        }
     }
-
 }
 
 
