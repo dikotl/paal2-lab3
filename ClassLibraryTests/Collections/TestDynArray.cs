@@ -61,6 +61,43 @@ public sealed class Basics
     [TestMethod]
     public void TestSlice()
     {
+        for (int i = 0; i < RepeatTime / 100 + 1; i++)
+        {
+            var mainArr = Generator.GetRandomDoubleArray(DefMaxSize, DefElementBound);
+            DynArray<double> dynArr = mainArr.ToDynArray();
+            for (int j = 0; j < mainArr.Length; j++)
+            {
+                var mainSliceForward = mainArr[..j];
+                var dynSliceForward = dynArr[..j];
+                var mainEnumerator = mainSliceForward.GetEnumerator();
+                foreach (var k in dynSliceForward)          // GetEnumerator must pass the test
+                {
+                    mainEnumerator.MoveNext();
+                    Assert.AreEqual(k, mainEnumerator.Current);
+                }
+
+                var mainSliceBackwards = mainArr[j..];
+                var dynSliceBackwards = dynArr[j..];
+                var mainEnumerator2 = mainSliceBackwards.GetEnumerator();
+                foreach (var k in dynSliceBackwards)         // GetEnumerator must pass the test
+                {
+                    mainEnumerator2.MoveNext();
+                    Assert.AreEqual(k, mainEnumerator2.Current);
+                }
+
+                for (int j2 = 0; j2 <= j; j2++)
+                {
+                    var mainSliceDouble = mainArr[j2..j];
+                    var dynSliceDouble = dynArr[j2..j];
+                    var mainEnumerator3 = mainSliceDouble.GetEnumerator();
+                    foreach (var k in dynSliceDouble)       // GetEnumerator must pass the test
+                    {
+                        mainEnumerator3.MoveNext();
+                        Assert.AreEqual(k, mainEnumerator3.Current);
+                    }
+                }
+            }
+        }
     }
 }
 
