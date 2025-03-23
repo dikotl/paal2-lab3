@@ -224,7 +224,7 @@ public sealed class Ops
     [TestMethod]
     public void TestOpEquals()
     {
-        for (int i = 0; i < RepeatTime; i++)
+        for (int i = 0; i < RepeatTime * 10; i++)
         {
 
             DynArray<double> dynArr1 =
