@@ -213,16 +213,6 @@ public sealed class ResizeOps
     }
 
     [TestMethod]
-    public void TestAdd()
-    {
-    }
-
-    [TestMethod]
-    public void TestInsert()
-    {
-    }
-
-    [TestMethod]
     public void TestRemove()
     {
     }
