@@ -55,6 +55,9 @@ public class DynArray<T> : IList<T>, ICloneable
     /// <param name="capacity">The capacity of the array.</param>
     public DynArray(int capacity)
     {
+        if (capacity < 0)
+            throw new ArgumentOutOfRangeException(nameof(capacity), "Negative capacity is not a valid");
+
         data = new T[capacity];
     }
 
@@ -152,6 +155,9 @@ public class DynArray<T> : IList<T>, ICloneable
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the value is negative.</exception>
     public void Resize(int value)
     {
+        if (value < 0)
+            throw new ArgumentOutOfRangeException(nameof(value), "Value must be >= 0");
+
         if (value == Count)
             return;
 
@@ -464,18 +470,18 @@ public class DynArray<T> : IList<T>, ICloneable
         if (b.Count == 0) return a;
 
         var result = new DynArray<T>(length: a.Count + b.Count);
+        var i = 0;
 
-        for (int i = 0; i < a.Count; i++)
+        for (int j = 0; j < a.Count; i++, j++)
         {
-            result.data[i] = a[i];
+            result.data[i] = a[j];
         }
 
-        for (int i = a.Count; i < result.Count; i++)
+        for (int j = 0; j < b.Count; i++, j++)
         {
-            result.data[i] = b[i - a.Count];
+            result.data[i] = b[j];
         }
 
-        result.Count = result.Capacity;
         return result;
     }
 }

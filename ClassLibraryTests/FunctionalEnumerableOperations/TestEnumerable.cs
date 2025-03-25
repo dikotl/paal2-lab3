@@ -1,20 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Numerics;
 using System.Reflection;
-using System.Linq.Expressions;
 using ClassLibrary.Collections;
-using System.Collections.Generic;
 using ClassLibrary.FunctionalEnumerableOperations;
 
-using static ClassLibraryTests.ConstValues;
-using static ClassLibrary.Collections.Generator;
+using static ClassLibraryTests.FunctionalEnumerableOperations.Enumerable.ConstValues;
 
 using Feo = ClassLibrary.FunctionalEnumerableOperations;
 
-namespace ClassLibraryTests;
+namespace ClassLibraryTests.FunctionalEnumerableOperations.Enumerable;
 
 [TestClass]
-public sealed class FeoTransforms
+public sealed class Transforms
 {
     [TestMethod]
     public void TestSkip___Int() =>
@@ -164,7 +163,7 @@ public sealed class FeoTransforms
 }
 
 [TestClass]
-public sealed class FeoBoolAggregations
+public sealed class BoolAggregations
 {
     [TestMethod]
     public void TestAll___Int() =>
@@ -208,7 +207,7 @@ public sealed class FeoBoolAggregations
 }
 
 [TestClass]
-public sealed class FeoConvertors
+public sealed class Convertors
 {
     [TestMethod]
     public void TestToArray___Int() =>
@@ -244,7 +243,7 @@ public sealed class FeoConvertors
 }
 
 [TestClass]
-public sealed class FeoFolds
+public sealed class Folds
 {
     [TestMethod]
     public void TestFold_1___Int() =>
@@ -275,7 +274,7 @@ public sealed class FeoFolds
     [TestMethod]
     public void TestFold_2___Int() =>
         FeoTestImplementation.TestFold_2(Generator.GetRandomIntArray,
-        Rand.Next(DefElementBound),
+        Generator.Rand.Next(DefElementBound),
         [
             (acc, c) => acc + c,
             (acc, c) => c < acc ? c : acc,
@@ -289,7 +288,7 @@ public sealed class FeoFolds
     [TestMethod]
     public void TestFold_2___Double() =>
         FeoTestImplementation.TestFold_2(Generator.GetRandomDoubleArray,
-        Rand.Next(DefElementBound) * Rand.NextDouble(),
+        Generator.Rand.Next(DefElementBound) * Generator.Rand.NextDouble(),
         [
             (acc, c) => acc + c,
             (acc, c) => c < acc ? c : acc,
@@ -376,8 +375,6 @@ public sealed class ValueFinders
             a => a - (int)a > 0.5,
             a => a > DefElementBound / 2
         ]);
-
-
 }
 
 [TestClass]
@@ -492,7 +489,7 @@ public sealed class Sorters
             a => a % 7 == 0 ? 0 : 1,
             a => a > 500 ? 0 : 1
         ],
-        GetComparers.GetIntComparersArray());
+        Comparers.GetIntComparersArray());
 
     [TestMethod]
     public void TestOrderBy_withComparer___Double() =>
@@ -515,7 +512,7 @@ public sealed class Sorters
             a => a % 7 == 0 ? 0 : 1,
             a => a > 500 ? 0 : 1
         ],
-        GetComparers.GetDoubleComparersArray());
+        Comparers.GetDoubleComparersArray());
 
     [TestMethod]
     public void TestOrderByDescending_withComparer___Int() =>
@@ -538,7 +535,7 @@ public sealed class Sorters
             a => a % 7 == 0 ? 0 : 1,
             a => a > 500 ? 0 : 1
         ],
-        GetComparers.GetIntComparersArray());
+        Comparers.GetIntComparersArray());
 
     [TestMethod]
     public void TestOrderByDescending_withComparer___Double() =>
@@ -561,7 +558,7 @@ public sealed class Sorters
             a => a % 7 == 0 ? 0 : 1,
             a => a > 500 ? 0 : 1
         ],
-        GetComparers.GetDoubleComparersArray());
+        Comparers.GetDoubleComparersArray());
 
     [TestMethod]
     public void TestThenBy___Int() =>
@@ -672,10 +669,9 @@ public sealed class Sorters
             a => a % 7 == 0 ? 0 : 1,
             a => a > 500 ? 0 : 1
         ],
-        GetComparers.GetIntComparersArray());
+        Comparers.GetIntComparersArray());
 
 }
-
 
 public static class FeoTestImplementation
 {
@@ -731,7 +727,7 @@ public static class FeoTestImplementation
         for (var i = 0; i < RepeatTime; i++)
         {
             var a = generateArray(DefMaxSize, DefElementBound);
-            var skipLen = Rand.Next(System.Linq.Enumerable.ToArray(a).Length);
+            var skipLen = Generator.Rand.Next(System.Linq.Enumerable.ToArray(a).Length);
             var expected = string.Join(" ", System.Linq.Enumerable.Skip(a, skipLen));
             var actual = string.Join(" ", Feo.Enumerable.Skip(a, skipLen));
 
@@ -745,7 +741,7 @@ public static class FeoTestImplementation
         for (var i = 0; i < RepeatTime; i++)
         {
             var a = generateArray(DefMaxSize, DefElementBound);
-            var takeLen = Rand.Next(System.Linq.Enumerable.ToArray(a).Length);
+            var takeLen = Generator.Rand.Next(System.Linq.Enumerable.ToArray(a).Length);
             var expected = string.Join(" ", System.Linq.Enumerable.Take(a, takeLen));
             var actual = string.Join(" ", Feo.Enumerable.Take(a, takeLen));
 
@@ -1116,8 +1112,7 @@ public static class FeoTestImplementation
     }
 }
 
-
-file static class GetComparers
+file static class Comparers
 {
     public static IComparer<int>[] GetIntComparersArray()
     {
@@ -1141,6 +1136,7 @@ file static class GetComparers
                 Comparer<int>.Create((x, y) => (x > 500).CompareTo(y > 500)),
             ];
     }
+
     public static IComparer<double>[] GetDoubleComparersArray()
     {
         return
