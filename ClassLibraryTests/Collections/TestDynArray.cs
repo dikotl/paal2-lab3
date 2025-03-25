@@ -247,15 +247,6 @@ public sealed class ListOps
             }
         }
     }
-}
-
-[TestClass]
-public sealed class ResizeOps
-{
-    [TestMethod]
-    public void TestReserve()
-    {
-    }
 
     [TestMethod]
     public void TestResize()
