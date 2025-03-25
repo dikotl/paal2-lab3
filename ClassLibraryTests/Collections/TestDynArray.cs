@@ -39,6 +39,16 @@ public sealed class Basics
     [TestMethod]
     public void TestGetCapacity()
     {
+        for (int i = 0; i < RepeatTime; i++)
+        {
+            var capacity = (int)Generator.Rand.NextInt64(
+                    DefaultMaxSize.Start.Value,
+                    DefaultMaxSize.End.Value);
+
+            var arr = new DynArray<int>(capacity: capacity);
+
+            Assert.AreEqual(arr.Capacity, capacity);
+        }
     }
 
     [TestMethod]
