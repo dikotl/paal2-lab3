@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using ClassLibrary.Collections;
 using ClassLibrary.FunctionalEnumerableOperations;
+
 using static ClassLibraryTests.Collections.DynArray.ConstValues;
 
 namespace ClassLibraryTests.Collections.DynArray;
@@ -300,8 +301,6 @@ public sealed class Ops
             var list = Generator
                 .GetRandomIntArray(DefaultMaxSize, DefaultElementBound)
                 .ToList();
-
-            System.Console.WriteLine($"{list.Count}");
 
             var dyn = list.ToDynArray();
             dyn += dyn;
