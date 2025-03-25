@@ -118,7 +118,10 @@ public sealed class ListOps
     {
         for (int i = 0; i < RepeatTime; i++)
         {
-            var mainArr = Generator.GetRandomDoubleArray(DefaultMaxSize, DefaultElementBound).ToList();
+            var mainArr = Generator
+                .GetRandomDoubleArray(DefaultMaxSize, DefaultElementBound)
+                .ToList();
+
             var dynArr = mainArr.ToDynArray();
 
             for (int j = 0; j < mainArr.Count; j++)
@@ -135,7 +138,10 @@ public sealed class ListOps
     {
         for (int i = 0; i < RepeatTime; i++)
         {
-            var mainArr = Generator.GetRandomDoubleArray(DefaultMaxSize, DefaultElementBound).ToList();
+            var mainArr = Generator
+                .GetRandomDoubleArray(DefaultMaxSize, DefaultElementBound)
+                .ToList();
+
             var dynArr = mainArr.ToDynArray();
 
             for (int j = 0; j < RepeatTime / 10 + 1; j++)
@@ -167,7 +173,10 @@ public sealed class ListOps
     {
         for (int i = 0; i < RepeatTime; i++)
         {
-            var mainArr = Generator.GetRandomDoubleArray(DefaultMaxSize, DefaultElementBound).ToList();
+            var mainArr = Generator
+                .GetRandomDoubleArray(DefaultMaxSize, DefaultElementBound)
+                .ToList();
+
             var dynArr = mainArr.ToDynArray();
 
             for (int j = 0; j < RepeatTime / 10 + 1; j++)
@@ -206,7 +215,10 @@ public sealed class ListOps
     {
         for (int i = 0; i < RepeatTime / 30 + 1; i++)
         {
-            var mainArr = Generator.GetRandomIntArray(DefaultMaxSize, DefaultElementBound).ToList();
+            var mainArr = Generator
+                .GetRandomIntArray(DefaultMaxSize, DefaultElementBound)
+                .ToList();
+
             var dynArr = mainArr.ToDynArray();
             var mainArrMax = mainArr.Max();
 
@@ -280,7 +292,10 @@ public sealed class Other
     {
         for (int i = 0; i < RepeatTime; i++)
         {
-            var dynArr = Generator.GetRandomIntArray(DefaultMaxSize, DefaultElementBound).ToDynArray();
+            var dynArr = Generator
+                .GetRandomIntArray(DefaultMaxSize, DefaultElementBound)
+                .ToDynArray();
+
             var sb = new StringBuilder().Append('[');
             sb.Append(string.Join(", ", dynArr));
             sb.Append(']');
