@@ -59,11 +59,6 @@ public sealed class Basics
     }
 
     [TestMethod]
-    public void TestCtors()
-    {
-    }
-
-    [TestMethod]
     public void TestSlice()
     {
         for (int i = 0; i < RepeatTime / 100 + 1; i++)
