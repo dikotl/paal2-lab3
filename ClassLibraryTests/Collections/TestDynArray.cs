@@ -231,7 +231,7 @@ public sealed class Ops
                 Generator.GetRandomDoubleArray(DefMaxSize, DefElementBound).ToDynArray();
             DynArray<double> dynArr2;
 
-            bool mustBeNotSame = (bool)Convert.ChangeType(Generator.Rand.Next(0, 2), typeof(bool));
+            bool mustBeNotSame = Generator.Rand.Next(0, 2) != 0;
 
             if (mustBeNotSame)
                 dynArr2 = dynArr1.ToDynArray();
@@ -279,7 +279,7 @@ public sealed class Other
                 Generator.GetRandomDoubleArray(DefMaxSize, DefElementBound).ToDynArray();
             DynArray<double> dynArr2;
 
-            bool mustBeNotSame = (bool)Convert.ChangeType(Generator.Rand.Next(0, 2), typeof(bool));
+            bool mustBeNotSame = Generator.Rand.Next(0, 2) != 0;
 
             if (mustBeNotSame)
                 dynArr2 = dynArr1.ToDynArray();
