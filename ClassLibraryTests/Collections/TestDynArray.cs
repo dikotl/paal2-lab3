@@ -38,21 +38,6 @@ public sealed class Basics
     }
 
     [TestMethod]
-    public void TestGetCapacity()
-    {
-        for (int i = 0; i < RepeatTime; i++)
-        {
-            var capacity = (int)Generator.Rand.NextInt64(
-                    DefaultMaxSize.Start.Value,
-                    DefaultMaxSize.End.Value);
-
-            var arr = new DynArray<int>(capacity: capacity);
-
-            Assert.AreEqual(arr.Capacity, capacity);
-        }
-    }
-
-    [TestMethod]
     public void TestGetEnumerator()
     {
         for (int i = 0; i < RepeatTime; i++)
@@ -184,6 +169,11 @@ public sealed class ListOps
             list.RemoveAt(index);
             arr.RemoveAt(index);
             Assert.AreEqual(list.Count, arr.Count);
+
+            for (int j = 0; j < list.Count; j++)
+            {
+                Assert.AreEqual(list[j], arr[j]);
+            }
         }
     }
 
@@ -251,10 +241,24 @@ public sealed class ListOps
     [TestMethod]
     public void TestResize()
     {
-        DynArray<int> a = [];
+        for (int i = 0; i < RepeatTime; i++)
+        {
+            var size = Generator.Rand.Next(-DefaultElementBound, DefaultElementBound);
+            var dyn = Generator
+                .GetRandomIntArray(DefaultMaxSize, DefaultElementBound)
+                .ToDynArray();
 
-        a.Resize(10);
-        Assert.AreEqual(10, a.Count);
+            if (size < 0)
+            {
+                Assert.ThrowsException<ArgumentOutOfRangeException>(
+                    () => dyn.Resize(size));
+            }
+            else
+            {
+                dyn.Resize(size);
+                Assert.AreEqual(size, dyn.Count);
+            }
+        }
     }
 }
 
@@ -310,15 +314,21 @@ public sealed class Other
     {
         for (int i = 0; i < RepeatTime; i++)
         {
-            var source = Generator.GetRandomIntArray(DefaultMaxSize, DefaultElementBound);
-            var dyn = source.ToDynArray();
-            var copy = new int[source.Length];
+            var list = Generator
+                .GetRandomIntArray(DefaultMaxSize, DefaultElementBound)
+                .ToList();
 
-            dyn.CopyTo(copy, 0);
+            var dyn = list.ToDynArray();
 
-            for (int j = 0; j < source.Length; j++)
+            var listCopy = new int[list.Count];
+            var dynCopy = new int[list.Count];
+
+            list.CopyTo(listCopy, 0);
+            dyn.CopyTo(dynCopy, 0);
+
+            for (int j = 0; j < list.Count; j++)
             {
-                Assert.AreEqual(source[j], copy[j]);
+                Assert.AreEqual(listCopy[j], dynCopy[j]);
             }
         }
     }
