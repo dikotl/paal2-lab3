@@ -265,11 +265,6 @@ public sealed class ResizeOps
         a.Resize(10);
         Assert.AreEqual(10, a.Count);
     }
-
-    [TestMethod]
-    public void TestRemove()
-    {
-    }
 }
 
 [TestClass]
