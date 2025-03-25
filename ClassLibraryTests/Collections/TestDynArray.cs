@@ -320,11 +320,12 @@ public sealed class Other
 
             var dyn = list.ToDynArray();
 
-            var listCopy = new int[list.Count];
-            var dynCopy = new int[list.Count];
+            var startIndex = Generator.Rand.Next(0, list.Count);
+            var listCopy = new int[list.Count + startIndex];
+            var dynCopy = new int[list.Count + startIndex];
 
-            list.CopyTo(listCopy, 0);
-            dyn.CopyTo(dynCopy, 0);
+            list.CopyTo(listCopy, startIndex);
+            dyn.CopyTo(dynCopy, startIndex);
 
             for (int j = 0; j < list.Count; j++)
             {
