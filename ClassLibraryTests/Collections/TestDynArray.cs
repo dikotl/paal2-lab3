@@ -294,6 +294,26 @@ public sealed class Ops
     [TestMethod]
     public void TestOpPlus()
     {
+        for (int i = 0; i < RepeatTime * 10; i++)
+        {
+
+            var list = Generator
+                .GetRandomIntArray(DefaultMaxSize, DefaultElementBound)
+                .ToList();
+
+            System.Console.WriteLine($"{list.Count}");
+
+            var dyn = list.ToDynArray();
+            dyn += dyn;
+
+            list.AddRange(list);
+            Assert.AreEqual(list.Count, dyn.Count);
+
+            for (int j = 0; j < list.Count; j++)
+            {
+                Assert.AreEqual(list[j], dyn[j]);
+            }
+        }
     }
 }
 

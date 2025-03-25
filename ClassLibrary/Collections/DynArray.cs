@@ -464,18 +464,18 @@ public class DynArray<T> : IList<T>, ICloneable
         if (b.Count == 0) return a;
 
         var result = new DynArray<T>(length: a.Count + b.Count);
+        var i = 0;
 
-        for (int i = 0; i < a.Count; i++)
+        for (int j = 0; j < a.Count; i++, j++)
         {
-            result.data[i] = a[i];
+            result.data[i] = a[j];
         }
 
-        for (int i = a.Count; i < result.Count; i++)
+        for (int j = 0; j < b.Count; i++, j++)
         {
-            result.data[i] = b[i - a.Count];
+            result.data[i] = b[j];
         }
 
-        result.Count = result.Capacity;
         return result;
     }
 }
