@@ -171,6 +171,19 @@ public sealed class ListOps
     [TestMethod]
     public void TestRemove()
     {
+        for (int i = 0; i < RepeatTime; i++)
+        {
+            var list = Generator
+                .GetRandomIntArray(DefaultMaxSize, DefaultElementBound)
+                .ToList();
+
+            var arr = list.ToDynArray();
+            var index = Generator.Rand.Next(0, list.Count);
+
+            list.RemoveAt(index);
+            arr.RemoveAt(index);
+            Assert.AreEqual(list.Count, arr.Count);
+        }
     }
 
     [TestMethod]
