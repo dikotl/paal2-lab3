@@ -290,6 +290,19 @@ public sealed class Other
     [TestMethod]
     public void TestCopyTo()
     {
+        for (int i = 0; i < RepeatTime; i++)
+        {
+            var source = Generator.GetRandomIntArray(DefaultMaxSize, DefaultElementBound);
+            var dyn = source.ToDynArray();
+            var copy = new int[source.Length];
+
+            dyn.CopyTo(copy, 0);
+
+            for (int j = 0; j < source.Length; j++)
+            {
+                Assert.AreEqual(source[j], copy[j]);
+            }
+        }
     }
 
     [TestMethod]
