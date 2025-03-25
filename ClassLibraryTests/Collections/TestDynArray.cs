@@ -249,7 +249,7 @@ public sealed class ResizeOps
         DynArray<int> a = [];
 
         a.Resize(10);
-        Assert.AreEqual(a.Count, 10);
+        Assert.AreEqual(10, a.Count);
     }
 
     [TestMethod]
