@@ -21,7 +21,36 @@ public static class Program
         [14] = (Task14, "Додати рядок після рядка, що містить мінімальний елемент (якщо у різних місцях є кілька елементів з однаковим мінімальним значенням, то брати останній з них)"),
     };
 
-    public static void Task10(Context context) => throw new NotImplementedException();
+    public static void Task10(Context context)
+    {
+        var arr = context.RequestArray(() => Generator.Rand.Next(-99, 99)).ToDynArray();
+        DelElements();
+        context.WriteLine(arr);
+
+        void DelElements()
+        {
+            if (arr.Count < 2) return;
+            int FirstMinIndex = 0;
+            int LastMaxIndex = 0;
+
+            for(int i = 0; i < arr.Count; i++)
+            {
+                if (arr[i] < arr[FirstMinIndex])
+                    FirstMinIndex = i;
+                if (arr[i] >= arr[LastMaxIndex])
+                    LastMaxIndex = i;
+            }
+
+            context.PrintLine($"max index: {LastMaxIndex}");
+            context.PrintLine($"min index: {FirstMinIndex}");
+            
+            if (FirstMinIndex > LastMaxIndex)
+                (FirstMinIndex, LastMaxIndex) = (LastMaxIndex, FirstMinIndex);
+
+            arr = arr.Take(FirstMinIndex + 1).ToDynArray() + arr.Skip(LastMaxIndex).ToDynArray();
+        }
+
+    }
 
     public static void Task15(Context context)
     {
@@ -66,8 +95,24 @@ public static class Program
     }
 
 
-    public static void Task11(Context context) => throw new NotImplementedException();
+    public static void Task11(Context context)
+    {
+        var jaggedArray = context.RequestMatrix(int.Parse, () => Generator.Rand.Next(1, 101));
 
+        int maxElement = int.MinValue;
+        int maxRowIndex = 0;
+
+        for (int i = 0; i < jaggedArray.Count; i++)
+            foreach (var element in jaggedArray[i])
+                if (element > maxElement)
+                    (maxElement, maxRowIndex) = (element, i);
+
+        jaggedArray.Insert(maxRowIndex + 1, [99, 100]);
+
+        context.PrintLine("Result:");
+        foreach (var row in jaggedArray)
+            context.WriteLine(row);
+    }
     public static void Task13(Context context)
     {
         var arr = context.RequestMatrix(int.Parse, () => Generator.Rand.Next(-20, 20));
