@@ -7,6 +7,7 @@
     <Compile Include="TaskSelectorMenu.fs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ClassLibrary\ClassLibrary.csproj" />
     <ProjectReference Include="..\App\App.csproj" />
   </ItemGroup>
 </Project>

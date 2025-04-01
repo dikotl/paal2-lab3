@@ -4,7 +4,7 @@ using System.IO;
 using ClassLibrary.Collections;
 using ClassLibrary.FunctionalEnumerableOperations;
 
-namespace App;
+namespace ClassLibrary.IO;
 
 /// <summary>
 /// Exception thrown to indicate the program should exit to the menu.

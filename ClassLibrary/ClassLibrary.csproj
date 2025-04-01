@@ -4,7 +4,6 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <NuGetAuditMode>all</NuGetAuditMode>
-    <EnablePreviewFeatures>true</EnablePreviewFeatures>
   </PropertyGroup>
 
 </Project>
