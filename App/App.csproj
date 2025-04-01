@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ClassLibrary\ClassLibrary.csproj" />
+    <ProjectReference Include="..\ClassLibraryVB\ClassLibraryVB.vbproj" />
   </ItemGroup>
 
 </Project>

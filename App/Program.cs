@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using ClassLibrary.Collections;
 using ClassLibrary.FunctionalEnumerableOperations;
+using ClassLibrary.IO;
 
 namespace App;
 
@@ -33,7 +34,7 @@ public static class Program
             int FirstMinIndex = 0;
             int LastMaxIndex = 0;
 
-            for(int i = 0; i < arr.Count; i++)
+            for (int i = 0; i < arr.Count; i++)
             {
                 if (arr[i] < arr[FirstMinIndex])
                     FirstMinIndex = i;
@@ -43,7 +44,7 @@ public static class Program
 
             context.PrintLine($"max index: {LastMaxIndex}");
             context.PrintLine($"min index: {FirstMinIndex}");
-            
+
             if (FirstMinIndex > LastMaxIndex)
                 (FirstMinIndex, LastMaxIndex) = (LastMaxIndex, FirstMinIndex);
 
