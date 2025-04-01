@@ -75,7 +75,7 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     /// <param name="message">The message to be written.</param>
     public void Write(object message)
     {
-        if (TalkToUser) Writer.Write(message);
+        Writer.Write(message);
     }
 
     /// <summary>
@@ -84,7 +84,7 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     /// <param name="message">The message to be written.</param>
     public void WriteLine(object message)
     {
-        if (TalkToUser) Writer.WriteLine(message);
+        Writer.WriteLine(message);
     }
 
     /// <summary>
