@@ -41,11 +41,11 @@ Namespace IO
             If TalkToUser Then Console.Error.WriteLine(message)
         End Sub
 
-        Public Sub Write(message As Object) 
+        Public Sub Write(message As Object)
             If TalkToUser Then Writer.Write(message)
         End Sub
 
-        Public Sub WriteLine(message As Object) 
+        Public Sub WriteLine(message As Object)
             If TalkToUser Then Writer.WriteLine(message)
         End Sub
 
@@ -68,16 +68,22 @@ Namespace IO
             End While
         End Function
 
-        Public Function Request(Of T As {IParsable(Of T), New})(Optional message As String = Nothing, Optional style As RequestStyle = RequestStyle.[Default])
-            Return Request(Function(input) T.Parse(input, Nothing), message, style)
+        Public Function Request(Of T As {IParsable(Of T), New})(Optional message As String = Nothing, Optional style As RequestStyle = RequestStyle.[Default]) As T
+            Return Request(Function(input)
+                               Dim method = GetType(T).GetMethod("Parse", {GetType(String), GetType(IFormatProvider)})
+                               If method IsNot Nothing Then
+                                   Return CType(method.Invoke(Nothing, {input, Nothing}), T)
+                               End If
+                           End Function, message, style)
         End Function
 
 
-        Public Function Request(Optional message as String = Nothing, Optional style As RequestStyle = RequestStyle.[Default]) As String
+
+        Public Function Request(Optional message As String = Nothing, Optional style As RequestStyle = RequestStyle.[Default]) As String
             Select Case style
                 Case RequestStyle.[Default]
                     If message IsNot Nothing Then Print(message)
-                    Print("\n> ")
+                    Print(vbLf & "> ")
                 Case RequestStyle.Inline
                     If message IsNot Nothing Then Print(message)
                     Print(": ")
@@ -89,16 +95,16 @@ Namespace IO
             Dim input As String = If(Reader.ReadLine(), "")
             Dim trimmed = input.Trim().ToLower()
 
-            If trimmed = "menu" Then Throw new ExitToMenuException()
-            If trimmed = "exit" Then Throw new ExitProgramException()
+            If trimmed = "menu" Then Throw New ExitToMenuException()
+            If trimmed = "exit" Then Throw New ExitProgramException()
 
             Return input
 
         End Function
 
         Public Function ReadArrayRandom(Of T)(getRandomItem As Func(Of T)) As DynArray(Of T)
-            Dim size As Integer = Request(SizeInt, "Input number of elements")
-            Dim generatedArray As DynArray(Of Integer) = Generator.GetRandomDynArray(New System.Range(size, size),getRandomItem)
+            Dim size As Integer = Request(Function(input) SizeInt(input), "Input number of elements")
+            Dim generatedArray As DynArray(Of T) = Generator.GetRandomDynArray(New Range(size, size), getRandomItem)
 
             PrintLine(String.Format("Generated array: {0}", generatedArray))
             Return generatedArray
@@ -112,21 +118,31 @@ Namespace IO
                 .ToDynArray()
         End Function
 
-        Private Function ParseInput(Of T As IParsable(Of T))(input As String) As T
-            Return T.Parse(input, Nothing)
+        Private Function ParseInput(Of T As {IParsable(Of T), New})(input As String) As T
+            Dim method = GetType(T).GetMethod("Parse", {GetType(String), GetType(IFormatProvider)})
+            If method IsNot Nothing Then
+                Return CType(method.Invoke(Nothing, {input, Nothing}), T)
+            End If
         End Function
 
-        Public Function ReadArrayInline(Of T As IParsable(Of T))() As DynArray(Of T)
-             Return Reader _
+
+        Public Function ReadArrayInline(Of T As {IParsable(Of T), New})() As DynArray(Of T)
+            Return Reader _
                 .ReadLine() _
                 .Split() _
                 .Map(Function(input) ParseInput(Of T)(input)) _
                 .ToDynArray()
         End Function
 
-        Public Function RequestArray(Of T As IParsable(Of T))(getRandomItem As Func(Of T)) As DynArray(Of T)
-            Return RequestArray(Function(input) T.Parse(input, Nothing), getRandomItem)
+        Public Function RequestArray(Of T As {IParsable(Of T), New})(getRandomItem As Func(Of T)) As DynArray(Of T)
+            Return RequestArray(Function(input)
+                                    Dim method = GetType(T).GetMethod("Parse", {GetType(String), GetType(IFormatProvider)})
+                                    If method IsNot Nothing Then
+                                        Return CType(method.Invoke(Nothing, {input, Nothing}), T)
+                                    End If
+                                End Function, getRandomItem)
         End Function
+
 
         Public Function RequestArray(Of T)(converter As Converter(Of String, T), getRandomItem As Func(Of T)) As DynArray(Of T)
             Dim isRandom As Boolean = ChooseInputMethod()
@@ -138,15 +154,21 @@ Namespace IO
                     Try
                         Return ReadArrayInline(converter)
                     Catch e As Exception When TypeOf e Is FormatException OrElse TypeOf e Is OverflowException
-                        Error(e.Message)
+                        Error (e.Message)
                     End Try
                 Loop
             End If
         End Function
 
-        Public Function RequestMatrix(Of T As IParsable(Of T))(getRandomItem As Func(Of T)) As DynArray(Of DynArray(Of T))
-            Return RequestMatrix(Function(input) T.Parse(input, Nothing), getRandomItem)
+        Public Function RequestMatrix(Of T As {IParsable(Of T), New})(getRandomItem As Func(Of T)) As DynArray(Of DynArray(Of T))
+            Return RequestMatrix(Function(input)
+                                     Dim method = GetType(T).GetMethod("Parse", {GetType(String), GetType(IFormatProvider)})
+                                     If method IsNot Nothing Then
+                                         Return CType(method.Invoke(Nothing, {input, Nothing}), T)
+                                     End If
+                                 End Function, getRandomItem)
         End Function
+
 
         Public Function RequestMatrix(Of T)(converter As Converter(Of String, T), getRandomItem As Func(Of T)) As DynArray(Of DynArray(Of T))
             Dim size As Integer = Request(AddressOf SizeInt, "Input number of sub-arrays")
@@ -173,7 +195,7 @@ Namespace IO
                 Try
                     typed(i) = ReadArrayInline(converter)
                 Catch e As Exception When TypeOf e Is FormatException OrElse TypeOf e Is OverflowException
-                    Error(e.Message)
+                    Error (e.Message)
                     i -= 1
                     show = True
                 End Try
@@ -184,13 +206,8 @@ Namespace IO
 
         Private Function RequestMatrixRandom(Of T)(rows As Integer, getRandomItem As Func(Of T)) As DynArray(Of DynArray(Of T))
             Dim maxColumnSize As Integer = Request(AddressOf SizeInt, "Input max number of elements")
-            Dim generated As New DynArray(Of DynArray(Of T))(rows)
-
-            For row As Integer = 0 To rows - 1
-                generated(row) = Generator.GetRandomDynArray(New System.Range(1, maxColumnSize), getRandomItem)
-            Next
-
-            Return generated
+            Return New DynArray(Of DynArray(Of T)) _
+                (rows, Function() Generator.GetRandomDynArray(New Range(1, maxColumnSize), getRandomItem))
         End Function
 
         Private Function ChooseInputMethod() As Boolean
@@ -204,11 +221,11 @@ Namespace IO
                     Case "1" : Return True
                     Case "2" : Return False
                 End Select
-                Error("Unknown option")
+                Error ("Unknown option")
             Loop
         End Function
 
-        Private Shared Function SizeInt(input As String) As Integer
+        Public Function SizeInt(input As String) As Integer
             Dim size As Integer = Integer.Parse(input)
 
             If size < 1 Then
