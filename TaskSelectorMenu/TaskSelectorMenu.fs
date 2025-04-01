@@ -54,19 +54,39 @@ let rec selectTask (tasks: TaskList) (context: Context) =
 let rec runTaskSelector menu tasks (context: Context) =
     context.PrintLine menu
 
-    let task = selectTask tasks context
-
-    context.PrintLine "To return to the menu, type 'menu'"
-    context.PrintLine "To exit the program, type 'exit'"
-
     try
+        let task = selectTask tasks context
+
+        context.PrintLine "To return to the menu, type 'menu'"
+        context.PrintLine "To exit the program, type 'exit'"
+
         task.Invoke context
     with
     | :? ExitProgramException -> exit 0
     | :? ExitToMenuException -> ()
 
     if context.TalkToUser then
+        // We are not in "test mode", so run the menu again
         runTaskSelector menu tasks context
+
+
+/// Opens a file and runs the action if it's exists.
+///
+/// A file may contains the following:
+///
+/// ```txt
+/// 1
+/// 1
+/// 10
+/// ```
+///
+/// ... where the first line contains the task number, and the rest - the sequence of input data.
+let openAndRun (filepath: string) applyReader =
+    try
+        use reader = new StreamReader(filepath) :> TextReader
+        applyReader reader
+    with :? IOException as e ->
+        eprintfn $"Error while processing program arguments. {e.Message}"
 
 
 [<EntryPoint>]
@@ -74,16 +94,14 @@ let main args =
     let menu, tasks = generateMenuAndTasks ()
     let run = runTaskSelector menu tasks
 
-    if args.Length > 0 then
-        for arg in args do
-            try
-                use reader = new StreamReader(arg) :> TextReader
-                let context = Context(reader, Console.Out, false)
-                run context
-            with :? IOException as e ->
-                eprintfn $"Error while processing program arguments. {e.Message}"
-    else
-        let context = Context(Console.In, Console.Out, true)
+    let runWithReader reader =
+        let context = Context(reader, Console.Out, (reader = Console.In))
         run context
+
+    if args.Length > 0 then
+        for filepath in args do
+            openAndRun filepath runWithReader
+    else
+        runWithReader Console.In
 
     0
