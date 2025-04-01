@@ -9,7 +9,7 @@ type Tasks = Dictionary<int, struct (Action<Context> * string)>
 type TaskList = Action<Context> List
 
 
-let taskMenu () =
+let generateMenuAndTasks () =
     let menu = new StringBuilder()
     let tasks = new TaskList()
     let taskIndex = ref 0
@@ -51,37 +51,39 @@ let rec selectTask (tasks: TaskList) (context: Context) =
         tasks[taskIndex]
 
 
+let rec runTaskSelector menu tasks (context: Context) =
+    context.PrintLine menu
+
+    let task = selectTask tasks context
+
+    context.PrintLine "To return to the menu, type 'menu'"
+    context.PrintLine "To exit the program, type 'exit'"
+
+    try
+        task.Invoke context
+    with
+    | :? ExitProgramException -> exit 0
+    | :? ExitToMenuException -> ()
+
+    if context.TalkToUser then
+        runTaskSelector menu tasks context
+
+
 [<EntryPoint>]
 let main args =
-    use reader =
-        if args.Length > 0 then
-            new StreamReader(args[0]) :> TextReader
-        else
-            Console.In
+    let menu, tasks = generateMenuAndTasks ()
+    let run = runTaskSelector menu tasks
 
-    use writer =
-        if args.Length > 1 then
-            new StreamWriter(args[1]) :> TextWriter
-        else
-            Console.Out
+    if args.Length > 0 then
+        for arg in args do
+            try
+                use reader = new StreamReader(arg) :> TextReader
+                let context = Context(reader, Console.Out, false)
+                run context
+            with :? IOException as e ->
+                eprintfn $"Error while processing program arguments. {e.Message}"
+    else
+        let context = Context(Console.In, Console.Out, true)
+        run context
 
-    let context = Context(reader, writer, args.Length = 0)
-    let menu, tasks = taskMenu ()
-
-    let rec runTaskSelector () =
-        try
-            context.PrintLine menu
-
-            let task = selectTask tasks context
-
-            context.PrintLine "To return to the menu, type 'menu'"
-            context.PrintLine "To exit the program, type 'exit'"
-            task.Invoke context
-
-            runTaskSelector ()
-        with
-        | :? ExitToMenuException -> runTaskSelector ()
-        | :? ExitProgramException -> ()
-
-    runTaskSelector ()
     0
