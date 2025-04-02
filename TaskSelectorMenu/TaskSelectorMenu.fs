@@ -92,6 +92,8 @@ let openAndRun (filepath: string) applyReader =
 
 [<EntryPoint>]
 let main args =
+    System.Console.InputEncoding <- Encoding.UTF8
+    System.Console.OutputEncoding <- Encoding.UTF8
     let menu, tasks = generateMenuAndTasks ()
     let run = runTaskSelector menu tasks
 
