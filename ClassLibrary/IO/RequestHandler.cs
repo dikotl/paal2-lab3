@@ -52,9 +52,12 @@ public enum RequestStyle
 public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
 {
     /// <summary>
-    /// Prints a message to the user without printing it as a program output.
+    /// Prints a message to the console without a newline, using the specified color.  
+    /// If the TalkToUser variable is set to True,  
+    /// the message will be written to the standard error stream (Console.Error).  
     /// </summary>
-    /// <param name="message">The message to be printed.</param>
+    /// <param name="message">The message to print.</param>
+    /// <param name="color">(Optional) The text color. Default is white.</param>
     public void Print(object message, ConsoleColor color = ConsoleColor.White)
     {
         if (TalkToUser)
@@ -67,9 +70,12 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     }
 
     /// <summary>
-    /// Prints a message to the user, appending a new line at the end.
+    /// Prints a message to the console with the specified color.  
+    /// If the TalkToUser variable is set to True,  
+    /// the message will be written to the standard error stream (Console.Error).  
     /// </summary>
-    /// <param name="message">The message to be printed.</param>
+    /// <param name="message">The message to print.</param>
+    /// <param name="color">(Optional) The text color. Default is white.</param>
     public void PrintLine(object message, ConsoleColor color = ConsoleColor.White)
     {
         if (TalkToUser)

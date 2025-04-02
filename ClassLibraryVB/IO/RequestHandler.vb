@@ -64,19 +64,35 @@ Namespace IO
         End Sub
 
         ''' <summary>
-        ''' Prints a message to the user without printing it as a program output.
+        ''' Prints a message to the console without a newline, using the specified color.  
+        ''' If the TalkToUser variable is set to True,  
+        ''' the message will be written to the standard error stream (Console.Error).  
         ''' </summary>
-        ''' <param name="message">The message to be printed.</param>
-        Public Sub Print(message As Object)
-            If TalkToUser Then Console.Error.Write(message)
+        ''' <param name="message">The message to print.</param>
+        ''' <param name="color">(Optional) The text color. Default is white.</param>
+        Public Sub Print(message As Object, Optional color As ConsoleColor = ConsoleColor.White)
+            If TalkToUser Then
+                Dim oldColor = Console.ForegroundColor
+                Console.ForegroundColor = color
+                Console.Error.Write(message)
+                Console.ForegroundColor = oldColor
+            End If
         End Sub
 
         ''' <summary>
-        ''' Prints a message to the user, appending a New line at the end.
+        ''' Prints a message to the console with the specified color.  
+        ''' If the TalkToUser variable is set to True,  
+        ''' the message will be written to the standard error stream (Console.Error).  
         ''' </summary>
-        ''' <param name="message">The message to be printed.</param>
-        Public Sub PrintLine(message As Object)
-            If TalkToUser Then Console.Error.WriteLine(message)
+        ''' <param name="message">The message to print.</param>
+        ''' <param name="color">(Optional) The text color. Default is white.</param>
+        Public Sub PrintLine(message As Object, Optional color As ConsoleColor = ConsoleColor.White)
+            If TalkToUser Then
+                Dim oldColor = Console.ForegroundColor
+                Console.ForegroundColor = color
+                Console.Error.WriteLine(message)
+                Console.ForegroundColor = oldColor
+            End If
         End Sub
 
         ''' <summary>
@@ -100,12 +116,7 @@ Namespace IO
         ''' </summary>
         ''' <param name="message">The error message to be printed.</param>
         Public Sub [Error](message As String)
-            Dim oldColor As ConsoleColor = Console.ForegroundColor
-            Console.ForegroundColor = ConsoleColor.Red
-
-            PrintLine("Error! " & If(message, ""))
-
-            Console.ForegroundColor = oldColor
+            PrintLine("Error! " & If(message, ""), ConsoleColor.Red)
         End Sub
 
         ''' <summary>
@@ -161,11 +172,11 @@ Namespace IO
         Public Function Request(Optional message As String = Nothing, Optional style As RequestStyle = RequestStyle.[Default]) As String
             Select Case style
                 Case RequestStyle.[Default]
-                    If message IsNot Nothing Then Print(message)
+                    If message IsNot Nothing Then Print(message, ConsoleColor.Magenta)
                     Print(vbLf & "> ")
                 Case RequestStyle.Inline
-                    If message IsNot Nothing Then Print(message)
-                    Print(": ")
+                    If message IsNot Nothing Then Print(message, ConsoleColor.Magenta)
+                    Print(": ", ConsoleColor.Magenta)
                 Case RequestStyle.Bare
                 Case Else
                     Throw New InvalidEnumArgumentException(NameOf(style), CType(style, Integer), GetType(RequestStyle))
