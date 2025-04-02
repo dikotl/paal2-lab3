@@ -170,11 +170,11 @@ Namespace IO
 begin:
             Select Case style
                 Case RequestStyle.[Default]
-                    If message IsNot Nothing Then Print(message, ConsoleColor.Magenta)
+                    If message IsNot Nothing Then Print(message, ConsoleColor.DarkCyan)
                     Print(vbLf & "> ")
                 Case RequestStyle.Inline
-                    If message IsNot Nothing Then Print(message, ConsoleColor.Magenta)
-                    Print(": ", ConsoleColor.Magenta)
+                    If message IsNot Nothing Then Print(message, ConsoleColor.DarkCyan)
+                    Print(": ", ConsoleColor.DarkCyan)
                 Case RequestStyle.Bare
                 Case Else
                     Throw New InvalidEnumArgumentException(NameOf(style), CType(style, Integer), GetType(RequestStyle))

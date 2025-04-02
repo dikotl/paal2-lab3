@@ -110,7 +110,7 @@ public static class Program
 
         jaggedArray.Insert(maxRowIndex + 1, [99, 100]);
 
-        context.PrintLine("Result:");
+        context.PrintLine("Result:", ConsoleColor.DarkCyan);
         foreach (var row in jaggedArray)
             context.WriteLine(row);
     }
@@ -126,7 +126,7 @@ public static class Program
                                 .FirstOrDefault(x => true);
 
         arr.Insert(rowWithMinItem.i, [rowWithMinItem.Item1]);
-        context.PrintLine($"Result:");
+        context.PrintLine($"Result:", ConsoleColor.DarkCyan);
         foreach (var item in arr)
             context.WriteLine(item);
     }
@@ -142,7 +142,7 @@ public static class Program
                                 .FirstOrDefault(x => true);
 
         arr.Insert(rowWithMinItem.i + 1, [rowWithMinItem.Item1]);
-        context.PrintLine($"Result:");
+        context.PrintLine($"Result:", ConsoleColor.DarkCyan);
         foreach (var item in arr)
             context.WriteLine(item);
     }

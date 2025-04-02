@@ -148,7 +148,7 @@ let generateMenuAndTasks () =
         |> Seq.map (fun task -> fst (task.Value.ToTuple()))
 
     let menu =
-        generateTable "Available tasks" keyValues BrightCyan BrightGreen Magenta Cyan
+        generateTable "Available tasks" keyValues BrightCyan  BrightWhite  BrightBlue  White
 
     menu, actions
 
@@ -222,9 +222,55 @@ let main args =
             openAndRun filepath runWithReader
     else
         let context = Context(Console.In, Console.Out, true)
-        context.PrintLine("Type 'menu' to return to the menu", ConsoleColor.Cyan)
-        context.PrintLine("Type 'exit' to exit the program", ConsoleColor.Cyan)
-        context.PrintLine("Type 'clear' to clear the console", ConsoleColor.Cyan)
+
+        let data = seq [
+            ("menu", "return to the menu")
+            ("exit", "exit the program")
+            ("clear", "clear the console")
+        ]
+
+        context.PrintLine(generateTable "Available Commands" data BrightCyan  BrightWhite  BrightBlue  White)
         run context
 
     0
+
+
+(*
+Goot themes
+
+
+Classic
+# Task
+BrightBlack  BrightGreen  BrightYellow  White
+# Commands
+BrightBlack  BrightCyan  BrightYellow  White
+# Other
+Magenta
+
+
+Blue Accents
+# Task
+BrightBlue  BrightGreen  BrightYellow  BrightWhite
+# Commands
+BrightBlue  BrightCyan  BrightYellow  BrightWhite
+# Other
+Cyan
+
+
+Hackerman
+# Task
+BrightBlack  BrightGreen  BrightGreen  White
+# Commands
+BrightBlack  BrightGreen  BrightGreen  White
+# Other
+DarkGreen
+
+
+Cold(Not Max)
+# Task
+BrightCyan  BrightWhite  BrightBlue  White
+# Commands
+BrightCyan  BrightWhite  BrightBlue  White
+# Other
+DarkCyan
+*)
