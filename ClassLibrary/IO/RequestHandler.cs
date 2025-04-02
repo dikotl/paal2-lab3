@@ -55,18 +55,30 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     /// Prints a message to the user without printing it as a program output.
     /// </summary>
     /// <param name="message">The message to be printed.</param>
-    public void Print(object message)
+    public void Print(object message, ConsoleColor color = ConsoleColor.White)
     {
-        if (TalkToUser) Console.Error.Write(message);
+        if (TalkToUser)
+        {
+            var oldColor = Console.ForegroundColor;
+            Console.ForegroundColor = color;
+            Console.Error.Write(message);
+            Console.ForegroundColor = oldColor;
+        }
     }
 
     /// <summary>
     /// Prints a message to the user, appending a new line at the end.
     /// </summary>
     /// <param name="message">The message to be printed.</param>
-    public void PrintLine(object message)
+    public void PrintLine(object message, ConsoleColor color = ConsoleColor.White)
     {
-        if (TalkToUser) Console.Error.WriteLine(message);
+        if (TalkToUser)
+        {
+            var oldColor = Console.ForegroundColor;
+            Console.ForegroundColor = color;
+            Console.Error.WriteLine(message);
+            Console.ForegroundColor = oldColor;
+        }
     }
 
     /// <summary>
@@ -93,12 +105,7 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     /// <param name="message">The error message to be printed.</param>
     public void Error(string? message = null)
     {
-        var oldColor = Console.ForegroundColor;
-        Console.ForegroundColor = ConsoleColor.Red;
-
-        PrintLine("Error! " + message ?? "");
-
-        Console.ForegroundColor = oldColor;
+        PrintLine("Error! " + message ?? "", ConsoleColor.Red);
     }
 
     /// <summary>
@@ -156,12 +163,12 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
         switch (style)
         {
             case RequestStyle.Default:
-                if (message != null) Print(message);
+                if (message != null) Print(message, ConsoleColor.Magenta);
                 Print("\n> ");
                 break;
             case RequestStyle.Inline:
-                if (message != null) Print(message);
-                Print(": ");
+                if (message != null) Print(message, ConsoleColor.Magenta);
+                Print(": ", ConsoleColor.Magenta);
                 break;
             case RequestStyle.Bare:
                 break;
