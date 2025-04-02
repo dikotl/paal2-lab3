@@ -65,9 +65,9 @@ Namespace IO
         End Sub
 
         ''' <summary>
-        ''' Prints a message to the console without a newline, using the specified color.  
-        ''' If the TalkToUser variable is set to True,  
-        ''' the message will be written to the standard error stream (Console.Error).  
+        ''' Prints a message to the console without a newline, using the specified color.
+        ''' If the TalkToUser variable is set to True,
+        ''' the message will be written to the standard error stream (Console.Error).
         ''' </summary>
         ''' <param name="message">The message to print.</param>
         ''' <param name="color">(Optional) The text color. Default is white.</param>
@@ -81,9 +81,9 @@ Namespace IO
         End Sub
 
         ''' <summary>
-        ''' Prints a message to the console with the specified color.  
-        ''' If the TalkToUser variable is set to True,  
-        ''' the message will be written to the standard error stream (Console.Error).  
+        ''' Prints a message to the console with the specified color.
+        ''' If the TalkToUser variable is set to True,
+        ''' the message will be written to the standard error stream (Console.Error).
         ''' </summary>
         ''' <param name="message">The message to print.</param>
         ''' <param name="color">(Optional) The text color. Default is white.</param>
@@ -180,13 +180,18 @@ Namespace IO
             End Select
 
             Dim input As String = If(Reader.ReadLine(), "")
-            Dim trimmed = input.Trim().ToLower()
 
-            If trimmed = "menu" Then Throw New ExitToMenuException()
-            If trimmed = "exit" Then Throw New ExitProgramException()
-
-            Return input
-
+            Select Case input.Trim().ToLower()
+                Case "menu"
+                    Throw New ExitToMenuException()
+                Case "exit"
+                    Throw New ExitProgramException()
+                case "clear"
+                    Console.Clear()
+                    Return Request(message, style)
+                Case Else
+                    Return input
+            End Select
         End Function
 
         ''' <summary>

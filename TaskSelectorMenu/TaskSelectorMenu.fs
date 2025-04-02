@@ -102,8 +102,9 @@ let main args =
             openAndRun filepath runWithReader
     else
         let context = Context(Console.In, Console.Out, true)
-        context.PrintLine("To return to the menu, type 'menu'", ConsoleColor.Cyan)
-        context.PrintLine("To exit the program, type 'exit'", ConsoleColor.Cyan)
+        context.PrintLine("Type 'menu' to return to the menu", ConsoleColor.Cyan)
+        context.PrintLine("Type 'exit' to exit the program", ConsoleColor.Cyan)
+        context.PrintLine("Type 'clear' to clear the console", ConsoleColor.Cyan)
         run context
 
     0

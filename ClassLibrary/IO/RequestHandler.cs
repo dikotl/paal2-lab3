@@ -52,9 +52,9 @@ public enum RequestStyle
 public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
 {
     /// <summary>
-    /// Prints a message to the console without a newline, using the specified color.  
-    /// If the TalkToUser variable is set to True,  
-    /// the message will be written to the standard error stream (Console.Error).  
+    /// Prints a message to the console without a newline, using the specified color.
+    /// If the TalkToUser variable is set to True,
+    /// the message will be written to the standard error stream (Console.Error).
     /// </summary>
     /// <param name="message">The message to print.</param>
     /// <param name="color">(Optional) The text color. Default is white.</param>
@@ -70,9 +70,9 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     }
 
     /// <summary>
-    /// Prints a message to the console with the specified color.  
-    /// If the TalkToUser variable is set to True,  
-    /// the message will be written to the standard error stream (Console.Error).  
+    /// Prints a message to the console with the specified color.
+    /// If the TalkToUser variable is set to True,
+    /// the message will be written to the standard error stream (Console.Error).
     /// </summary>
     /// <param name="message">The message to print.</param>
     /// <param name="color">(Optional) The text color. Default is white.</param>
@@ -183,15 +183,19 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
         }
 
         string input = Reader.ReadLine() ?? "";
-        string trimmed = input.Trim().ToLower();
 
-        if (trimmed == "menu")
-            throw new ExitToMenuException();
-
-        if (trimmed == "exit")
-            throw new ExitProgramException();
-
-        return input;
+        switch (input.Trim().ToLower())
+        {
+            case "menu":
+                throw new ExitToMenuException();
+            case "exit":
+                throw new ExitProgramException();
+            case "clear":
+                Console.Clear();
+                return Request(message, style);
+            default:
+                return input;
+        }
     }
 
     /// <summary>
