@@ -167,6 +167,7 @@ Namespace IO
         ''' <exception cref="ExitToMenuException">Thrown when the user chooses to return to the menu.</exception>
         ''' <exception cref="ExitProgramException">Thrown when the user chooses to exit the program.</exception>
         Public Function Request(Optional message As String = Nothing, Optional style As RequestStyle = RequestStyle.[Default]) As String
+begin:
             Select Case style
                 Case RequestStyle.[Default]
                     If message IsNot Nothing Then Print(message, ConsoleColor.Magenta)
@@ -186,9 +187,9 @@ Namespace IO
                     Throw New ExitToMenuException()
                 Case "exit"
                     Throw New ExitProgramException()
-                case "clear"
+                Case "clear"
                     Console.Clear()
-                    Return Request(message, style)
+                    GoTo begin
                 Case Else
                     Return input
             End Select
@@ -215,10 +216,22 @@ Namespace IO
         ''' <param name="converter">A function that converts each input string into the requested type.</param>
         ''' <returns>An array of elements of type T entered by the user.</returns>
         Public Function ReadArrayInline(Of T)(converter As Converter(Of String, T)) As DynArray(Of T)
-            Return Reader _
-                .ReadLine() _
+begin:
+            Dim input As String = Reader.ReadLine()
+
+            Select Case input.Trim().ToLower()
+                Case "menu"
+                    Throw New ExitToMenuException()
+                Case "exit"
+                    Throw New ExitProgramException()
+                Case "clear"
+                    Console.Clear()
+                    GoTo begin
+            End Select
+
+            Return input _
                 .Split() _
-                .Map(Function(input) converter(input)) _
+                .Map(Function(inp) converter(inp)) _
                 .ToDynArray()
         End Function
 
@@ -289,7 +302,7 @@ Namespace IO
         ''' <param name="getRandomItem">A function that generates random elements of type T.</param>
         ''' <returns>A dynamically sized matrix (array of arrays) with parsed Or randomly generated elements.</returns>
         Public Function RequestMatrix(Of T)(converter As Converter(Of String, T), getRandomItem As Func(Of T)) As DynArray(Of DynArray(Of T))
-            Dim size As Integer = Request(AddressOf SizeInt, "Input number of sub-arrays")
+            Dim size As Integer = Request(AddressOf SizeInt, "Input number Of Sub-arrays")
             Dim isRandomOrWasError As Boolean = ChooseInputMethod()
 
             Dim result As DynArray(Of DynArray(Of T)) =
@@ -367,7 +380,7 @@ Namespace IO
         ''' </summary>
         ''' <param name="input">The user input as a string.</param>
         ''' <returns>A valid array size.</returns>
-        Public Function SizeInt(input As String) As Integer
+        Private Function SizeInt(input As String) As Integer
             Dim size As Integer = Integer.Parse(input)
 
             If size < 1 Then
@@ -377,7 +390,7 @@ Namespace IO
             Return size
         End Function
 
-        Public Function Parse(Of T As {IParsable(Of T), New})(input As String) As T
+        Private Function Parse(Of T As {IParsable(Of T), New})(input As String) As T
             Dim method = GetType(T).GetMethod("Parse", {GetType(String), GetType(IFormatProvider)})
 
             Try
