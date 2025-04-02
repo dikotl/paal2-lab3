@@ -65,18 +65,17 @@ let rec runTaskSelector menu tasks (context: Context) =
         // We are not in "test mode", so run the menu again
         runTaskSelector menu tasks context
 
-
-/// Opens a file and runs the action if it's exists.
-///
-/// A file may contains the following:
-///
-/// ```txt
+/// <summary>
+///  Opens a file and runs the action if it's exists.
+/// <code>
 /// 1
 /// 1
 /// 10
-/// ```
-///
+/// </code>
 /// ... where the first line contains the task number, and the rest - the sequence of input data.
+/// </summary>
+/// <param name="filepath">The path to the file to open.</param>
+/// <param name="applyReader">The function to run with the reader as an argument.</param>
 let openAndRun (filepath: string) applyReader =
     try
         use reader = new StreamReader(filepath) :> TextReader
