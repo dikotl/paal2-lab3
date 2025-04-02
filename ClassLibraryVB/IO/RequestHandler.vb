@@ -380,9 +380,9 @@ Namespace IO
                     Return method.Invoke(Nothing, {input, Nothing})
                 Catch ex As TargetInvocationException
                     If TypeOf ex.InnerException Is FormatException Then
-                        Throw New FormatException($"Format error: '{input}' cannot be converted to {GetType(T).Name}.”, ex.InnerException)
+                        Throw New FormatException($"Format error: '{input}' cannot be converted to {GetType(T).Name}.", ex.InnerException)
                     ElseIf TypeOf ex.InnerException Is OverflowException Then
-                        Throw New OverflowException($"Overflow: '{input}' is too large or small for {GetType(T).Name}.”, ex.InnerException)
+                        Throw New OverflowException($"Overflow: '{input}' is too large or small for {GetType(T).Name}.", ex.InnerException)
                     End If
                     Throw
                 End Try
