@@ -166,6 +166,7 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     /// <exception cref="ExitProgramException">Thrown when the user chooses to exit the program.</exception>
     public string Request(string? message = null, RequestStyle style = RequestStyle.Default)
     {
+    begin:
         switch (style)
         {
             case RequestStyle.Default:
@@ -192,7 +193,7 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
                 throw new ExitProgramException();
             case "clear":
                 Console.Clear();
-                return Request(message, style);
+                goto begin; // OMG 🔥 SUPER 🔥 DUPER 🔥 SEMI-UNSAFE 🔥 UNCONDITIONAL 🔥 JUMP
             default:
                 return input;
         }
