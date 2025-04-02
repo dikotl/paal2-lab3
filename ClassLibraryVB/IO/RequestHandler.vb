@@ -368,7 +368,7 @@ begin:
         ''' </summary>
         ''' <param name="input">The user input as a string.</param>
         ''' <returns>A valid array size.</returns>
-        Public Function SizeInt(input As String) As Integer
+        Private Function SizeInt(input As String) As Integer
             Dim size As Integer = Integer.Parse(input)
 
             If size < 1 Then
@@ -378,7 +378,7 @@ begin:
             Return size
         End Function
 
-        Public Function Parse(Of T As {IParsable(Of T), New})(input As String) As T
+        Private Function Parse(Of T As {IParsable(Of T), New})(input As String) As T
             Dim method = GetType(T).GetMethod("Parse", {GetType(String), GetType(IFormatProvider)})
 
             Try
