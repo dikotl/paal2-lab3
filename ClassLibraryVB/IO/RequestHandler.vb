@@ -216,10 +216,22 @@ begin:
         ''' <param name="converter">A function that converts each input string into the requested type.</param>
         ''' <returns>An array of elements of type T entered by the user.</returns>
         Public Function ReadArrayInline(Of T)(converter As Converter(Of String, T)) As DynArray(Of T)
-            Return Reader _
-                .ReadLine() _
+begin:
+            Dim input As String = Reader.ReadLine()
+
+            Select Case input.Trim().ToLower()
+                Case "menu"
+                    Throw New ExitToMenuException()
+                Case "exit"
+                    Throw New ExitProgramException()
+                Case "clear"
+                    Console.Clear()
+                    GoTo begin
+            End Select
+
+            Return input _
                 .Split() _
-                .Map(Function(input) converter(input)) _
+                .Map(Function(inp) converter(inp)) _
                 .ToDynArray()
         End Function
 
@@ -290,7 +302,7 @@ begin:
         ''' <param name="getRandomItem">A function that generates random elements of type T.</param>
         ''' <returns>A dynamically sized matrix (array of arrays) with parsed Or randomly generated elements.</returns>
         Public Function RequestMatrix(Of T)(converter As Converter(Of String, T), getRandomItem As Func(Of T)) As DynArray(Of DynArray(Of T))
-            Dim size As Integer = Request(AddressOf SizeInt, "Input number of sub-arrays")
+            Dim size As Integer = Request(AddressOf SizeInt, "Input number Of Sub-arrays")
             Dim isRandomOrWasError As Boolean = ChooseInputMethod()
 
             Dim result As DynArray(Of DynArray(Of T)) =
