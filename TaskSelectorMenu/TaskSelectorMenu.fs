@@ -3,7 +3,7 @@ open System.Collections.Generic
 open System.IO
 open System.Text
 open App
-open ClassLibrary.IO
+open ClassLibraryVB.IO
 
 
 type Tasks = Dictionary<int, struct (Action<Context> * string)>
@@ -92,6 +92,8 @@ let openAndRun (filepath: string) applyReader =
 
 [<EntryPoint>]
 let main args =
+    Console.InputEncoding <- Encoding.UTF8
+    Console.OutputEncoding <- Encoding.UTF8
     let menu, tasks = generateMenuAndTasks ()
     let run = runTaskSelector menu tasks
 

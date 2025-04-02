@@ -1,6 +1,7 @@
 Imports System
-Imports System.IO
 Imports System.ComponentModel
+Imports System.IO
+Imports System.Reflection
 Imports ClassLibrary.Collections
 Imports ClassLibrary.FunctionalEnumerableOperations
 
@@ -64,19 +65,35 @@ Namespace IO
         End Sub
 
         ''' <summary>
-        ''' Prints a message to the user without printing it as a program output.
+        ''' Prints a message to the console without a newline, using the specified color.  
+        ''' If the TalkToUser variable is set to True,  
+        ''' the message will be written to the standard error stream (Console.Error).  
         ''' </summary>
-        ''' <param name="message">The message to be printed.</param>
-        Public Sub Print(message As Object)
-            If TalkToUser Then Console.Error.Write(message)
+        ''' <param name="message">The message to print.</param>
+        ''' <param name="color">(Optional) The text color. Default is white.</param>
+        Public Sub Print(message As Object, Optional color As ConsoleColor = ConsoleColor.White)
+            If TalkToUser Then
+                Dim oldColor = Console.ForegroundColor
+                Console.ForegroundColor = color
+                Console.Error.Write(message)
+                Console.ForegroundColor = oldColor
+            End If
         End Sub
 
         ''' <summary>
-        ''' Prints a message to the user, appending a New line at the end.
+        ''' Prints a message to the console with the specified color.  
+        ''' If the TalkToUser variable is set to True,  
+        ''' the message will be written to the standard error stream (Console.Error).  
         ''' </summary>
-        ''' <param name="message">The message to be printed.</param>
-        Public Sub PrintLine(message As Object)
-            If TalkToUser Then Console.Error.WriteLine(message)
+        ''' <param name="message">The message to print.</param>
+        ''' <param name="color">(Optional) The text color. Default is white.</param>
+        Public Sub PrintLine(message As Object, Optional color As ConsoleColor = ConsoleColor.White)
+            If TalkToUser Then
+                Dim oldColor = Console.ForegroundColor
+                Console.ForegroundColor = color
+                Console.Error.WriteLine(message)
+                Console.ForegroundColor = oldColor
+            End If
         End Sub
 
         ''' <summary>
@@ -100,12 +117,7 @@ Namespace IO
         ''' </summary>
         ''' <param name="message">The error message to be printed.</param>
         Public Sub [Error](message As String)
-            Dim oldColor As ConsoleColor = Console.ForegroundColor
-            Console.ForegroundColor = ConsoleColor.Red
-
-            PrintLine("Error! " & If(message, ""))
-
-            Console.ForegroundColor = oldColor
+            PrintLine("Error! " & If(message, ""), ConsoleColor.Red)
         End Sub
 
         ''' <summary>
@@ -140,13 +152,9 @@ Namespace IO
         ''' <exception cref="ExitToMenuException">Thrown when the user chooses to return to the menu.</exception>
         ''' <exception cref="ExitProgramException">Thrown when the user chooses to exit the program.</exception>
         Public Function Request(Of T As {IParsable(Of T), New})(Optional message As String = Nothing, Optional style As RequestStyle = RequestStyle.[Default]) As T
-            Return Request(Function(input)
-                               Dim method = GetType(T).GetMethod("Parse", {GetType(String), GetType(IFormatProvider)})
-                               If method IsNot Nothing Then
-                                   Return CType(method.Invoke(Nothing, {input, Nothing}), T)
-                               End If
-                           End Function, message, style)
+            Return Request(AddressOf Parse(Of T), message, style)
         End Function
+
 
 
 
@@ -161,11 +169,11 @@ Namespace IO
         Public Function Request(Optional message As String = Nothing, Optional style As RequestStyle = RequestStyle.[Default]) As String
             Select Case style
                 Case RequestStyle.[Default]
-                    If message IsNot Nothing Then Print(message)
+                    If message IsNot Nothing Then Print(message, ConsoleColor.Magenta)
                     Print(vbLf & "> ")
                 Case RequestStyle.Inline
-                    If message IsNot Nothing Then Print(message)
-                    Print(": ")
+                    If message IsNot Nothing Then Print(message, ConsoleColor.Magenta)
+                    Print(": ", ConsoleColor.Magenta)
                 Case RequestStyle.Bare
                 Case Else
                     Throw New InvalidEnumArgumentException(NameOf(style), CType(style, Integer), GetType(RequestStyle))
@@ -215,17 +223,10 @@ Namespace IO
         ''' <typeparam name="T">The type of the elements in the array, constrained to be IParsable.</typeparam>
         ''' <returns>An array of elements of type T entered by the user.</returns>
         Public Function ReadArrayInline(Of T As {IParsable(Of T), New})() As DynArray(Of T)
-            Dim ParseInput =
-                Function(input As String) As T
-                    Dim method = GetType(T).GetMethod("Parse", {GetType(String), GetType(IFormatProvider)})
-                    If method IsNot Nothing Then
-                        Return CType(method.Invoke(Nothing, {input, Nothing}), T)
-                    End If
-                End Function
             Return Reader _
                 .ReadLine() _
                 .Split() _
-                .Map(Function(input) ParseInput(input)) _
+                .Map(AddressOf Parse(Of T)) _
                 .ToDynArray()
         End Function
 
@@ -237,12 +238,7 @@ Namespace IO
         ''' <param name="getRandomItem">A function that generates random elements of type T.</param>
         ''' <returns>An array of elements of type T entered by the user.</returns>
         Public Function RequestArray(Of T As {IParsable(Of T), New})(getRandomItem As Func(Of T)) As DynArray(Of T)
-            Return RequestArray(Function(input)
-                                    Dim method = GetType(T).GetMethod("Parse", {GetType(String), GetType(IFormatProvider)})
-                                    If method IsNot Nothing Then
-                                        Return CType(method.Invoke(Nothing, {input, Nothing}), T)
-                                    End If
-                                End Function, getRandomItem)
+            Return RequestArray(AddressOf Parse(Of T), getRandomItem)
         End Function
 
 
@@ -263,7 +259,7 @@ Namespace IO
                     Try
                         Return ReadArrayInline(converter)
                     Catch e As Exception When TypeOf e Is FormatException OrElse TypeOf e Is OverflowException
-                        Error (e.Message)
+                        [Error](e.Message)
                     End Try
                 Loop
             End If
@@ -276,12 +272,7 @@ Namespace IO
         ''' <typeparam name="T">The type of the elements in the matrix, constrained to be IParsable.</typeparam>
         ''' <returns>A dynamically sized matrix (array of arrays) with elements of type T.</returns>
         Public Function RequestMatrix(Of T As {IParsable(Of T), New})(getRandomItem As Func(Of T)) As DynArray(Of DynArray(Of T))
-            Return RequestMatrix(Function(input)
-                                     Dim method = GetType(T).GetMethod("Parse", {GetType(String), GetType(IFormatProvider)})
-                                     If method IsNot Nothing Then
-                                         Return CType(method.Invoke(Nothing, {input, Nothing}), T)
-                                     End If
-                                 End Function, getRandomItem)
+            Return RequestMatrix(AddressOf Parse(Of T), getRandomItem)
         End Function
 
 
@@ -318,14 +309,14 @@ Namespace IO
         ''' <param name="show">Outputs a flag indicating if any error occurred during input processing.</param>
         ''' <returns>A dynamic array of dynamic arrays representing the matrix.</returns>
         Private Function RequestMatrixInline(Of T)(size As Integer, converter As Converter(Of String, T), ByRef show As Boolean) As DynArray(Of DynArray(Of T))
-            Dim typed As New DynArray(Of DynArray(Of T))(size)
+            Dim typed As New DynArray(Of DynArray(Of T))(size, Function() Nothing)
             show = False
 
             For i As Integer = 0 To size - 1
                 Try
-                    typed(i) = ReadArrayInline(converter)
+                    typed(i) = ReadArrayInline(Function(input) converter(input))
                 Catch e As Exception When TypeOf e Is FormatException OrElse TypeOf e Is OverflowException
-                    Error (e.Message)
+                    [Error](e.Message)
                     i -= 1
                     show = True
                 End Try
@@ -381,7 +372,24 @@ Namespace IO
             Return size
         End Function
 
+        Public Function Parse(Of T As {IParsable(Of T), New})(input As String) As T
+            Dim method = GetType(T).GetMethod("Parse", {GetType(String), GetType(IFormatProvider)})
 
+            Try
+                Try
+                    Return method.Invoke(Nothing, {input, Nothing})
+                Catch ex As TargetInvocationException
+                    If TypeOf ex.InnerException Is FormatException Then
+                        Throw New FormatException($"Format error: '{input}' cannot be converted to {GetType(T).Name}.", ex.InnerException)
+                    ElseIf TypeOf ex.InnerException Is OverflowException Then
+                        Throw New OverflowException($"Overflow: '{input}' is too large or small for {GetType(T).Name}.", ex.InnerException)
+                    End If
+                    Throw
+                End Try
+            Catch ex As Exception
+                Throw
+            End Try
+        End Function
     End Class
 
 End Namespace
