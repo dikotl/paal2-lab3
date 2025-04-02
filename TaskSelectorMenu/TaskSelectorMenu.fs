@@ -56,12 +56,7 @@ let rec runTaskSelector menu tasks (context: Context) =
     context.PrintLine(menu, ConsoleColor.Cyan)
 
     try
-        context.PrintLine("To return to the menu, type 'menu'", ConsoleColor.Cyan)
-        context.PrintLine("To exit the program, type 'exit'", ConsoleColor.Cyan)
-
-        let task = selectTask tasks context
-
-        task.Invoke context
+        (selectTask tasks context).Invoke context
     with
     | :? ExitProgramException -> exit 0
     | :? ExitToMenuException -> ()
@@ -94,17 +89,21 @@ let openAndRun (filepath: string) applyReader =
 let main args =
     Console.InputEncoding <- Encoding.UTF8
     Console.OutputEncoding <- Encoding.UTF8
+
     let menu, tasks = generateMenuAndTasks ()
     let run = runTaskSelector menu tasks
 
-    let runWithReader reader =
-        let context = Context(reader, Console.Out, (reader = Console.In))
-        run context
-
     if args.Length > 0 then
+        let runWithReader reader =
+            let context = Context(reader, Console.Out, false)
+            run context
+
         for filepath in args do
             openAndRun filepath runWithReader
     else
-        runWithReader Console.In
+        let context = Context(Console.In, Console.Out, true)
+        context.PrintLine("To return to the menu, type 'menu'", ConsoleColor.Cyan)
+        context.PrintLine("To exit the program, type 'exit'", ConsoleColor.Cyan)
+        run context
 
     0
