@@ -167,6 +167,7 @@ Namespace IO
         ''' <exception cref="ExitToMenuException">Thrown when the user chooses to return to the menu.</exception>
         ''' <exception cref="ExitProgramException">Thrown when the user chooses to exit the program.</exception>
         Public Function Request(Optional message As String = Nothing, Optional style As RequestStyle = RequestStyle.[Default]) As String
+begin:
             Select Case style
                 Case RequestStyle.[Default]
                     If message IsNot Nothing Then Print(message, ConsoleColor.Magenta)
@@ -186,9 +187,9 @@ Namespace IO
                     Throw New ExitToMenuException()
                 Case "exit"
                     Throw New ExitProgramException()
-                case "clear"
+                Case "clear"
                     Console.Clear()
-                    Return Request(message, style)
+                    GoTo begin
                 Case Else
                     Return input
             End Select
