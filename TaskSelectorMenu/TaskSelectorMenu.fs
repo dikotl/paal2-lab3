@@ -3,7 +3,7 @@ open System.Collections.Generic
 open System.IO
 open System.Text
 open App
-open ClassLibraryVB.IO
+open ClassLibrary.IO
 
 
 type Tasks = Dictionary<int, struct (Action<Context> * string)>
@@ -40,26 +40,26 @@ let rec selectTask (tasks: TaskList) (context: Context) =
             with
             | :? FormatException
             | :? OverflowException ->
-                context.PrintLine "Error! Invalid input"
+                context.Error "Invalid input"
                 getTaskNumber ()
 
         getTaskNumber () - 1
 
     if taskIndex >= tasks.Count || taskIndex < 0 then
-        context.PrintLine "Error! Unknown task"
+        context.Error "Unknown task"
         selectTask tasks context
     else
         tasks[taskIndex]
 
 
 let rec runTaskSelector menu tasks (context: Context) =
-    context.PrintLine menu
+    context.PrintLine(menu, ConsoleColor.Cyan)
 
     try
-        let task = selectTask tasks context
+        context.PrintLine("To return to the menu, type 'menu'", ConsoleColor.Cyan)
+        context.PrintLine("To exit the program, type 'exit'", ConsoleColor.Cyan)
 
-        context.PrintLine "To return to the menu, type 'menu'"
-        context.PrintLine "To exit the program, type 'exit'"
+        let task = selectTask tasks context
 
         task.Invoke context
     with

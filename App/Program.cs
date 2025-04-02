@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using ClassLibrary.Collections;
 using ClassLibrary.FunctionalEnumerableOperations;
-using ClassLibraryVB.IO;
+using ClassLibrary.IO;
 
 namespace App;
 
