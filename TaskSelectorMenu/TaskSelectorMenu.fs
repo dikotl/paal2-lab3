@@ -6,33 +6,154 @@ open App
 open ClassLibraryVB.IO
 
 
-type Tasks = Dictionary<int, struct (Action<Context> * string)>
-type TaskList = Action<Context> List
+let center (s: string) totalWidth =
+    let padding = max 0 (totalWidth - s.Length)
+    let leftPadding = padding / 2
+    s.PadLeft(s.Length + leftPadding).PadRight(totalWidth)
+
+let numLength n =
+    if n = 0 then
+        1
+    else
+        n //
+        |> Math.Abs
+        |> Math.Log10
+        |> int
+        |> (+) 1
+
+type Color =
+    | Black
+    | Red
+    | Green
+    | Yellow
+    | Blue
+    | Magenta
+    | Cyan
+    | White
+    | BrightBlack
+    | BrightRed
+    | BrightGreen
+    | BrightYellow
+    | BrightBlue
+    | BrightMagenta
+    | BrightCyan
+    | BrightWhite
+
+
+let (=>>) color s =
+    match color with
+    | Black -> "\x1B[30m" + s + "\x1B[0m"
+    | Red -> "\x1B[31m" + s + "\x1B[0m"
+    | Green -> "\x1B[32m" + s + "\x1B[0m"
+    | Yellow -> "\x1B[33m" + s + "\x1B[0m"
+    | Blue -> "\x1B[34m" + s + "\x1B[0m"
+    | Magenta -> "\x1B[35m" + s + "\x1B[0m"
+    | Cyan -> "\x1B[36m" + s + "\x1B[0m"
+    | White -> "\x1B[37m" + s + "\x1B[0m"
+    | BrightBlack -> "\x1B[90m" + s + "\x1B[0m"
+    | BrightRed -> "\x1B[91m" + s + "\x1B[0m"
+    | BrightGreen -> "\x1B[92m" + s + "\x1B[0m"
+    | BrightYellow -> "\x1B[93m" + s + "\x1B[0m"
+    | BrightBlue -> "\x1B[94m" + s + "\x1B[0m"
+    | BrightMagenta -> "\x1B[95m" + s + "\x1B[0m"
+    | BrightCyan -> "\x1B[96m" + s + "\x1B[0m"
+    | BrightWhite -> "\x1B[97m" + s + "\x1B[0m"
+
+
+let generateTable
+    (header: string)
+    (keyValues: (string * string) seq)
+    borderColor
+    headerColor
+    keyColor
+    valueColor //
+    =
+    let maxKeyLen =
+        keyValues //
+        |> Seq.length
+        |> numLength
+
+    let maxValueLen =
+        keyValues //
+        |> Seq.map (fun (_, value) -> value.Length)
+        |> Seq.max
+
+    // 3 for corners and 4 for spaces around
+    let totalLength = 7 + maxKeyLen + maxValueLen
+
+
+    let bars n = //
+        borderColor =>> String.replicate n "═"
+
+    let top =
+        sprintf //
+            "%s%s%s"
+            (borderColor =>> "╔")
+            (bars (totalLength - 2))
+            (borderColor =>> "╗")
+
+    let middle =
+        sprintf //
+            "%s%s%s%s%s"
+            (borderColor =>> "╠")
+            (borderColor =>> bars (maxKeyLen + 2))
+            (borderColor =>> "╦")
+            (bars (maxValueLen + 2))
+            (borderColor =>> "╣")
+
+    let bottom =
+        sprintf //
+            "%s%s%s%s%s"
+            (borderColor =>> "╚")
+            (bars (maxKeyLen + 2))
+            (borderColor =>> "╩")
+            (bars (maxValueLen + 2))
+            (borderColor =>> "╝")
+
+    let header =
+        (borderColor =>> "║") //
+        + (headerColor =>> center header (totalLength - 2))
+        + (borderColor =>> "║")
+
+    let row le (ri: string) =
+        sprintf //
+            "%s %s %s %s %s"
+            (borderColor =>> "║")
+            (keyColor =>> le.ToString().PadRight maxKeyLen)
+            (borderColor =>> "║")
+            (valueColor =>> ri.PadRight maxValueLen)
+            (borderColor =>> "║")
+
+    let rows =
+        keyValues //
+        |> Seq.mapi (fun i (_, desc) -> row (i + 1) desc)
+        |> String.concat "\n"
+
+    String.concat "\n" [ top; header; middle; rows; bottom ]
 
 
 let generateMenuAndTasks () =
-    let menu = new StringBuilder()
-    let tasks = new TaskList()
-    let taskIndex = ref 0
+    let tasks =
+        seq {
+            yield! Program.Block1Tasks
+            yield! Program.Block2Tasks
+        }
 
-    menu.Append "Available tasks" |> ignore
+    let keyValues =
+        tasks //
+        |> Seq.map (fun task -> task.Key.ToString(), snd (task.Value.ToTuple()))
 
-    let inline writeTasksToMenu (block: Tasks) (blockNum: int) (i: int ref) =
-        for pair in block do
-            let taskNum, taskInfo = pair.Deconstruct()
-            let struct (task, desc) = taskInfo
+    let actions =
+        tasks //
+        |> Seq.map (fun task -> fst (task.Value.ToTuple()))
 
-            i.Value <- i.Value + 1
-            menu.Append $"\n    {i.Value} - Task {blockNum}.{taskNum} {desc}" |> ignore
-            tasks.Add task
+    let menu =
+        generateTable "Available tasks" keyValues BrightCyan BrightGreen Magenta Cyan
 
-    writeTasksToMenu Program.Block1Tasks 1 taskIndex
-    writeTasksToMenu Program.Block2Tasks 2 taskIndex
-
-    menu.ToString(), tasks
+    menu, actions
 
 
-let rec selectTask (tasks: TaskList) (context: Context) =
+let rec selectTask (tasks: Context Action List) (context: Context) =
     let taskIndex =
         let rec getTaskNumber () =
             try
@@ -52,7 +173,7 @@ let rec selectTask (tasks: TaskList) (context: Context) =
         tasks[taskIndex]
 
 
-let rec runTaskSelector menu tasks (context: Context) =
+let rec runTaskSelector (menu: string) tasks (context: Context) =
     context.PrintLine(menu, ConsoleColor.Cyan)
 
     try
@@ -91,7 +212,7 @@ let main args =
     Console.OutputEncoding <- Encoding.UTF8
 
     let menu, tasks = generateMenuAndTasks ()
-    let run = runTaskSelector menu tasks
+    let run = runTaskSelector menu (List tasks)
 
     if args.Length > 0 then
         let runWithReader reader =
