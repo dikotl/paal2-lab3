@@ -23,41 +23,41 @@ let numLength n =
 
 type Color =
     | Black
-    | Red
-    | Green
-    | Yellow
+    | DarkBlue
+    | DarkGreen
+    | DarkCyan
+    | DarkRed
+    | DarkMagenta
+    | DarkYellow
+    | Gray
+    | DarkGray
     | Blue
-    | Magenta
+    | Green
     | Cyan
+    | Red
+    | Magenta
+    | Yellow
     | White
-    | BrightBlack
-    | BrightRed
-    | BrightGreen
-    | BrightYellow
-    | BrightBlue
-    | BrightMagenta
-    | BrightCyan
-    | BrightWhite
 
 
 let (=>>) color s =
     match color with
-    | Black -> "\x1B[30m" + s + "\x1B[0m"
-    | Red -> "\x1B[31m" + s + "\x1B[0m"
-    | Green -> "\x1B[32m" + s + "\x1B[0m"
-    | Yellow -> "\x1B[33m" + s + "\x1B[0m"
-    | Blue -> "\x1B[34m" + s + "\x1B[0m"
-    | Magenta -> "\x1B[35m" + s + "\x1B[0m"
-    | Cyan -> "\x1B[36m" + s + "\x1B[0m"
-    | White -> "\x1B[37m" + s + "\x1B[0m"
-    | BrightBlack -> "\x1B[90m" + s + "\x1B[0m"
-    | BrightRed -> "\x1B[91m" + s + "\x1B[0m"
-    | BrightGreen -> "\x1B[92m" + s + "\x1B[0m"
-    | BrightYellow -> "\x1B[93m" + s + "\x1B[0m"
-    | BrightBlue -> "\x1B[94m" + s + "\x1B[0m"
-    | BrightMagenta -> "\x1B[95m" + s + "\x1B[0m"
-    | BrightCyan -> "\x1B[96m" + s + "\x1B[0m"
-    | BrightWhite -> "\x1B[97m" + s + "\x1B[0m"
+    | Black       -> "\x1B[30m" + s + "\x1B[0m"
+    | DarkBlue    -> "\x1B[34m" + s + "\x1B[0m"
+    | DarkGreen   -> "\x1B[32m" + s + "\x1B[0m"
+    | DarkCyan    -> "\x1B[36m" + s + "\x1B[0m"
+    | DarkRed     -> "\x1B[31m" + s + "\x1B[0m"
+    | DarkMagenta -> "\x1B[35m" + s + "\x1B[0m"
+    | DarkYellow  -> "\x1B[33m" + s + "\x1B[0m"
+    | Gray        -> "\x1B[37m" + s + "\x1B[0m"
+    | DarkGray    -> "\x1B[90m" + s + "\x1B[0m"
+    | Blue        -> "\x1B[94m" + s + "\x1B[0m"
+    | Green       -> "\x1B[92m" + s + "\x1B[0m"
+    | Cyan        -> "\x1B[96m" + s + "\x1B[0m"
+    | Red         -> "\x1B[91m" + s + "\x1B[0m"
+    | Magenta     -> "\x1B[95m" + s + "\x1B[0m"
+    | Yellow      -> "\x1B[93m" + s + "\x1B[0m"
+    | White       -> "\x1B[97m" + s + "\x1B[0m"
 
 
 let generateTable
@@ -148,7 +148,7 @@ let generateMenuAndTasks () =
         |> Seq.map (fun task -> fst (task.Value.ToTuple()))
 
     let menu =
-        generateTable "Available tasks" keyValues BrightCyan  BrightWhite  BrightBlue  White
+        generateTable "Available tasks" keyValues Cyan White Blue Gray
 
     menu, actions
 
@@ -229,48 +229,48 @@ let main args =
             ("clear", "clear the console")
         ]
 
-        context.PrintLine(generateTable "Available Commands" data BrightCyan  BrightWhite  BrightBlue  White)
+        context.PrintLine(generateTable "Available Commands" data Cyan White Blue Gray)
         run context
 
     0
 
 
 (*
-Goot themes
+Good themes
 
 
 Classic
 # Task
-BrightBlack  BrightGreen  BrightYellow  White
+DarkGray  Green  Yellow  Gray
 # Commands
-BrightBlack  BrightCyan  BrightYellow  White
+DarkGray  Cyan  Yellow  Gray
 # Other
 Magenta
 
 
 Blue Accents
 # Task
-BrightBlue  BrightGreen  BrightYellow  BrightWhite
+Blue  Green  Yellow  White
 # Commands
-BrightBlue  BrightCyan  BrightYellow  BrightWhite
+Blue  Cyan  Yellow  White
 # Other
 Cyan
 
 
 Hackerman
 # Task
-BrightBlack  BrightGreen  BrightGreen  White
+DarkGray  Green  Green  Gray
 # Commands
-BrightBlack  BrightGreen  BrightGreen  White
+DarkGray  Green  Green  Gray
 # Other
 DarkGreen
 
 
 Cold(Not Max)
 # Task
-BrightCyan  BrightWhite  BrightBlue  White
+Cyan  White  Blue  Gray
 # Commands
-BrightCyan  BrightWhite  BrightBlue  White
+Cyan  White  Blue  Gray
 # Other
 DarkCyan
 *)
