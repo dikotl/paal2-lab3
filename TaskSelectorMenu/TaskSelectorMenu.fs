@@ -70,8 +70,8 @@ let generateTable
     =
     let maxKeyLen =
         keyValues //
-        |> Seq.length
-        |> numLength
+        |> Seq.map (fun (key, _) -> key.Length)
+        |> Seq.max
 
     let maxValueLen =
         keyValues //
@@ -126,7 +126,7 @@ let generateTable
 
     let rows =
         keyValues //
-        |> Seq.mapi (fun i (_, desc) -> row (i + 1) desc)
+        |> Seq.map (fun (key, desc) -> row key desc)
         |> String.concat "\n"
 
     String.concat "\n" [ top; header; middle; rows; bottom ]
@@ -141,7 +141,7 @@ let generateMenuAndTasks () =
 
     let keyValues =
         tasks //
-        |> Seq.map (fun task -> task.Key.ToString(), snd (task.Value.ToTuple()))
+        |> Seq.mapi (fun i task -> (i+1).ToString(), snd (task.Value.ToTuple()))
 
     let actions =
         tasks //
