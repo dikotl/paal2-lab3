@@ -1,11 +1,10 @@
 using System;
 using System.Text;
-using ClassLibrary.Collections;
-using ClassLibrary.FunctionalEnumerableOperations;
+using ClassLibraryCS.Collections;
+using ClassLibraryCS.FunctionalEnumerableOperations;
+using static Tests.ClassLibraryCS.Collections.ConstValues;
 
-using static ClassLibraryTests.Collections.DynArray.ConstValues;
-
-namespace ClassLibraryTests.Collections.DynArray;
+namespace Tests.ClassLibraryCS.Collections;
 
 [TestClass]
 public sealed class Basics

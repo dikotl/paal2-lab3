@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Numerics;
 using System.Reflection;
-using ClassLibrary.Collections;
-using ClassLibrary.FunctionalEnumerableOperations;
+using ClassLibraryCS.Collections;
+using ClassLibraryCS.FunctionalEnumerableOperations;
+using static Tests.ClassLibraryCS.FunctionalEnumerableOperations.ConstValues;
 
-using static ClassLibraryTests.FunctionalEnumerableOperations.Enumerable.ConstValues;
+using Feo = ClassLibraryCS.FunctionalEnumerableOperations;
 
-using Feo = ClassLibrary.FunctionalEnumerableOperations;
-
-namespace ClassLibraryTests.FunctionalEnumerableOperations.Enumerable;
+namespace Tests.ClassLibraryCS.FunctionalEnumerableOperations;
 
 [TestClass]
 public sealed class Transforms
@@ -247,7 +246,7 @@ public sealed class Folds
 {
     [TestMethod]
     public void TestFold_1___Int() =>
-        FeoTestImplementation.TestFold_1<int>(Generator.GetRandomIntArray,
+        FeoTestImplementation.TestFold_1(Generator.GetRandomIntArray,
         [
             (acc, c) => acc + c,
             (acc, c) => c < acc ? c : acc,
@@ -260,7 +259,7 @@ public sealed class Folds
 
     [TestMethod]
     public void TestFold_1___Double() =>
-        FeoTestImplementation.TestFold_1<double>(Generator.GetRandomDoubleArray,
+        FeoTestImplementation.TestFold_1(Generator.GetRandomDoubleArray,
         [
             (acc, c) => acc + c,
             (acc, c) => c < acc ? c : acc,
@@ -682,7 +681,7 @@ public static class FeoTestImplementation
             var a = generateArray(DefMaxSize, DefElementBound);
             var k = 0;
             var expected = string.Join(" ", System.Linq.Enumerable.Select(a, a => (a, k++)));
-            var actual = string.Join(" ", Feo.Enumerable.Enumerate(a));
+            var actual = string.Join(" ", a.Enumerate());
 
             Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
             $"<{typeof(T)}> test target does not work correctly");
@@ -695,8 +694,8 @@ public static class FeoTestImplementation
         for (var i = 0; i < RepeatTime; i++)
         {
             var a = generateArray(DefMaxSize, DefElementBound);
-            var expectedMin = Feo.Enumerable.Min(a);
-            var expectedMax = Feo.Enumerable.Max(a);
+            var expectedMin = a.Min();
+            var expectedMax = a.Max();
             var min = System.Linq.Enumerable.Min(a);
             var max = System.Linq.Enumerable.Max(a);
 
@@ -712,8 +711,8 @@ public static class FeoTestImplementation
             for (var i = 0; i < RepeatTime; i++)
             {
                 var a = generateArray(DefMaxSize, DefElementBound);
-                var expectedMin = Feo.Enumerable.Min(a, selector.Compile());
-                var expectedMax = Feo.Enumerable.Max(a, selector.Compile());
+                var expectedMin = a.Min(selector.Compile());
+                var expectedMax = a.Max(selector.Compile());
                 var min = System.Linq.Enumerable.Min(a, selector.Compile());
                 var max = System.Linq.Enumerable.Max(a, selector.Compile());
 
@@ -729,7 +728,7 @@ public static class FeoTestImplementation
             var a = generateArray(DefMaxSize, DefElementBound);
             var skipLen = Generator.Rand.Next(System.Linq.Enumerable.ToArray(a).Length);
             var expected = string.Join(" ", System.Linq.Enumerable.Skip(a, skipLen));
-            var actual = string.Join(" ", Feo.Enumerable.Skip(a, skipLen));
+            var actual = string.Join(" ", a.Skip(skipLen));
 
             Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
             $"<{typeof(T)}> test target does not work correctly");
@@ -743,7 +742,7 @@ public static class FeoTestImplementation
             var a = generateArray(DefMaxSize, DefElementBound);
             var takeLen = Generator.Rand.Next(System.Linq.Enumerable.ToArray(a).Length);
             var expected = string.Join(" ", System.Linq.Enumerable.Take(a, takeLen));
-            var actual = string.Join(" ", Feo.Enumerable.Take(a, takeLen));
+            var actual = string.Join(" ", a.Take(takeLen));
 
             Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
             $"<{typeof(T)}> test target does not work correctly");
@@ -759,7 +758,7 @@ public static class FeoTestImplementation
                 var expected = string.Join(" ",
                     System.Linq.Enumerable.FirstOrDefault(a, predicate.Compile()));
                 var actual = string.Join(" ",
-                    Feo.Enumerable.FirstOrDefault(a, predicate.Compile()));
+                    a.FirstOrDefault(predicate.Compile()));
 
                 Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
                 $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
@@ -780,7 +779,7 @@ public static class FeoTestImplementation
                 var expected = string.Join(" ",
                     System.Linq.Enumerable.FirstOrDefault(a, predicate.Compile(), defaultValue));
                 var actual = string.Join(" ",
-                    Feo.Enumerable.FirstOrDefault(a, predicate.Compile(), defaultValue));
+                    a.FirstOrDefault(predicate.Compile(), defaultValue));
 
                 Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
                 $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
@@ -796,7 +795,7 @@ public static class FeoTestImplementation
                 var expected = string.Join(" ",
                     System.Linq.Enumerable.All(a, predicate.Compile()));
                 var actual = string.Join(" ",
-                    Feo.Enumerable.All(a, predicate.Compile()));
+                    a.All(predicate.Compile()));
 
                 Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
                 $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
@@ -812,7 +811,7 @@ public static class FeoTestImplementation
                 var expected = string.Join(" ",
                     System.Linq.Enumerable.All(a, predicate.Compile()));
                 var actual = string.Join(" ",
-                    Feo.Enumerable.All(a, predicate.Compile()));
+                    a.All(predicate.Compile()));
 
                 Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
                 $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
@@ -825,7 +824,7 @@ public static class FeoTestImplementation
         {
             var a = generateArray(..(DefMaxSize.End.Value * 3), DefElementBound * 2);
             var expected = string.Join(" ", System.Linq.Enumerable.ToArray(a));
-            var actual = string.Join(" ", Feo.Enumerable.ToArray(a));
+            var actual = string.Join(" ", a.ToArray());
 
             Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
             $"<{typeof(T)}> test target does not work correctly");
@@ -838,7 +837,7 @@ public static class FeoTestImplementation
         {
             var a = generateArray(..(DefMaxSize.End.Value * 3), DefElementBound * 2);
             var expected = string.Join(" ", System.Linq.Enumerable.ToList(a));
-            var actual = string.Join(" ", Feo.Enumerable.ToList(a));
+            var actual = string.Join(" ", a.ToList());
 
             Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
             $"<{typeof(T)}> test target does not work correctly");
@@ -851,7 +850,7 @@ public static class FeoTestImplementation
         {
             var a = generateArray(..(DefMaxSize.End.Value * 3), DefElementBound * 2);
             var expected = string.Join(" ", System.Linq.Enumerable.ToHashSet(a));
-            var actual = string.Join(" ", Feo.Enumerable.ToSet(a));
+            var actual = string.Join(" ", a.ToSet());
 
             Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
             $"<{typeof(T)}> test target does not work correctly");
@@ -867,7 +866,7 @@ public static class FeoTestImplementation
                 var expected = string.Join(" ",
                     System.Linq.Enumerable.Aggregate(a, predicate.Compile()));
                 var actual = string.Join(" ",
-                    Feo.Enumerable.Fold(a, predicate.Compile()));
+                    a.Fold(predicate.Compile()));
 
                 Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
                 $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
@@ -884,7 +883,7 @@ public static class FeoTestImplementation
                 var expected = string.Join(" ",
                     System.Linq.Enumerable.Aggregate(a, defVal, predicate.Compile()));
                 var actual = string.Join(" ",
-                    Feo.Enumerable.Fold(a, defVal, predicate.Compile()));
+                    a.Fold(defVal, predicate.Compile()));
 
                 Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
                 $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
@@ -900,7 +899,7 @@ public static class FeoTestImplementation
                 var expected = string.Join(" ",
                     System.Linq.Enumerable.Where(a, predicate.Compile()));
                 var actual = string.Join(" ",
-                    Feo.Enumerable.Filter(a, predicate.Compile()));
+                    a.Filter(predicate.Compile()));
 
                 Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
                 $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
@@ -916,7 +915,7 @@ public static class FeoTestImplementation
                 var expected = string.Join(" ",
                     System.Linq.Enumerable.Where(a, predicate.Compile()));
                 var actual = string.Join(" ",
-                    Feo.Enumerable.Filter(a, predicate.Compile()));
+                    a.Filter(predicate.Compile()));
 
                 Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
                 $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
@@ -932,7 +931,7 @@ public static class FeoTestImplementation
                 var expected = string.Join(" ",
                     System.Linq.Enumerable.TakeWhile(a, predicate.Compile()));
                 var actual = string.Join(" ",
-                    Feo.Enumerable.TakeWhile(a, predicate.Compile()));
+                    a.TakeWhile(predicate.Compile()));
 
                 Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
                 $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
@@ -948,7 +947,7 @@ public static class FeoTestImplementation
                 var expected = string.Join(" ",
                     System.Linq.Enumerable.SkipWhile(a, predicate.Compile()));
                 var actual = string.Join(" ",
-                    Feo.Enumerable.SkipWhile(a, predicate.Compile()));
+                    a.SkipWhile(predicate.Compile()));
 
                 Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
                 $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
@@ -964,7 +963,7 @@ public static class FeoTestImplementation
                 var expected = string.Join(" ",
                     System.Linq.Enumerable.Select(a, predicate.Compile()));
                 var actual = string.Join(" ",
-                    Feo.Enumerable.Map(a, predicate.Compile()));
+                    a.Map(predicate.Compile()));
 
                 Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
                 $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
@@ -987,7 +986,7 @@ public static class FeoTestImplementation
                     var expected = string.Join(" ",
                         System.Linq.Enumerable.OrderBy(a, predicate.Compile(), comparer));
                     var actual = string.Join(" ",
-                        Feo.Enumerable.OrderBy(a, predicate.Compile(), comparer));
+                        a.OrderBy(predicate.Compile(), comparer));
 
                     Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
                     $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");
@@ -1011,7 +1010,7 @@ public static class FeoTestImplementation
                     var expected = string.Join(" ",
                         System.Linq.Enumerable.OrderByDescending(a, predicate.Compile(), comparer));
                     var actual = string.Join(" ",
-                        Feo.Enumerable.OrderByDescending(a, predicate.Compile(), comparer));
+                        a.OrderByDescending(predicate.Compile(), comparer));
 
                     Assert.AreEqual(expected, actual, $"{MethodBase.GetCurrentMethod()?.Name} " +
                     $"<{typeof(T)}> test target does not work correctly with {predicate.Body}");

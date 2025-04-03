@@ -1,10 +1,9 @@
 Imports System
-Imports System.ComponentModel
 Imports System.IO
 Imports System.Reflection
-Imports ClassLibrary.Collections
-Imports ClassLibrary.FunctionalEnumerableOperations
-
+Imports System.ComponentModel
+Imports ClassLibraryCS.Collections
+Imports ClassLibraryCS.FunctionalEnumerableOperations
 
 Namespace IO
     ''' <summary>
@@ -53,15 +52,33 @@ Namespace IO
     ''' <param name="Reader">The input data stream.</param>
     ''' <param name="Writer">The output data stream.</param>
     ''' <param name="TalkToUser">Indicates whether to communicate with the user through stderr.</param>
+
+    Public Class Theme
+        Public ReadOnly Property Border As ConsoleColor
+        Public ReadOnly Property Header As ConsoleColor
+        Public ReadOnly Property Key As ConsoleColor
+        Public ReadOnly Property Value As ConsoleColor
+        Public ReadOnly Property Other As ConsoleColor
+        Public Sub New(border As ConsoleColor, header As ConsoleColor, key As ConsoleColor, value As ConsoleColor, other As ConsoleColor)
+            Me.Border = border
+            Me.Header = header
+            Me.Key = key
+            Me.Value = value
+            Me.Other = other
+        End Sub
+    End Class
+
     Public Class Context
         Public ReadOnly Property Reader As TextReader
         Public ReadOnly Property Writer As TextWriter
         Public ReadOnly Property TalkToUser As Boolean
+        Public ReadOnly Property GlobalTheme As Theme
 
-        Public Sub New(reader As TextReader, writer As TextWriter, talkToUser As Boolean)
+        Public Sub New(reader As TextReader, writer As TextWriter, talkToUser As Boolean, globalTheme As Theme)
             Me.Reader = reader
             Me.Writer = writer
             Me.TalkToUser = talkToUser
+            Me.GlobalTheme = globalTheme
         End Sub
 
         ''' <summary>
@@ -71,7 +88,8 @@ Namespace IO
         ''' </summary>
         ''' <param name="message">The message to print.</param>
         ''' <param name="color">(Optional) The text color. Default is white.</param>
-        Public Sub Print(message As Object, Optional color As ConsoleColor = ConsoleColor.Gray)
+        Public Sub Print(message As Object, Optional color As ConsoleColor? = Nothing)
+            If color Is Nothing Then color = GlobalTheme.Other
             If TalkToUser Then
                 Dim oldColor = Console.ForegroundColor
                 Console.ForegroundColor = color
@@ -87,7 +105,8 @@ Namespace IO
         ''' </summary>
         ''' <param name="message">The message to print.</param>
         ''' <param name="color">(Optional) The text color. Default is white.</param>
-        Public Sub PrintLine(message As Object, Optional color As ConsoleColor = ConsoleColor.Gray)
+        Public Sub PrintLine(message As Object, Optional color As ConsoleColor? = Nothing)
+            If color Is Nothing Then color = GlobalTheme.Other
             If TalkToUser Then
                 Dim oldColor = Console.ForegroundColor
                 Console.ForegroundColor = color
@@ -117,7 +136,7 @@ Namespace IO
         ''' </summary>
         ''' <param name="message">The error message to be printed.</param>
         Public Sub [Error](message As String)
-            PrintLine("Error! " & If(message, ""), ConsoleColor.Red)
+            PrintLine("Error! " & If(message, ""), ConsoleColor.DarkRed)
         End Sub
 
         ''' <summary>
@@ -170,11 +189,11 @@ Namespace IO
 begin:
             Select Case style
                 Case RequestStyle.[Default]
-                    If message IsNot Nothing Then Print(message, ConsoleColor.DarkCyan)
+                    If message IsNot Nothing Then Print(message)
                     Print(vbLf & "> ")
                 Case RequestStyle.Inline
-                    If message IsNot Nothing Then Print(message, ConsoleColor.DarkCyan)
-                    Print(": ", ConsoleColor.DarkCyan)
+                    If message IsNot Nothing Then Print(message)
+                    Print(": ")
                 Case RequestStyle.Bare
                 Case Else
                     Throw New InvalidEnumArgumentException(NameOf(style), CType(style, Integer), GetType(RequestStyle))

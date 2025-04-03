@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\ClassLibrary\ClassLibrary.csproj" />
+    <ProjectReference Include="..\ClassLibraryCS\ClassLibraryCS.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

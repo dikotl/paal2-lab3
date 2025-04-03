@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClassLibrary.Collections;
+namespace ClassLibraryCS.Collections;
 
 public class DynArray<T> : IList<T>, ICloneable
 {
