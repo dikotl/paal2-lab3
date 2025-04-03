@@ -71,7 +71,7 @@ Namespace IO
         ''' </summary>
         ''' <param name="message">The message to print.</param>
         ''' <param name="color">(Optional) The text color. Default is white.</param>
-        Public Sub Print(message As Object, Optional color As ConsoleColor = ConsoleColor.White)
+        Public Sub Print(message As Object, Optional color As ConsoleColor = ConsoleColor.Gray)
             If TalkToUser Then
                 Dim oldColor = Console.ForegroundColor
                 Console.ForegroundColor = color
@@ -87,7 +87,7 @@ Namespace IO
         ''' </summary>
         ''' <param name="message">The message to print.</param>
         ''' <param name="color">(Optional) The text color. Default is white.</param>
-        Public Sub PrintLine(message As Object, Optional color As ConsoleColor = ConsoleColor.White)
+        Public Sub PrintLine(message As Object, Optional color As ConsoleColor = ConsoleColor.Gray)
             If TalkToUser Then
                 Dim oldColor = Console.ForegroundColor
                 Console.ForegroundColor = color

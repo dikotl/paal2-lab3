@@ -58,7 +58,7 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     /// </summary>
     /// <param name="message">The message to print.</param>
     /// <param name="color">(Optional) The text color. Default is white.</param>
-    public void Print(object message, ConsoleColor color = ConsoleColor.White)
+    public void Print(object message, ConsoleColor color = ConsoleColor.Gray)
     {
         if (TalkToUser)
         {
@@ -76,7 +76,7 @@ public record Context(TextReader Reader, TextWriter Writer, bool TalkToUser)
     /// </summary>
     /// <param name="message">The message to print.</param>
     /// <param name="color">(Optional) The text color. Default is white.</param>
-    public void PrintLine(object message, ConsoleColor color = ConsoleColor.White)
+    public void PrintLine(object message, ConsoleColor color = ConsoleColor.Gray)
     {
         if (TalkToUser)
         {
