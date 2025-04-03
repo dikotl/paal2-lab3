@@ -65,7 +65,7 @@ let main args =
     Console.InputEncoding <- Encoding.UTF8
     Console.OutputEncoding <- Encoding.UTF8
 
-    let globalTheme = Theme.Classic
+    let globalTheme = Theme.Cold
 
     let parsedTasks =
         seq {
@@ -74,32 +74,38 @@ let main args =
         }
         |> parseTasks
 
-    let menu = generateTable "Available tasks" (getIndexedDescriptions parsedTasks) globalTheme
+
+    let helpMenu = 
+        generateTable 
+            "Available Commands" 
+            [ 
+                ("menu", "return to the menu")
+                ("exit", "exit the program")
+                ("help", "show this table") 
+                ("clear", "clear the console") 
+            ] 
+            globalTheme
+
+    let tasksMenu = generateTable "Available tasks" (getIndexedDescriptions parsedTasks) globalTheme
 
     let tasks = 
         parsedTasks
         |> Seq.map (fun (_, _, task) -> task)
         |> List
 
-    let run = runTaskSelector menu tasks
+    let run = runTaskSelector tasksMenu tasks
 
     if args.Length > 0 then
         let runWithReader reader =
-            let context = Context(reader, Console.Out, false, globalTheme.ToVBTheme())
+            let context = Context(reader, Console.Out, false, globalTheme.ToVBTheme(), helpMenu)
             run context
 
         for filepath in args do
             openAndRun filepath runWithReader
     else
-        let context = Context(Console.In, Console.Out, true, globalTheme.ToVBTheme())
+        let context = Context(Console.In, Console.Out, true, globalTheme.ToVBTheme(), helpMenu)
 
-        let data = seq [
-            ("menu", "return to the menu")
-            ("exit", "exit the program")
-            ("clear", "clear the console")
-        ]
-
-        context.PrintLine(generateTable "Available Commands" data globalTheme)
+        context.PrintLine(helpMenu)
         run context
 
     0

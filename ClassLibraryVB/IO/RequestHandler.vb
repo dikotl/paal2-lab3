@@ -73,12 +73,14 @@ Namespace IO
         Public ReadOnly Property Writer As TextWriter
         Public ReadOnly Property TalkToUser As Boolean
         Public ReadOnly Property GlobalTheme As Theme
+        Public ReadOnly Property HelpMenu As String
 
-        Public Sub New(reader As TextReader, writer As TextWriter, talkToUser As Boolean, globalTheme As Theme)
+        Public Sub New(reader As TextReader, writer As TextWriter, talkToUser As Boolean, globalTheme As Theme, helpMenu As String)
             Me.Reader = reader
             Me.Writer = writer
             Me.TalkToUser = talkToUser
             Me.GlobalTheme = globalTheme
+            Me.HelpMenu = helpMenu
         End Sub
 
         ''' <summary>
@@ -209,6 +211,9 @@ begin:
                 Case "clear"
                     Console.Clear()
                     GoTo begin
+                Case "help"
+                    PrintLine(HelpMenu)
+                    GoTo begin
                 Case Else
                     Return input
             End Select
@@ -245,6 +250,9 @@ begin:
                     Throw New ExitProgramException()
                 Case "clear"
                     Console.Clear()
+                    GoTo begin
+                Case "help"
+                    PrintLine(HelpMenu)
                     GoTo begin
             End Select
 
