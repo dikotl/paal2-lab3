@@ -13,50 +13,86 @@ type Theme =
         Other:  ConsoleColor
     }
 
-    static member Default =
-        {
-            Border = ConsoleColor.Gray
-            Header = ConsoleColor.Gray
-            Key    = ConsoleColor.Gray
-            Value  = ConsoleColor.Gray
-            Other  = ConsoleColor.Gray
-        }
+        static member Default =
+            {
+                Border = ConsoleColor.Gray
+                Header = ConsoleColor.Gray
+                Key    = ConsoleColor.Gray
+                Value  = ConsoleColor.Gray
+                Other  = ConsoleColor.Gray
+            }
 
-    static member Classic =
-        {
-            Border = ConsoleColor.DarkGray
-            Header = ConsoleColor.Green
-            Key    = ConsoleColor.Yellow
-            Value  = ConsoleColor.Gray
-            Other  = ConsoleColor.Magenta
-        }
+        static member Classic =
+            {
+                Border = ConsoleColor.DarkGray
+                Header = ConsoleColor.Green
+                Key    = ConsoleColor.Yellow
+                Value  = ConsoleColor.Gray
+                Other  = ConsoleColor.Magenta
+            }
 
-    static member BlueAccents =
-        {
-            Border = ConsoleColor.Blue
-            Header = ConsoleColor.Green
-            Key    = ConsoleColor.Yellow
-            Value  = ConsoleColor.White
-            Other  = ConsoleColor.Cyan
-        }
+        static member BlueAccents =
+            {
+                Border = ConsoleColor.Blue
+                Header = ConsoleColor.Green
+                Key    = ConsoleColor.Yellow
+                Value  = ConsoleColor.White
+                Other  = ConsoleColor.Cyan
+            }
 
-    static member Hackerman =
-        {
-            Border = ConsoleColor.DarkGray
-            Header = ConsoleColor.Green
-            Key    = ConsoleColor.Green
-            Value  = ConsoleColor.Gray
-            Other  = ConsoleColor.DarkGreen
-        }
+        static member Hackerman =
+            {
+                Border = ConsoleColor.DarkGray
+                Header = ConsoleColor.Green
+                Key    = ConsoleColor.Green
+                Value  = ConsoleColor.Gray
+                Other  = ConsoleColor.DarkGreen
+            }
 
-    static member Cold =
-        {
-            Border = ConsoleColor.Cyan
-            Header = ConsoleColor.White
-            Key    = ConsoleColor.Blue
-            Value  = ConsoleColor.Gray
-            Other  = ConsoleColor.DarkCyan
-        }
+        static member Cold =
+            {
+                Border = ConsoleColor.Cyan
+                Header = ConsoleColor.White
+                Key    = ConsoleColor.Blue
+                Value  = ConsoleColor.Gray
+                Other  = ConsoleColor.DarkCyan
+            }
+
+        static member Warm =
+            {
+                Border = ConsoleColor.Red
+                Header = ConsoleColor.Yellow
+                Key    = ConsoleColor.Magenta
+                Value  = ConsoleColor.White
+                Other  = ConsoleColor.DarkRed
+            }
+
+        static member Sunset =
+            {
+                Border = ConsoleColor.DarkRed
+                Header = ConsoleColor.Yellow
+                Key    = ConsoleColor.Red
+                Value  = ConsoleColor.Magenta
+                Other  = ConsoleColor.DarkYellow
+            }
+
+        static member Forest =
+            {
+                Border = ConsoleColor.DarkGreen
+                Header = ConsoleColor.Green
+                Key    = ConsoleColor.Yellow
+                Value  = ConsoleColor.White
+                Other  = ConsoleColor.DarkGreen
+            }
+
+        static member Ocean =
+            {
+                Border = ConsoleColor.Blue
+                Header = ConsoleColor.Cyan
+                Key    = ConsoleColor.DarkBlue
+                Value  = ConsoleColor.White
+                Other  = ConsoleColor.DarkCyan
+            }
 
 let (=>>) color s =
     match color with
