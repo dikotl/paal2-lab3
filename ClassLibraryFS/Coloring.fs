@@ -2,7 +2,6 @@
 
 open System
 open System.Runtime.CompilerServices
-open ClassLibraryVB.IO
 
 type Theme =
     {
@@ -119,10 +118,3 @@ type WrapEscColor() =
     [<Extension>]
     static member WrapEscColor(str: string, color: ConsoleColor) =
         color =>> str
-
-
-[<Extension>]
-type ToVBTheme() =
-    [<Extension>]
-    static member ToVBTheme(theme: Theme) =
-        Theme(theme.Border, theme.Header, theme.Key, theme.Value, theme.Other)

@@ -4,6 +4,8 @@ Imports System.Reflection
 Imports System.ComponentModel
 Imports ClassLibraryCS.Collections
 Imports ClassLibraryCS.FunctionalEnumerableOperations
+Imports ClassLibraryFS
+Imports ClassLibraryFS.ConsoleUI
 
 Namespace IO
     ''' <summary>
@@ -53,29 +55,15 @@ Namespace IO
     ''' <param name="Writer">The output data stream.</param>
     ''' <param name="TalkToUser">Indicates whether to communicate with the user through stderr.</param>
 
-    Public Class Theme
-        Public ReadOnly Property Border As ConsoleColor
-        Public ReadOnly Property Header As ConsoleColor
-        Public ReadOnly Property Key As ConsoleColor
-        Public ReadOnly Property Value As ConsoleColor
-        Public ReadOnly Property Other As ConsoleColor
-        Public Sub New(border As ConsoleColor, header As ConsoleColor, key As ConsoleColor, value As ConsoleColor, other As ConsoleColor)
-            Me.Border = border
-            Me.Header = header
-            Me.Key = key
-            Me.Value = value
-            Me.Other = other
-        End Sub
-    End Class
-
     Public Class Context
-        Public ReadOnly Property Reader As TextReader
-        Public ReadOnly Property Writer As TextWriter
-        Public ReadOnly Property TalkToUser As Boolean
-        Public ReadOnly Property GlobalTheme As Theme
-        Public ReadOnly Property HelpMenu As String
+        Implements IContext
+        Public ReadOnly Property Reader As TextReader Implements IContext.Reader
+        Public ReadOnly Property Writer As TextWriter Implements IContext.Writer
+        Public ReadOnly Property TalkToUser As Boolean Implements IContext.TalkToUser
+        Public ReadOnly Property GlobalTheme As Coloring.Theme Implements IContext.GlobalTheme
+        Public ReadOnly Property HelpMenu As String Implements IContext.HelpMenu
 
-        Public Sub New(reader As TextReader, writer As TextWriter, talkToUser As Boolean, globalTheme As Theme, helpMenu As String)
+        Public Sub New(reader As TextReader, writer As TextWriter, talkToUser As Boolean, globalTheme As Coloring.Theme, helpMenu As String)
             Me.Reader = reader
             Me.Writer = writer
             Me.TalkToUser = talkToUser

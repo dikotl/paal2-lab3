@@ -11,9 +11,5 @@
     <Compile Include="Coloring.fs" />
     <Compile Include="ConsoleUI.fs" />
   </ItemGroup>
-	
-  <ItemGroup>
-	<ProjectReference Include="..\ClassLibraryVB\ClassLibraryVB.vbproj" />
-  </ItemGroup>
 
 </Project>

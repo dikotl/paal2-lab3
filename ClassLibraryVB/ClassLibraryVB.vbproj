@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ClassLibraryCS\ClassLibraryCS.csproj" />
+    <ProjectReference Include="..\ClassLibraryFS\ClassLibraryFS.fsproj" />
   </ItemGroup>
 
   <PropertyGroup>

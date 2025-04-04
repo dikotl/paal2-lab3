@@ -7,7 +7,6 @@ open ClassLibraryVB.IO
 open ClassLibraryFS.ConsoleUI
 open ClassLibraryFS.Coloring
 
-open type System.ConsoleColor
 
 let rec selectTask (tasks: Context Action List) (context: Context) =
     let taskIndex =
@@ -97,13 +96,13 @@ let main args =
 
     if args.Length > 0 then
         let runWithReader reader =
-            let context = Context(reader, Console.Out, false, globalTheme.ToVBTheme(), helpMenu)
+            let context = Context(reader, Console.Out, false, globalTheme, helpMenu)
             run context
 
         for filepath in args do
             openAndRun filepath runWithReader
     else
-        let context = Context(Console.In, Console.Out, true, globalTheme.ToVBTheme(), helpMenu)
+        let context = Context(Console.In, Console.Out, true, globalTheme, helpMenu)
 
         context.PrintLine(helpMenu)
         run context
