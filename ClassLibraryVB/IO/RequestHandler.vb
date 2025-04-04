@@ -294,6 +294,7 @@ Namespace IO
             Else
                 Do
                     Try
+                        PrintLine("Enter the array separated by spaces:")
                         Return ReadArrayInline(converter)
                     Catch e As Exception When TypeOf e Is FormatException OrElse TypeOf e Is OverflowException
                         [Error](e.Message)
@@ -350,6 +351,7 @@ Namespace IO
 
             For i As Integer = 0 To size - 1
                 Try
+                    Print(i + 1 & ": ")
                     typed(i) = ReadArrayInline(Function(input) converter(input))
                 Catch e As Exception When TypeOf e Is FormatException OrElse TypeOf e Is OverflowException
                     [Error](e.Message)
@@ -382,7 +384,7 @@ Namespace IO
             Const message As String =
                 "Select input method:" & vbCrLf &
                 "    1. Random" & vbCrLf &
-                "    2. Line by line"
+                "    2. Manual"
 
             Do
                 Select Case Request(message).Trim()
