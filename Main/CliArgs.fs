@@ -11,59 +11,70 @@ type Argument =
     static member inputFile: string  = "--inputFile"
     static member talkToUser: string = "--talkToUser"
 
+[<Literal>]
+let usage = """Usage: lab3 [options]
+
+Options:
+    --help                  Show help message
+    --inputFile FILEPATH    Specify a task command sequence file
+    --taskToUser BOOL       Print messages to the console
+    --theme THEME           Set color theme, available themes:
+                            - Default
+                            - Classic
+                            - BlueAccents
+                            - Hackerman
+                            - Cold
+                            - Warm
+                            - Sunset
+                            - Forest
+                            - Ocean
+"""
+
 type CliHandler(args: string array) =
     let _help =
         if Array.contains Argument.help args then
-            // TODO make help message
-            Console.Error.WriteLine("HELP MESSAGE")
-            System.Environment.Exit(0)
+            Console.Error.WriteLine(usage)
+            System.Environment.Exit(1)
 
     let getArgValue (arg: string) =
-        // TODO optimize
-        if Array.contains arg args then
-            args.[Array.IndexOf(args, arg) + 1]
-        else null
-
-    let appendExit (original: TextReader) =
-        // TODO make normal Reader exit
-        let originalText = original.ReadToEnd()
-        let finalText = originalText + "\nexit"
-        new StringReader(finalText) :> TextReader
+        args
+        |> Array.skipWhile ((<>) arg)
+        |> Array.tryItem 1        
 
     let openReader (filepath: string) =
         try
-           appendExit (new StreamReader(filepath) :> TextReader)
+            new StreamReader(filepath)
+            :> TextReader
+            |> _.ReadToEnd()
+            |> (fun x -> new StringReader(x + "\nexit"))
+            :> TextReader
         with :? IOException as e ->
             raise (ArgumentException $"Error while processing program arguments. {e.Message}")
-
 
     let themeArg = getArgValue Argument.theme
     let inputFileArg = getArgValue Argument.inputFile
     let talkToUserArg = getArgValue Argument.talkToUser
 
-
     member val GlobalTheme: Theme = 
-        if (isNull themeArg) then
-            Theme.Cold
-        else
-            Theme.parseTheme(themeArg) 
+        themeArg
+        |> Option.map Theme.parseTheme
+        |> Option.defaultValue Theme.Cold
         with get
 
     member val InputFile: TextReader = 
-        if (isNull inputFileArg) then
-            Console.In
-        else
-            openReader inputFileArg 
+        inputFileArg
+        |> Option.map openReader
+        |> Option.defaultValue Console.In
         with get
 
     member val TalkToUser: bool = 
-        if (isNull talkToUserArg) then
-            true
-        else
+        talkToUserArg
+        |> Option.map (fun talkToUser ->
             try
-                bool.Parse talkToUserArg
-            with ex ->
-                raise (ArgumentException $"Error while processing program arguments. {ex.Message}")
+                bool.Parse talkToUser
+            with :? FormatException as e ->
+                raise (ArgumentException $"Error while processing program arguments. {e.Message}"))
+        |> Option.defaultValue true
         with get
 
     member this.getContext(): Context = 
