@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CliArgs.fs" />
     <Compile Include="TaskSelectorMenu.fs" />
   </ItemGroup>
   <ItemGroup>

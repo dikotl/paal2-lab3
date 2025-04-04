@@ -6,6 +6,24 @@ open System.Collections.Generic
 open ClassLibraryFS
 open ClassLibraryFS.Coloring
 
+[<Interface>]
+type public IContext =
+    abstract member Reader: TextReader
+    abstract member Writer: TextWriter
+    abstract member TalkToUser: Boolean
+    abstract member GlobalTheme: Theme
+    abstract member HelpMenu: String
+
+let parseTasks<'T when 'T :> IContext>(blocks: KeyValuePair<int, struct(Action<'T> * string)> seq) =
+    blocks
+    |> Seq.mapi (fun i x -> 
+        let (task, desc) = x.Value.ToTuple()
+        i + 1, desc, task)
+
+let getIndexedDescriptions<'T when 'T :> IContext> (tasks: (int * string * 'T Action) seq) =
+    tasks 
+    |> Seq.mapi (fun i (_, description, _) -> (i+1).ToString(), description)
+
 let generateTable
     (header: string) (keyValues: (string * string) seq) (theme: Theme)  //
     =
@@ -70,21 +88,3 @@ let generateTable
         |> String.concat "\n"
 
     String.concat "\n" [ top; header; middle; rows; bottom ]
-
-[<Interface>]
-type public IContext =
-    abstract member Reader: TextReader
-    abstract member Writer: TextWriter
-    abstract member TalkToUser: Boolean
-    abstract member GlobalTheme: Theme
-    abstract member HelpMenu: String
-
-let parseTasks<'T when 'T :> IContext>(blocks: KeyValuePair<int, struct(Action<'T> * string)> seq) =
-    blocks
-    |> Seq.mapi (fun i x -> 
-        let (task, desc) = x.Value.ToTuple()
-        i + 1, desc, task)
-
-let getIndexedDescriptions<'T when 'T :> IContext> (tasks: (int * string * 'T Action) seq) =
-    tasks 
-    |> Seq.mapi (fun i (_, description, _) -> (i+1).ToString(), description)

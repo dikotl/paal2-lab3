@@ -12,6 +12,19 @@ type Theme =
         Other:  ConsoleColor
     }
 
+        static member parseTheme(str: string) =
+            match str with
+            | "Default"     -> Theme.Default
+            | "Classic"     -> Theme.Classic
+            | "BlueAccents" -> Theme.BlueAccents
+            | "Hackerman"   -> Theme.Hackerman
+            | "Cold"        -> Theme.Cold
+            | "Warm"        -> Theme.Warm
+            | "Sunset"      -> Theme.Sunset
+            | "Forest"      -> Theme.Forest
+            | "Ocean"       -> Theme.Ocean
+            | _             -> Theme.Default
+
         static member Default =
             {
                 Border = ConsoleColor.Gray

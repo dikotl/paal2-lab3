@@ -63,12 +63,21 @@ Namespace IO
         Public ReadOnly Property GlobalTheme As Coloring.Theme Implements IContext.GlobalTheme
         Public ReadOnly Property HelpMenu As String Implements IContext.HelpMenu
 
-        Public Sub New(reader As TextReader, writer As TextWriter, talkToUser As Boolean, globalTheme As Coloring.Theme, helpMenu As String)
+        Public Sub New(reader As TextReader, writer As TextWriter, talkToUser As Boolean, globalTheme As Coloring.Theme)
             Me.Reader = reader
             Me.Writer = writer
             Me.TalkToUser = talkToUser
             Me.GlobalTheme = globalTheme
-            Me.HelpMenu = helpMenu
+            Me.HelpMenu = generateTable(
+                "Available Commands",
+                {
+                    Tuple.Create("menu", "return to the menu"),
+                    Tuple.Create("exit", "exit the program"),
+                    Tuple.Create("help", "show this table"),
+                    Tuple.Create("clear", "clear the console")
+                },
+                globalTheme)
+            PrintLine(Me.HelpMenu)
         End Sub
 
         ''' <summary>
