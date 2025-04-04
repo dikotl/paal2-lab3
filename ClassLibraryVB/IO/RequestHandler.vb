@@ -54,7 +54,6 @@ Namespace IO
     ''' <param name="Reader">The input data stream.</param>
     ''' <param name="Writer">The output data stream.</param>
     ''' <param name="TalkToUser">Indicates whether to communicate with the user through stderr.</param>
-
     Public Class Context
         Implements IContext
         Public ReadOnly Property Reader As TextReader Implements IContext.Reader
@@ -139,6 +138,30 @@ Namespace IO
         End Sub
 
         ''' <summary>
+        ''' Handles command...
+        ''' </summary>
+        ''' <param name="input">An input from the user to be checked</param>
+        ''' <returns>True if command was handled</returns>
+        Private Function HandleCommand(input As String) As Boolean
+            If input Is Nothing Then Throw New ExitProgramException()
+
+            Select Case input.Trim().ToLower()
+                Case "menu"
+                    Throw New ExitToMenuException()
+                Case "exit"
+                    Throw New ExitProgramException()
+                Case "clear"
+                    Console.Clear()
+                    Return True
+                Case "help"
+                    PrintLine(HelpMenu)
+                    Return True
+                Case Else
+                    Return False
+            End Select
+        End Function
+
+        ''' <summary>
         ''' Requests input from the user, attempting to convert it to a specific type.
         ''' If an exception occurs, an error message Is shown And the request Is retried.
         ''' </summary>
@@ -173,9 +196,6 @@ Namespace IO
             Return Request(AddressOf Parse(Of T), message, style)
         End Function
 
-
-
-
         ''' <summary>
         ''' Requests a string input from the user And returns it.
         ''' </summary>
@@ -185,35 +205,23 @@ Namespace IO
         ''' <exception cref="ExitToMenuException">Thrown when the user chooses to return to the menu.</exception>
         ''' <exception cref="ExitProgramException">Thrown when the user chooses to exit the program.</exception>
         Public Function Request(Optional message As String = Nothing, Optional style As RequestStyle = RequestStyle.[Default]) As String
-begin:
-            Select Case style
-                Case RequestStyle.[Default]
-                    If message IsNot Nothing Then Print(message)
-                    Print(vbLf & "> ")
-                Case RequestStyle.Inline
-                    If message IsNot Nothing Then Print(message)
-                    Print(": ")
-                Case RequestStyle.Bare
-                Case Else
-                    Throw New InvalidEnumArgumentException(NameOf(style), CType(style, Integer), GetType(RequestStyle))
-            End Select
+            Dim input As String
+            Do
+                Select Case style
+                    Case RequestStyle.[Default]
+                        If message IsNot Nothing Then Print(message)
+                        Print(vbLf & "> ")
+                    Case RequestStyle.Inline
+                        If message IsNot Nothing Then Print(message)
+                        Print(": ")
+                    Case RequestStyle.Bare
+                    Case Else
+                        Throw New InvalidEnumArgumentException(NameOf(style), CType(style, Integer), GetType(RequestStyle))
+                End Select
 
-            Dim input As String = If(Reader.ReadLine(), "")
-
-            Select Case input.Trim().ToLower()
-                Case "menu"
-                    Throw New ExitToMenuException()
-                Case "exit"
-                    Throw New ExitProgramException()
-                Case "clear"
-                    Console.Clear()
-                    GoTo begin
-                Case "help"
-                    PrintLine(HelpMenu)
-                    GoTo begin
-                Case Else
-                    Return input
-            End Select
+                input = Reader.ReadLine()
+            Loop While HandleCommand(input)
+            Return input
         End Function
 
         ''' <summary>
@@ -237,21 +245,10 @@ begin:
         ''' <param name="converter">A function that converts each input string into the requested type.</param>
         ''' <returns>An array of elements of type T entered by the user.</returns>
         Public Function ReadArrayInline(Of T)(converter As Converter(Of String, T)) As DynArray(Of T)
-begin:
-            Dim input As String = Reader.ReadLine()
-
-            Select Case input.Trim().ToLower()
-                Case "menu"
-                    Throw New ExitToMenuException()
-                Case "exit"
-                    Throw New ExitProgramException()
-                Case "clear"
-                    Console.Clear()
-                    GoTo begin
-                Case "help"
-                    PrintLine(HelpMenu)
-                    GoTo begin
-            End Select
+            Dim input As String
+            Do
+                input = Reader.ReadLine()
+            Loop While HandleCommand(input)
 
             Return input _
                 .Split() _
@@ -272,7 +269,6 @@ begin:
                 .ToDynArray()
         End Function
 
-
         ''' <summary>
         ''' Requests the user to specify the input method for entering an array.
         ''' </summary>
@@ -282,7 +278,6 @@ begin:
         Public Function RequestArray(Of T As {IParsable(Of T), New})(getRandomItem As Func(Of T)) As DynArray(Of T)
             Return RequestArray(AddressOf Parse(Of T), getRandomItem)
         End Function
-
 
         ''' <summary>
         ''' Requests the user to specify the input method for entering an array.
@@ -316,7 +311,6 @@ begin:
         Public Function RequestMatrix(Of T As {IParsable(Of T), New})(getRandomItem As Func(Of T)) As DynArray(Of DynArray(Of T))
             Return RequestMatrix(AddressOf Parse(Of T), getRandomItem)
         End Function
-
 
         ''' <summary>
         ''' Requests a matrix of elements, using a specified converter And random item generator.
@@ -433,5 +427,4 @@ begin:
             End Try
         End Function
     End Class
-
 End Namespace
