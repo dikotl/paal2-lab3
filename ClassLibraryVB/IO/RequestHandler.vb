@@ -49,19 +49,46 @@ Namespace IO
     End Enum
 
     ''' <summary>
-    ''' Represents the context for program I/O operations. It includes methods to read And write data from/to the user.
+    ''' Represents an execution context that implements <see cref="IContext"/> for reading input,
+    ''' writing output, and handling user interaction with color themes.
     ''' </summary>
-    ''' <param name="Reader">The input data stream.</param>
-    ''' <param name="Writer">The output data stream.</param>
-    ''' <param name="TalkToUser">Indicates whether to communicate with the user through stderr.</param>
     Public Class Context
         Implements IContext
+
+        ''' <summary>
+        ''' Gets the input data stream.
+        ''' </summary>
         Public ReadOnly Property Reader As TextReader Implements IContext.Reader
+
+        ''' <summary>
+        ''' Gets the output data stream.
+        ''' </summary>
         Public ReadOnly Property Writer As TextWriter Implements IContext.Writer
+
+        ''' <summary>
+        ''' Indicates whether the context should display messages to the user.
+        ''' </summary>
         Public ReadOnly Property TalkToUser As Boolean Implements IContext.TalkToUser
+
+        ''' <summary>
+        ''' Gets the global color theme used for styled output.
+        ''' </summary>
         Public ReadOnly Property GlobalTheme As Coloring.Theme Implements IContext.GlobalTheme
+
+        ''' <summary>
+        ''' Gets the formatted help menu as a string.
+        ''' </summary>
         Public ReadOnly Property HelpMenu As String Implements IContext.HelpMenu
 
+
+        ''' <summary>
+        ''' Initializes a new instance of the <see cref="Context"/> class with the specified input/output streams,
+        ''' user interaction flag, and color theme. Automatically generates and prints the help menu.
+        ''' </summary>
+        ''' <param name="reader">The input stream.</param>
+        ''' <param name="writer">The output stream.</param>
+        ''' <param name="talkToUser">Indicates whether to print messages to the user.</param>
+        ''' <param name="globalTheme">The theme used for color formatting.</param>
         Public Sub New(reader As TextReader, writer As TextWriter, talkToUser As Boolean, globalTheme As Coloring.Theme)
             Me.Reader = reader
             Me.Writer = writer
@@ -90,7 +117,7 @@ Namespace IO
             If color Is Nothing Then color = GlobalTheme.Other
             If TalkToUser Then
                 Dim oldColor = Console.ForegroundColor
-                Console.ForegroundColor = color
+                Console.ForegroundColor = color.Value
                 Console.Error.Write(message)
                 Console.ForegroundColor = oldColor
             End If
@@ -107,7 +134,7 @@ Namespace IO
             If color Is Nothing Then color = GlobalTheme.Other
             If TalkToUser Then
                 Dim oldColor = Console.ForegroundColor
-                Console.ForegroundColor = color
+                Console.ForegroundColor = color.Value
                 Console.Error.WriteLine(message)
                 Console.ForegroundColor = oldColor
             End If
@@ -391,7 +418,7 @@ Namespace IO
                     Case "1" : Return True
                     Case "2" : Return False
                 End Select
-                Error ("Unknown option")
+                [Error]("Unknown option")
             Loop
         End Function
 
@@ -410,12 +437,12 @@ Namespace IO
             Return size
         End Function
 
-        Private Function Parse(Of T As {IParsable(Of T), New})(input As String) As T
+        Shared Function Parse(Of T As {IParsable(Of T), New})(input As String) As T
             Dim method = GetType(T).GetMethod("Parse", {GetType(String), GetType(IFormatProvider)})
 
             Try
                 Try
-                    Return method.Invoke(Nothing, {input, Nothing})
+                    Return CType(method.Invoke(Nothing, {input, Nothing}), T)
                 Catch ex As TargetInvocationException
                     If TypeOf ex.InnerException Is FormatException Then
                         Throw New FormatException($"Format error: '{input}' cannot be converted to {GetType(T).Name}.", ex.InnerException)
