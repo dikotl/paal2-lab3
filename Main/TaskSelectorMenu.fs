@@ -33,8 +33,8 @@ let rec runTaskSelector (menu: string) tasks (context: Context) =
     try
         (selectTask tasks context).Invoke context
     with
-    | :? ExitProgramException -> exit 0
-    | :? ExitToMenuException -> ()
+    | :? ДопобаченняException -> exit 0
+    | :? ДавайПоНовійException -> ()
 
     if context.Reader = Console.In then
         runTaskSelector menu tasks context

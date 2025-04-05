@@ -11,14 +11,14 @@ Namespace IO
     ''' <summary>
     ''' Exception thrown to indicate the program should exit to the menu.
     ''' </summary>
-    Public Class ExitToMenuException
+    Public Class ДавайПоНовійException
         Inherits Exception
     End Class
 
     ''' <summary>
     ''' Exception thrown to indicate the program should exit completely.
     ''' </summary>
-    Public Class ExitProgramException
+    Public Class ДопобаченняException
         Inherits Exception
     End Class
 
@@ -169,13 +169,13 @@ Namespace IO
         ''' <param name="input">An input from the user to be checked</param>
         ''' <returns>True if command was handled</returns>
         Private Function HandleCommand(input As String) As Boolean
-            If input Is Nothing Then Throw New ExitProgramException()
+            If input Is Nothing Then Throw New ДопобаченняException()
 
             Select Case input.Trim().ToLower()
                 Case "menu"
-                    Throw New ExitToMenuException()
+                    Throw New ДавайПоНовійException()
                 Case "exit"
-                    Throw New ExitProgramException()
+                    Throw New ДопобаченняException()
                 Case "clear"
                     Console.Clear()
                     Return True
