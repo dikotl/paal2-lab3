@@ -5,14 +5,26 @@ using System.Text;
 
 namespace ClassLibraryCS.Collections;
 
+/// <summary>
+/// A dynamic array that automatically resizes itself as elements are added or removed.
+/// </summary>
 public class DynArray<T> : IList<T>, ICloneable
 {
     private T?[] data = [];
 
+    /// <summary>
+    /// Gets a value indicating whether the collection is read-only.
+    /// </summary>
     public bool IsReadOnly => false;
 
+    /// <summary>
+    /// Gets the number of elements currently in the collection.
+    /// </summary>
     public int Count { get; private set; }
 
+    /// <summary>
+    /// Gets or sets the capacity of the array. The capacity is the number of elements the array can hold before resizing is required.
+    /// </summary>
     public int Capacity
     {
         get => data.Length;

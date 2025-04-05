@@ -9,7 +9,6 @@
     <RootNamespace>ClassLibraryVB</RootNamespace>
     <TargetFramework>net10.0</TargetFramework>
 	<GenerateDocumentationFile>true</GenerateDocumentationFile>
-	<NoWarn>1591</NoWarn>
   </PropertyGroup>
 
 </Project>

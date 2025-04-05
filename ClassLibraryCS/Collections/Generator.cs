@@ -7,6 +7,9 @@ namespace ClassLibraryCS.Collections;
 /// </summary>
 public static class Generator
 {
+    /// <summary>
+    /// A static instance of the <see cref="Random"/> class for generating random numbers.
+    /// </summary>
     public static readonly Random Rand = new();
 
     /// <summary>

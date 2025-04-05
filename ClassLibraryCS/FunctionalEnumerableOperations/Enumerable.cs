@@ -6,6 +6,9 @@ using System.Collections.Generic;
 
 namespace ClassLibraryCS.FunctionalEnumerableOperations;
 
+/// <summary>
+/// Provides extension methods for working with sequences, including transformations, filtering, and taking elements.
+/// </summary>
 public static class Enumerable
 {
     // Transforms
@@ -304,7 +307,7 @@ public static class Enumerable
     /// <summary>
     /// Returns the maximum element in a sequence based on the implemented comparison operators for the type.
     /// </summary>
-    ///<typeparam name = "TSource" > The type of the elements in the sequence, which must implement<see cref="IComparisonOperators{TSelf,TOther,TResult}"/>.</typeparam>
+    /// <typeparam name="TSource"> The type of the elements in the sequence, which must implement<see cref="IComparisonOperators{TSelf,TOther,TResult}"/>.</typeparam>
     /// <param name="source">The sequence to find the maximum element from.</param>
     /// <returns>The maximum element in the sequence, or <c>default</c> if the sequence is empty.</returns>
     public static TSource? Max<TSource>(this IEnumerable<TSource> source) where TSource : IComparisonOperators<TSource, TSource, bool>

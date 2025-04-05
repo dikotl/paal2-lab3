@@ -5,7 +5,6 @@
     <Nullable>enable</Nullable>
     <NuGetAuditMode>all</NuGetAuditMode>
 	<GenerateDocumentationFile>true</GenerateDocumentationFile>
-	<NoWarn>1591</NoWarn>
   </PropertyGroup>
 
 </Project>

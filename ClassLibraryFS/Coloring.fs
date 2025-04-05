@@ -54,6 +54,7 @@ type Theme =
             "Forest",      Theme.Forest
             "Ocean",       Theme.Ocean
         ]
+
     /// <summary>
     /// Parses a theme by name. If not found, returns the default theme.
     /// </summary>
