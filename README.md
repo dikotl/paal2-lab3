@@ -1,6 +1,6 @@
 # Lab3
 
-This is a student's laboratory work on the topic “Dynamic arrays (one-dimensional and toothed)”.
+This is a student's laboratory work on the topic “Dynamic arrays (one-dimensional and jagged)”.
 
 ## Lab Assignment: Dynamic Arrays
 
