@@ -80,7 +80,6 @@ Namespace IO
         ''' </summary>
         Public ReadOnly Property HelpMenu As String Implements IContext.HelpMenu
 
-
         ''' <summary>
         ''' Initializes a new instance of the <see cref="Context"/> class with the specified input/output streams,
         ''' user interaction flag, and color theme. Automatically generates and prints the help menu.

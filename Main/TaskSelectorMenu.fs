@@ -36,8 +36,7 @@ let rec runTaskSelector (menu: string) tasks (context: Context) =
     | :? ExitProgramException -> exit 0
     | :? ExitToMenuException -> ()
 
-    if context.TalkToUser then
-        // We are not in "test mode", so run the menu again
+    if context.Reader = Console.In then
         runTaskSelector menu tasks context
 
 
