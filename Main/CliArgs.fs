@@ -5,6 +5,7 @@ open System.IO
 open ClassLibraryFS.Coloring
 open ClassLibraryVB.IO
 
+
 [<Literal>]
 let usage = $"""
 Usage:
@@ -35,6 +36,7 @@ Options:
     -tf                     Set theme to Forest
     -fo                     Set theme to Ocean
 """
+
 
 type CliHandler(args: string array) =
     let openReader (filepath: string) =
@@ -133,11 +135,14 @@ type CliHandler(args: string array) =
                         ex.Message)
                 Environment.Exit(2)
 
-    member val GlobalTheme: Theme = themeArg with get
+    member val GlobalTheme: Theme = themeArg
+        with get
 
-    member val InputFile: TextReader = inputFile with get
+    member val InputFile: TextReader = inputFile
+        with get
 
-    member val TalkToUser: bool = talkToUser with get
+    member val TalkToUser: bool = talkToUser
+        with get
 
     member this.getContext(): Context =
         Context(this.InputFile, Console.Out, this.TalkToUser, this.GlobalTheme)
