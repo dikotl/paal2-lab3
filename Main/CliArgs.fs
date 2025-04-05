@@ -17,8 +17,8 @@ Usage:
 
 Options:
     --help|-h               Show help message
-    --inputFile FILEPATH    Specify a task command sequence file
-    --taskToUser BOOL       Print messages to the console
+    --input-file FILEPATH    Specify a task command sequence file
+    --task-to-user BOOL       Print messages to the console
     --theme THEME           Set color theme, available themes:
                             - Default
                             - Classic
@@ -67,19 +67,19 @@ type CliHandler(args: string array) =
         | "-h" :: _ | "--help" :: _ ->
             Console.Error.WriteLine usage
             Environment.Exit(1)
-        | "--inputFile" :: filename :: tail ->
+        | "--input-file" :: filename :: tail ->
             inputFile <- openReader filename
             parseArgs tail
-        | "--inputFile" :: [] ->
+        | "--input-file" :: [] ->
             raise (ArgumentException "--file requires <filepath>")
-        | "--talkToUser" :: cond :: tail ->
+        | "--talk-to-user" :: cond :: tail ->
             let success, parsedCond = bool.TryParse(cond)
 
             match success with
             | true  -> talkToUser <- parsedCond
             | false -> raise (ArgumentException($"Unable to parse --talkToUser parameter {cond}"))
             parseArgs tail
-        | "--talkToUser" :: [] ->
+        | "--talk-to-user" :: [] ->
             raise (ArgumentException "--talkToUser requires [true/false]")
         | "--theme" :: th :: tail ->
             themeArg <- Theme.parseTheme th
