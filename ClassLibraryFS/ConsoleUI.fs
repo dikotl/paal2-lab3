@@ -6,14 +6,28 @@ open System.Collections.Generic
 open ClassLibraryFS
 open ClassLibraryFS.Coloring
 
+/// Defines the interface for an execution context that interacts with the user.
 [<Interface>]
 type public IContext =
+    /// Gets the input stream.
     abstract member Reader: TextReader
+
+    /// Gets the output stream.
     abstract member Writer: TextWriter
+
+    /// Indicates whether the context should interact with the user.
     abstract member TalkToUser: Boolean
+
+    /// Gets the current console color theme.
     abstract member GlobalTheme: Theme
+
+    /// Gets the help menu string.
     abstract member HelpMenu: String
 
+/// Parses task definitions from key-value blocks and assigns each a sequential index.
+/// 
+/// <param name="blocks">A sequence of key-value pairs with an action and description.</param>
+/// <returns>A sequence of indexed tuples (index, description, action).</returns>
 let parseTasks<'T when 'T :> IContext>
     (blocks: KeyValuePair<int, struct(Action<'T> * string)> seq)
     =
@@ -22,12 +36,22 @@ let parseTasks<'T when 'T :> IContext>
         let (task, desc) = x.Value.ToTuple()
         i + 1, desc, task)
 
+/// Extracts indexed descriptions from a sequence.
+/// 
+/// <param name="tasks">A sequence of (index, description, action) tuples.</param>
+/// <returns>A sequence of (string index, description) pairs.</returns>
 let getIndexedDescriptions<'T when 'T :> IContext>
     (tasks: (int * string * 'T Action) seq)
     =
     tasks
     |> Seq.mapi (fun i (_, description, _) -> (i+1).ToString(), description)
 
+/// Generates a formatted table string using Unicode box-drawing characters and ANSI colors.
+/// 
+/// <param name="header">The title displayed at the top of the table.</param>
+/// <param name="keyValues">A sequence of key-description pairs to display in the table.</param>
+/// <param name="theme">The console color theme used for styling the table.</param>
+/// <returns>A formatted string representing the styled table.</returns>
 let generateTable
     (header: string) (keyValues: (string * string) seq) (theme: Theme)
     =
