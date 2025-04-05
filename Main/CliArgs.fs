@@ -1,4 +1,8 @@
-﻿module CliArgs
+﻿/// <summary>
+/// Provides parsing and handling of command-line arguments for the lab3 application.
+/// Supports reading an input file, enabling/disabling console output, and setting a visual theme.
+/// </summary>
+module CliArgs
 
 open System
 open System.IO
@@ -37,7 +41,11 @@ Options:
     -fo                     Set theme to Ocean
 """
 
-
+/// <summary>
+/// Handles parsing of CLI arguments and provides the configured execution context,
+/// including the selected theme, input source, and verbosity setting.
+/// </summary>
+/// <param name="args">Array of command-line arguments.</param>
 type CliHandler(args: string array) =
     let openReader (filepath: string) =
         try
@@ -135,14 +143,30 @@ type CliHandler(args: string array) =
                         ex.Message)
                 Environment.Exit(2)
 
+    /// <summary>
+    /// Gets the global theme specified via CLI arguments.
+    /// Defaults to Theme.Cold if not specified.
+    /// </summary>
     member val GlobalTheme: Theme = themeArg
         with get
 
+    /// <summary>
+    /// Gets the input source for commands.
+    /// If an input file is specified, it is used; otherwise, Console input is used.
+    /// </summary>
     member val InputFile: TextReader = inputFile
         with get
 
+    /// <summary>
+    /// Indicates whether output should be printed to the user (true by default).
+    /// Can be controlled via the --talkToUser or -q option.
+    /// </summary>
     member val TalkToUser: bool = talkToUser
         with get
 
+    /// <summary>
+    /// Constructs and returns a Context instance based on parsed CLI arguments.
+    /// </summary>
+    /// <returns>Configured Context object for executing tasks.</returns>
     member this.getContext(): Context =
         Context(this.InputFile, Console.Out, this.TalkToUser, this.GlobalTheme)
