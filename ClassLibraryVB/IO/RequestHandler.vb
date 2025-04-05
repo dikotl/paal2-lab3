@@ -118,7 +118,7 @@ Namespace IO
         ''' </summary>
         ''' <param name="message">The message to be written.</param>
         Public Sub Write(message As Object)
-            If TalkToUser Then Writer.Write(message)
+            Writer.Write(message)
         End Sub
 
         ''' <summary>
@@ -126,7 +126,7 @@ Namespace IO
         ''' </summary>
         ''' <param name="message">The message to be written.</param>
         Public Sub WriteLine(message As Object)
-            If TalkToUser Then Writer.WriteLine(message)
+            Writer.WriteLine(message)
         End Sub
 
         ''' <summary>
