@@ -1,4 +1,6 @@
-﻿/// A module that provides support for theming and ANSI color formatting in the console.
+﻿/// <summary>
+/// A module that provides support for theming and ANSI color formatting in the console.
+/// </summary>
 module ClassLibraryFS.Coloring
 
 open System
@@ -6,26 +8,40 @@ open System.Runtime.CompilerServices
 
 open type System.ConsoleColor
 
+/// <summary>
 /// Represents a color theme for console output.
+/// </summary>
 type Theme =
     {
+        /// <summary>
         /// The color used for borders.
+        /// </summary>
         Border: ConsoleColor
 
+        /// <summary>
         /// The color used for headers.
+        /// </summary>
         Header: ConsoleColor
 
+        /// <summary>
         /// The color used for keys.
+        /// </summary>
         Key:    ConsoleColor
 
+        /// <summary>
         /// The color used for values.
+        /// </summary>
         Value:  ConsoleColor
 
+        /// <summary>
         /// The color used for miscellaneous elements.
+        /// </summary>
         Other:  ConsoleColor
     }
 
+    /// <summary>
     /// A collection of predefined themes accessible by name.
+    /// </summary>
     static member themes : Map<string, Theme> =
         Map.ofList [
             "Default",     Theme.Default
@@ -38,8 +54,9 @@ type Theme =
             "Forest",      Theme.Forest
             "Ocean",       Theme.Ocean
         ]
-
+    /// <summary>
     /// Parses a theme by name. If not found, returns the default theme.
+    /// </summary>
     /// <param name="str">The name of the theme.</param>
     /// <returns>The corresponding Theme if found, otherwise Default.</returns>
     static member parseTheme(str: string) =
@@ -128,8 +145,9 @@ type Theme =
             Other  = DarkCyan
         }
 
-
+/// <summary>
 /// Colors a string using ANSI escape codes for a given ConsoleColor.
+/// </summary>
 /// <param name="color">The color to use.</param>
 /// <param name="s">The string to wrap in color.</param>
 /// <returns>The string wrapped in ANSI color codes.</returns>
@@ -153,10 +171,14 @@ let (=>>) color s =
     | ConsoleColor.White       -> "\x1B[97m" + s + "\x1B[0m"
     | _ -> s
 
+/// <summary>
 /// Extension method for strings to wrap them in ANSI escape codes for a given ConsoleColor.
+/// </summary>
 [<Extension>]
 type WrapEscColor() =
+    /// <summary>
     /// Wraps the string in ANSI escape codes using the specified ConsoleColor.
+    /// </summary>
     /// <param name="str">The string to format.</param>
     /// <param name="color">The ConsoleColor to apply.</param>
     /// <returns>The ANSI-colored string.</returns>

@@ -1,4 +1,9 @@
-﻿module ClassLibraryFS.ConsoleUI
+﻿/// <summary>
+/// Provides utilities for console-based user interaction in CLI applications,
+/// including context abstraction, task parsing, description extraction, and
+/// styled table rendering with themes.
+/// </summary>
+module ClassLibraryFS.ConsoleUI
 
 open System
 open System.IO
@@ -6,26 +11,39 @@ open System.Collections.Generic
 open ClassLibraryFS
 open ClassLibraryFS.Coloring
 
+/// <summary>
 /// Defines the interface for an execution context that interacts with the user.
+/// </summary>
 [<Interface>]
 type public IContext =
+    /// <summary>
     /// Gets the input stream.
+    /// </summary>
     abstract member Reader: TextReader
 
+    /// <summary>
     /// Gets the output stream.
+    /// </summary>
     abstract member Writer: TextWriter
 
+    /// <summary>
     /// Indicates whether the context should interact with the user.
+    /// </summary>
     abstract member TalkToUser: Boolean
 
+    /// <summary>
     /// Gets the current console color theme.
+    /// </summary>
     abstract member GlobalTheme: Theme
 
+    /// <summary>
     /// Gets the help menu string.
+    /// </summary>
     abstract member HelpMenu: String
 
+/// <summary>
 /// Parses task definitions from key-value blocks and assigns each a sequential index.
-/// 
+/// </summary>
 /// <param name="blocks">A sequence of key-value pairs with an action and description.</param>
 /// <returns>A sequence of indexed tuples (index, description, action).</returns>
 let parseTasks<'T when 'T :> IContext>
@@ -36,8 +54,9 @@ let parseTasks<'T when 'T :> IContext>
         let (task, desc) = x.Value.ToTuple()
         i + 1, desc, task)
 
+/// <summary>
 /// Extracts indexed descriptions from a sequence.
-/// 
+/// </summary>
 /// <param name="tasks">A sequence of (index, description, action) tuples.</param>
 /// <returns>A sequence of (string index, description) pairs.</returns>
 let getIndexedDescriptions<'T when 'T :> IContext>
@@ -46,8 +65,9 @@ let getIndexedDescriptions<'T when 'T :> IContext>
     tasks
     |> Seq.mapi (fun i (_, description, _) -> (i+1).ToString(), description)
 
+/// <summary>
 /// Generates a formatted table string using Unicode box-drawing characters and ANSI colors.
-/// 
+/// </summary>
 /// <param name="header">The title displayed at the top of the table.</param>
 /// <param name="keyValues">A sequence of key-description pairs to display in the table.</param>
 /// <param name="theme">The console color theme used for styling the table.</param>
