@@ -18,7 +18,7 @@ Namespace IO
     ''' <summary>
     ''' Exception thrown to indicate the program should exit completely.
     ''' </summary>
-    Public Class ДопобаченняException
+    Public Class ДоПобаченняException
         Inherits Exception
     End Class
 
@@ -169,13 +169,13 @@ Namespace IO
         ''' <param name="input">An input from the user to be checked</param>
         ''' <returns>True if command was handled</returns>
         Private Function HandleCommand(input As String) As Boolean
-            If input Is Nothing Then Throw New ДопобаченняException()
+            If input Is Nothing Then Throw New ДоПобаченняException()
 
             Select Case input.Trim().ToLower()
                 Case "menu"
                     Throw New ДавайПоНовійException()
                 Case "exit"
-                    Throw New ДопобаченняException()
+                    Throw New ДоПобаченняException()
                 Case "clear"
                     Console.Clear()
                     Return True
