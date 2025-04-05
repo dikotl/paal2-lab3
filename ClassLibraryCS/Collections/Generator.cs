@@ -15,7 +15,7 @@ public static class Generator
     /// <typeparam name="T">The type of the items in the array.</typeparam>
     /// <param name="sizeRange">A range specifying the minimum and maximum size of the array.</param>
     /// <param name="getItem">A function that generates items for the array.</param>
-    /// <returns>A `DynArray<T>` containing random items.</returns>
+    /// <returns>A <c>DynArray&lt;T&gt;</c> containing random items.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if the `sizeRange` is not valid (e.g., if `sizeRange.Start.Value` is greater than `sizeRange.End.Value`).</exception>
     public static DynArray<T> GetRandomDynArray<T>(Range sizeRange, Func<T> getItem)
     {

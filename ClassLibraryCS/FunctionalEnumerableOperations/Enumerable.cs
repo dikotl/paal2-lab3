@@ -304,7 +304,7 @@ public static class Enumerable
     /// <summary>
     /// Returns the maximum element in a sequence based on the implemented comparison operators for the type.
     /// </summary>
-    /// <typeparam name="TSource">The type of the elements in the sequence, which must implement <see cref="IComparisonOperators{TSource, TSource, bool}"/>.</typeparam>
+    ///<typeparam name = "TSource" > The type of the elements in the sequence, which must implement<see cref="IComparisonOperators{TSelf,TOther,TResult}"/>.</typeparam>
     /// <param name="source">The sequence to find the maximum element from.</param>
     /// <returns>The maximum element in the sequence, or <c>default</c> if the sequence is empty.</returns>
     public static TSource? Max<TSource>(this IEnumerable<TSource> source) where TSource : IComparisonOperators<TSource, TSource, bool>
@@ -323,7 +323,7 @@ public static class Enumerable
     /// Projects each element of a sequence to a value and returns the maximum value according to the provided selector function.
     /// </summary>
     /// <typeparam name="TSource">The type of the elements in the sequence.</typeparam>
-    /// <typeparam name="TResult">The type of the values returned by the selector function, which must implement <see cref="IComparisonOperators{TResult, TResult, bool}"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the values returned by the selector function, which must implement <see cref="IComparisonOperators{TSelf,TOther,TResult}"/>.</typeparam>
     /// <param name="source">The sequence to find the maximum value from.</param>
     /// <param name="selector">A function to select a value from each element.</param>
     /// <returns>The maximum value selected from the sequence, or <c>default</c> if the sequence is empty.</returns>
@@ -343,7 +343,7 @@ public static class Enumerable
     /// <summary>
     /// Returns the minimum element in a sequence based on the implemented comparison operators for the type.
     /// </summary>
-    /// <typeparam name="TSource">The type of the elements in the sequence, which must implement <see cref="IComparisonOperators{TSource, TSource, bool}"/>.</typeparam>
+    /// <typeparam name="TSource">The type of the elements in the sequence, which must implement <see cref="IComparisonOperators{TSelf,TOther,TResult}"/>.</typeparam>
     /// <param name="source">The sequence to find the minimum element from.</param>
     /// <returns>The minimum element in the sequence, or <c>default</c> if the sequence is empty.</returns>
     public static TSource? Min<TSource>(this IEnumerable<TSource> source) where TSource : IComparisonOperators<TSource, TSource, bool>
@@ -362,7 +362,7 @@ public static class Enumerable
     /// Projects each element of a sequence to a value and returns the minimum value according to the provided selector function.
     /// </summary>
     /// <typeparam name="TSource">The type of the elements in the sequence.</typeparam>
-    /// <typeparam name="TResult">The type of the values returned by the selector function, which must implement <see cref="IComparisonOperators{TResult, TResult, bool}"/>.</typeparam>
+    /// <typeparam name="TResult">The type of the values returned by the selector function, which must implement <see cref="IComparisonOperators{TSelf,TOther,TResult}"/>.</typeparam>
     /// <param name="source">The sequence to find the minimum value from.</param>
     /// <param name="selector">A function to select a value from each element.</param>
     /// <returns>The minimum value selected from the sequence, or <c>default</c> if the sequence is empty.</returns>
