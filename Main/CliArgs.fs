@@ -5,9 +5,6 @@ open System.IO
 open ClassLibraryFS.Coloring
 open ClassLibraryVB.IO
 
-type Option = 
-    static member inputFile: string  = "--inputFile"
-
 [<Literal>]
 let usage = $"""
 Usage: 
