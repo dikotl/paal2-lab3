@@ -196,8 +196,8 @@ Namespace IO
         ''' <param name="message">A message that guides the user on what to input.</param>
         ''' <param name="style">The style of the request message.</param>
         ''' <returns>The user input converted to the specified type.</returns>
-        ''' <exception cref="ExitToMenuException">Thrown when the user chooses to return to the menu.</exception>
-        ''' <exception cref="ExitProgramException">Thrown when the user chooses to exit the program.</exception>
+        ''' <exception cref="ДавайПоНовійException">Thrown when the user chooses to return to the menu.</exception>
+        ''' <exception cref="ДоПобаченняException">Thrown when the user chooses to exit the program.</exception>
         Public Function Request(Of T)(converter As Converter(Of String, T), Optional message As String = Nothing, Optional style As RequestStyle = RequestStyle.Default) As T
             While True
                 Try
@@ -216,8 +216,8 @@ Namespace IO
         ''' <param name="message">A message that guides the user on what to input.</param>
         ''' <param name="style">The style of the request message.</param>
         ''' <returns>The user input converted to the specified type.</returns>
-        ''' <exception cref="ExitToMenuException">Thrown when the user chooses to return to the menu.</exception>
-        ''' <exception cref="ExitProgramException">Thrown when the user chooses to exit the program.</exception>
+        ''' <exception cref="ДавайПоНовійException">Thrown when the user chooses to return to the menu.</exception>
+        ''' <exception cref="ДоПобаченняException">Thrown when the user chooses to exit the program.</exception>
         Public Function Request(Of T As {IParsable(Of T), New})(Optional message As String = Nothing, Optional style As RequestStyle = RequestStyle.[Default]) As T
             Return Request(AddressOf Parse(Of T), message, style)
         End Function
@@ -228,8 +228,8 @@ Namespace IO
         ''' <param name="message">A message that guides the user on what to input.</param>
         ''' <param name="style">The style of the request message.</param>
         ''' <returns>The user input as a string.</returns>
-        ''' <exception cref="ExitToMenuException">Thrown when the user chooses to return to the menu.</exception>
-        ''' <exception cref="ExitProgramException">Thrown when the user chooses to exit the program.</exception>
+        ''' <exception cref="ДавайПоНовійException">Thrown when the user chooses to return to the menu.</exception>
+        ''' <exception cref="ДоПобаченняException">Thrown when the user chooses to exit the program.</exception>
         Public Function Request(Optional message As String = Nothing, Optional style As RequestStyle = RequestStyle.[Default]) As String
             Dim input As String
             Do
