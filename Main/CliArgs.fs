@@ -7,12 +7,10 @@ open ClassLibraryVB.IO
 
 [<Literal>]
 let usage = $"""
-Usage: 
-lab3 [options|arguments]
-lab3 [path-to-input-file]
-lab3 [path-to-input-file] [options]
+Usage:
+    lab3 [input-file] [options]
 
-Options & arguments:
+Options:
     --help|-h               Show help message
     --inputFile FILEPATH    Specify a task command sequence file
     --taskToUser BOOL       Print messages to the console
@@ -26,7 +24,6 @@ Options & arguments:
                             - Sunset
                             - Forest
                             - Ocean
-
     -q                      Set talkToUser to false
     -td                     Set theme to Default
     -tcl                    Set theme to Classic
@@ -37,9 +34,6 @@ Options & arguments:
     -ts                     Set theme to Sunset
     -tf                     Set theme to Forest
     -fo                     Set theme to Ocean
-
-path-to-input-file:
-    The path to the input file for the program.
 """
 
 type CliHandler(args: string array) =
@@ -82,9 +76,9 @@ type CliHandler(args: string array) =
             parseArgs tail
         | "--theme" :: [] ->
             raise (ArgumentException "--theme requires <theme>. TIP see --help")
-        | arg :: tail when arg.StartsWith("-") ->
-            match arg.StartsWith("--") with
-            | true -> raise (ArgumentException $"Unknown argument: {arg}")
+        | opt :: tail when opt.StartsWith("-") ->
+            match opt.StartsWith("--") with
+            | true -> raise (ArgumentException $"Unknown option: {opt}")
             | false ->
                 let rec checkNextSymbol remainingChars =
                     match remainingChars with
