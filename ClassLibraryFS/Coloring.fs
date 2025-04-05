@@ -3,6 +3,8 @@
 open System
 open System.Runtime.CompilerServices
 
+open type System.ConsoleColor
+
 type Theme =
     {
         Border: ConsoleColor
@@ -12,98 +14,103 @@ type Theme =
         Other:  ConsoleColor
     }
 
+    static member themes : Map<string, Theme> =
+        Map.ofList [
+            "Default",     Theme.Default
+            "Classic",     Theme.Classic
+            "BlueAccents", Theme.BlueAccents
+            "Hackerman",   Theme.Hackerman
+            "Cold",        Theme.Cold
+            "Warm",        Theme.Warm
+            "Sunset",      Theme.Sunset
+            "Forest",      Theme.Forest
+            "Ocean",       Theme.Ocean
+        ]
+
     static member parseTheme(str: string) =
-        match str with
-        | "Default"     -> Theme.Default
-        | "Classic"     -> Theme.Classic
-        | "BlueAccents" -> Theme.BlueAccents
-        | "Hackerman"   -> Theme.Hackerman
-        | "Cold"        -> Theme.Cold
-        | "Warm"        -> Theme.Warm
-        | "Sunset"      -> Theme.Sunset
-        | "Forest"      -> Theme.Forest
-        | "Ocean"       -> Theme.Ocean
-        | _             -> Theme.Default
+        match Theme.themes.TryFind str with
+        | Some theme -> theme
+        | None -> Theme.Default
 
     static member Default =
         {
-            Border = ConsoleColor.Gray
-            Header = ConsoleColor.Gray
-            Key    = ConsoleColor.Gray
-            Value  = ConsoleColor.Gray
-            Other  = ConsoleColor.Gray
+            Border = Gray
+            Header = Gray
+            Key    = Gray
+            Value  = Gray
+            Other  = Gray
         }
 
     static member Classic =
         {
-            Border = ConsoleColor.DarkGray
-            Header = ConsoleColor.Green
-            Key    = ConsoleColor.Yellow
-            Value  = ConsoleColor.Gray
-            Other  = ConsoleColor.Magenta
+            Border = DarkGray
+            Header = Green
+            Key    = Yellow
+            Value  = Gray
+            Other  = Magenta
         }
 
     static member BlueAccents =
         {
-            Border = ConsoleColor.Blue
-            Header = ConsoleColor.Green
-            Key    = ConsoleColor.Yellow
-            Value  = ConsoleColor.White
-            Other  = ConsoleColor.Cyan
+            Border = Blue
+            Header = Green
+            Key    = Yellow
+            Value  = White
+            Other  = Cyan
         }
 
     static member Hackerman =
         {
-            Border = ConsoleColor.DarkGray
-            Header = ConsoleColor.Green
-            Key    = ConsoleColor.Green
-            Value  = ConsoleColor.Gray
-            Other  = ConsoleColor.DarkGreen
+            Border = DarkGray
+            Header = Green
+            Key    = Green
+            Value  = Gray
+            Other  = DarkGreen
         }
 
     static member Cold =
         {
-            Border = ConsoleColor.Cyan
-            Header = ConsoleColor.White
-            Key    = ConsoleColor.Blue
-            Value  = ConsoleColor.Gray
-            Other  = ConsoleColor.DarkCyan
+            Border = Cyan
+            Header = White
+            Key    = Blue
+            Value  = Gray
+            Other  = DarkCyan
         }
 
     static member Warm =
         {
-            Border = ConsoleColor.Red
-            Header = ConsoleColor.Yellow
-            Key    = ConsoleColor.Magenta
-            Value  = ConsoleColor.White
-            Other  = ConsoleColor.DarkRed
+            Border = Red
+            Header = Yellow
+            Key    = Magenta
+            Value  = White
+            Other  = DarkRed
         }
 
     static member Sunset =
         {
-            Border = ConsoleColor.DarkRed
-            Header = ConsoleColor.Yellow
-            Key    = ConsoleColor.Red
-            Value  = ConsoleColor.Magenta
-            Other  = ConsoleColor.DarkYellow
+            Border = DarkRed
+            Header = Yellow
+            Key    = Red
+            Value  = Magenta
+            Other  = DarkYellow
         }
 
     static member Forest =
         {
-            Border = ConsoleColor.DarkGreen
-            Header = ConsoleColor.Green
-            Key    = ConsoleColor.Yellow
-            Value  = ConsoleColor.White
-            Other  = ConsoleColor.DarkGreen
+            Border = DarkGreen
+            Header = Green
+            Key    = Yellow
+            Value  = White
+            Other  = DarkGreen
         }
 
     static member Ocean =
         {
-            Border = ConsoleColor.Blue
-            Header = ConsoleColor.Cyan
-            Key    = ConsoleColor.DarkBlue
-            Value  = ConsoleColor.White
-            Other  = ConsoleColor.DarkCyan
+            Border = Blue
+            Header = Cyan
+            Key    = DarkBlue
+            Value  = White
+            Other  = DarkCyan
         }
 
 let (=>>) color s =
