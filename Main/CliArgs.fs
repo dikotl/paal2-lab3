@@ -56,7 +56,7 @@ type CliHandler(args: string array) =
         | [] -> ()
         | "-h" :: _ | "--help" :: _ ->
             Console.Error.WriteLine usage
-            System.Environment.Exit(1)
+            Environment.Exit(1)
         | "--inputFile" :: filename :: tail ->
             inputFile <- openReader filename
             parseArgs tail
@@ -88,33 +88,33 @@ type CliHandler(args: string array) =
                         | 'q' -> talkToUser <- false
                         | 't' ->
                             match rest with
-                            | 'd' :: _ -> 
+                            | 'd' :: _ ->
                                 themeArg <- Theme.Default
-                            | 'c' :: 'l' :: _ -> 
+                            | 'c' :: 'l' :: _ ->
                                 themeArg <- Theme.Classic
-                            | 'b' :: _ -> 
+                            | 'b' :: _ ->
                                 themeArg <- Theme.BlueAccents
-                            | 'h' :: _ -> 
+                            | 'h' :: _ ->
                                 themeArg <- Theme.Hackerman
-                            | 'c' :: _ -> 
+                            | 'c' :: _ ->
                                 themeArg <- Theme.Cold
-                            | 'w' :: _ -> 
+                            | 'w' :: _ ->
                                 themeArg <- Theme.Warm
-                            | 's' :: _ -> 
+                            | 's' :: _ ->
                                 themeArg <- Theme.Sunset
-                            | 'f' :: _ -> 
+                            | 'f' :: _ ->
                                 themeArg <- Theme.Forest
-                            | 'o' :: _ -> 
+                            | 'o' :: _ ->
                                 themeArg <- Theme.Ocean
                             | _ -> ()
                         | _ -> ()
                         checkNextSymbol rest
-                checkNextSymbol (arg.TrimStart('-') |> List.ofSeq)
+                checkNextSymbol (opt.TrimStart('-') |> List.ofSeq)
                 parseArgs tail
         | unknown :: tail ->
             raise (ArgumentException $"Unknown argument: {unknown}")
             parseArgs tail
-    
+
     do
         if args.Length > 0 then
             let argsList = args |> Array.toList
@@ -126,10 +126,12 @@ type CliHandler(args: string array) =
                     parseArgs (List.tail argsList)
                     inputFile <- openReader args.[0]
             with ex ->
-                Console.Error.WriteLine (sprintf "%s%s" (ConsoleColor.DarkRed =>> "Error occured while parsing Cli arguments:\n") ex.Message)
-                System.Environment.Exit(2)
-
-            
+                Console.Error.WriteLine(
+                    sprintf
+                        "%s%s"
+                        (ConsoleColor.DarkRed =>> "Error occurred while parsing Cli arguments:\n")
+                        ex.Message)
+                Environment.Exit(2)
 
     member val GlobalTheme: Theme = themeArg with get
 
@@ -137,5 +139,5 @@ type CliHandler(args: string array) =
 
     member val TalkToUser: bool = talkToUser with get
 
-    member this.getContext(): Context = 
+    member this.getContext(): Context =
         Context(this.InputFile, Console.Out, this.TalkToUser, this.GlobalTheme)
