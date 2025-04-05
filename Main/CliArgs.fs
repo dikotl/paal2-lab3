@@ -66,7 +66,7 @@ type CliHandler(args: string array) =
         | [] -> ()
         | "-h" :: _ | "--help" :: _ ->
             Console.Error.WriteLine usage
-            Environment.Exit(1)
+            exit 1
         | "--input-file" :: filename :: tail ->
             inputFile <- openReader filename
             parseArgs tail
@@ -141,7 +141,7 @@ type CliHandler(args: string array) =
                         "%s%s"
                         (ConsoleColor.DarkRed =>> "Error occurred while parsing Cli arguments:\n")
                         ex.Message)
-                Environment.Exit(2)
+                exit 2
 
     /// <summary>
     /// Gets the global theme specified via CLI arguments.

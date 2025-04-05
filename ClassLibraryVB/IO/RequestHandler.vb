@@ -11,14 +11,14 @@ Namespace IO
     ''' <summary>
     ''' Exception thrown to indicate the program should exit to the menu.
     ''' </summary>
-    Public Class ExitToMenuException
+    Public Class ДавайПоНовійException
         Inherits Exception
     End Class
 
     ''' <summary>
     ''' Exception thrown to indicate the program should exit completely.
     ''' </summary>
-    Public Class ExitProgramException
+    Public Class ДоПобаченняException
         Inherits Exception
     End Class
 
@@ -169,13 +169,13 @@ Namespace IO
         ''' <param name="input">An input from the user to be checked</param>
         ''' <returns>True if command was handled</returns>
         Private Function HandleCommand(input As String) As Boolean
-            If input Is Nothing Then Throw New ExitProgramException()
+            If input Is Nothing Then Throw New ДоПобаченняException()
 
             Select Case input.Trim().ToLower()
                 Case "menu"
-                    Throw New ExitToMenuException()
+                    Throw New ДавайПоНовійException()
                 Case "exit"
-                    Throw New ExitProgramException()
+                    Throw New ДоПобаченняException()
                 Case "clear"
                     Console.Clear()
                     Return True
@@ -196,8 +196,8 @@ Namespace IO
         ''' <param name="message">A message that guides the user on what to input.</param>
         ''' <param name="style">The style of the request message.</param>
         ''' <returns>The user input converted to the specified type.</returns>
-        ''' <exception cref="ExitToMenuException">Thrown when the user chooses to return to the menu.</exception>
-        ''' <exception cref="ExitProgramException">Thrown when the user chooses to exit the program.</exception>
+        ''' <exception cref="ДавайПоНовійException">Thrown when the user chooses to return to the menu.</exception>
+        ''' <exception cref="ДоПобаченняException">Thrown when the user chooses to exit the program.</exception>
         Public Function Request(Of T)(converter As Converter(Of String, T), Optional message As String = Nothing, Optional style As RequestStyle = RequestStyle.Default) As T
             While True
                 Try
@@ -216,8 +216,8 @@ Namespace IO
         ''' <param name="message">A message that guides the user on what to input.</param>
         ''' <param name="style">The style of the request message.</param>
         ''' <returns>The user input converted to the specified type.</returns>
-        ''' <exception cref="ExitToMenuException">Thrown when the user chooses to return to the menu.</exception>
-        ''' <exception cref="ExitProgramException">Thrown when the user chooses to exit the program.</exception>
+        ''' <exception cref="ДавайПоНовійException">Thrown when the user chooses to return to the menu.</exception>
+        ''' <exception cref="ДоПобаченняException">Thrown when the user chooses to exit the program.</exception>
         Public Function Request(Of T As {IParsable(Of T), New})(Optional message As String = Nothing, Optional style As RequestStyle = RequestStyle.[Default]) As T
             Return Request(AddressOf Parse(Of T), message, style)
         End Function
@@ -228,8 +228,8 @@ Namespace IO
         ''' <param name="message">A message that guides the user on what to input.</param>
         ''' <param name="style">The style of the request message.</param>
         ''' <returns>The user input as a string.</returns>
-        ''' <exception cref="ExitToMenuException">Thrown when the user chooses to return to the menu.</exception>
-        ''' <exception cref="ExitProgramException">Thrown when the user chooses to exit the program.</exception>
+        ''' <exception cref="ДавайПоНовійException">Thrown when the user chooses to return to the menu.</exception>
+        ''' <exception cref="ДоПобаченняException">Thrown when the user chooses to exit the program.</exception>
         Public Function Request(Optional message As String = Nothing, Optional style As RequestStyle = RequestStyle.[Default]) As String
             Dim input As String
             Do

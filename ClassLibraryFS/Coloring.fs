@@ -44,15 +44,15 @@ type Theme =
     /// </summary>
     static member themes : Map<string, Theme> =
         Map.ofList [
-            "Default",     Theme.Default
-            "Classic",     Theme.Classic
-            "BlueAccents", Theme.BlueAccents
-            "Hackerman",   Theme.Hackerman
-            "Cold",        Theme.Cold
-            "Warm",        Theme.Warm
-            "Sunset",      Theme.Sunset
-            "Forest",      Theme.Forest
-            "Ocean",       Theme.Ocean
+            "default",     Theme.Default
+            "classic",     Theme.Classic
+            "blueaccents", Theme.BlueAccents
+            "hackerman",   Theme.Hackerman
+            "cold",        Theme.Cold
+            "warm",        Theme.Warm
+            "sunset",      Theme.Sunset
+            "forest",      Theme.Forest
+            "ocean",       Theme.Ocean
         ]
 
     /// <summary>
@@ -61,7 +61,7 @@ type Theme =
     /// <param name="str">The name of the theme.</param>
     /// <returns>The corresponding Theme if found, otherwise Default.</returns>
     static member parseTheme(str: string) =
-        match Theme.themes.TryFind str with
+        match Theme.themes.TryFind (str.ToLower()) with
         | Some theme -> theme
         | None -> Theme.Default
 
