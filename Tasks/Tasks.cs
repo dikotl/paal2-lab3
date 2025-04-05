@@ -1,21 +1,21 @@
 using System;
 using System.Collections.Generic;
-using ClassLibrary.Collections;
-using ClassLibrary.FunctionalEnumerableOperations;
+using ClassLibraryCS.Collections;
 using ClassLibraryVB.IO;
+using ClassLibraryCS.FunctionalEnumerableOperations;
 
-namespace App;
+namespace Tasks;
 
-public static class Program
+public static class Tasks
 {
-    public static readonly Dictionary<int, (Action<Context> task, string description)> Block1Tasks = new()
+    public static readonly Dictionary<int, (Action<Context> task, string description)> Block1 = new()
     {
-        [10] = (Task10, "Видалити елементи між першим мінімальним і останнім максимальним, окрім них самих"),
+        [10] = (Task10, "Видалити елементи між першим мінімальним і останнім максимальним"),
         [15] = (Task15, "Вставити 0 після кожного парного елемента"),
         [16] = (Task16, "Вставити 1 перед кожним парним елементом"),
     };
 
-    public static readonly Dictionary<int, (Action<Context> task, string description)> Block2Tasks = new()
+    public static readonly Dictionary<int, (Action<Context> task, string description)> Block2 = new()
     {
         [11] = (Task11, "Додати рядок після першого рядка з максимальним елементом"),
         [13] = (Task13, "Додати рядок перед першим рядком із мінімальним елементом"),
@@ -110,7 +110,7 @@ public static class Program
 
         jaggedArray.Insert(maxRowIndex + 1, [99, 100]);
 
-        context.PrintLine("Result:");
+        context.PrintLine("Result:", ConsoleColor.DarkCyan);
         foreach (var row in jaggedArray)
             context.WriteLine(row);
     }
@@ -126,7 +126,7 @@ public static class Program
                                 .FirstOrDefault(x => true);
 
         arr.Insert(rowWithMinItem.i, [rowWithMinItem.Item1]);
-        context.PrintLine($"Result:");
+        context.PrintLine($"Result:", ConsoleColor.DarkCyan);
         foreach (var item in arr)
             context.WriteLine(item);
     }
@@ -142,7 +142,7 @@ public static class Program
                                 .FirstOrDefault(x => true);
 
         arr.Insert(rowWithMinItem.i + 1, [rowWithMinItem.Item1]);
-        context.PrintLine($"Result:");
+        context.PrintLine($"Result:", ConsoleColor.DarkCyan);
         foreach (var item in arr)
             context.WriteLine(item);
     }

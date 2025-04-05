@@ -1,10 +1,11 @@
 Imports System
-Imports System.ComponentModel
 Imports System.IO
 Imports System.Reflection
-Imports ClassLibrary.Collections
-Imports ClassLibrary.FunctionalEnumerableOperations
-
+Imports System.ComponentModel
+Imports ClassLibraryCS.Collections
+Imports ClassLibraryCS.FunctionalEnumerableOperations
+Imports ClassLibraryFS
+Imports ClassLibraryFS.ConsoleUI
 
 Namespace IO
     ''' <summary>
@@ -54,24 +55,39 @@ Namespace IO
     ''' <param name="Writer">The output data stream.</param>
     ''' <param name="TalkToUser">Indicates whether to communicate with the user through stderr.</param>
     Public Class Context
-        Public ReadOnly Property Reader As TextReader
-        Public ReadOnly Property Writer As TextWriter
-        Public ReadOnly Property TalkToUser As Boolean
+        Implements IContext
+        Public ReadOnly Property Reader As TextReader Implements IContext.Reader
+        Public ReadOnly Property Writer As TextWriter Implements IContext.Writer
+        Public ReadOnly Property TalkToUser As Boolean Implements IContext.TalkToUser
+        Public ReadOnly Property GlobalTheme As Coloring.Theme Implements IContext.GlobalTheme
+        Public ReadOnly Property HelpMenu As String Implements IContext.HelpMenu
 
-        Public Sub New(reader As TextReader, writer As TextWriter, talkToUser As Boolean)
+        Public Sub New(reader As TextReader, writer As TextWriter, talkToUser As Boolean, globalTheme As Coloring.Theme)
             Me.Reader = reader
             Me.Writer = writer
             Me.TalkToUser = talkToUser
+            Me.GlobalTheme = globalTheme
+            Me.HelpMenu = generateTable(
+                "Available Commands",
+                {
+                    Tuple.Create("menu", "return to the menu"),
+                    Tuple.Create("exit", "exit the program"),
+                    Tuple.Create("help", "show this table"),
+                    Tuple.Create("clear", "clear the console")
+                },
+                globalTheme)
+            PrintLine(Me.HelpMenu)
         End Sub
 
         ''' <summary>
-        ''' Prints a message to the console without a newline, using the specified color.  
-        ''' If the TalkToUser variable is set to True,  
-        ''' the message will be written to the standard error stream (Console.Error).  
+        ''' Prints a message to the console without a newline, using the specified color.
+        ''' If the TalkToUser variable is set to True,
+        ''' the message will be written to the standard error stream (Console.Error).
         ''' </summary>
         ''' <param name="message">The message to print.</param>
         ''' <param name="color">(Optional) The text color. Default is white.</param>
-        Public Sub Print(message As Object, Optional color As ConsoleColor = ConsoleColor.White)
+        Public Sub Print(message As Object, Optional color As ConsoleColor? = Nothing)
+            If color Is Nothing Then color = GlobalTheme.Other
             If TalkToUser Then
                 Dim oldColor = Console.ForegroundColor
                 Console.ForegroundColor = color
@@ -81,13 +97,14 @@ Namespace IO
         End Sub
 
         ''' <summary>
-        ''' Prints a message to the console with the specified color.  
-        ''' If the TalkToUser variable is set to True,  
-        ''' the message will be written to the standard error stream (Console.Error).  
+        ''' Prints a message to the console with the specified color.
+        ''' If the TalkToUser variable is set to True,
+        ''' the message will be written to the standard error stream (Console.Error).
         ''' </summary>
         ''' <param name="message">The message to print.</param>
         ''' <param name="color">(Optional) The text color. Default is white.</param>
-        Public Sub PrintLine(message As Object, Optional color As ConsoleColor = ConsoleColor.White)
+        Public Sub PrintLine(message As Object, Optional color As ConsoleColor? = Nothing)
+            If color Is Nothing Then color = GlobalTheme.Other
             If TalkToUser Then
                 Dim oldColor = Console.ForegroundColor
                 Console.ForegroundColor = color
@@ -101,7 +118,7 @@ Namespace IO
         ''' </summary>
         ''' <param name="message">The message to be written.</param>
         Public Sub Write(message As Object)
-            If TalkToUser Then Writer.Write(message)
+            Writer.Write(message)
         End Sub
 
         ''' <summary>
@@ -109,7 +126,7 @@ Namespace IO
         ''' </summary>
         ''' <param name="message">The message to be written.</param>
         Public Sub WriteLine(message As Object)
-            If TalkToUser Then Writer.WriteLine(message)
+            Writer.WriteLine(message)
         End Sub
 
         ''' <summary>
@@ -117,8 +134,32 @@ Namespace IO
         ''' </summary>
         ''' <param name="message">The error message to be printed.</param>
         Public Sub [Error](message As String)
-            PrintLine("Error! " & If(message, ""), ConsoleColor.Red)
+            PrintLine("Error! " & If(message, ""), ConsoleColor.DarkRed)
         End Sub
+
+        ''' <summary>
+        ''' Handles command...
+        ''' </summary>
+        ''' <param name="input">An input from the user to be checked</param>
+        ''' <returns>True if command was handled</returns>
+        Private Function HandleCommand(input As String) As Boolean
+            If input Is Nothing Then Throw New ExitProgramException()
+
+            Select Case input.Trim().ToLower()
+                Case "menu"
+                    Throw New ExitToMenuException()
+                Case "exit"
+                    Throw New ExitProgramException()
+                Case "clear"
+                    Console.Clear()
+                    Return True
+                Case "help"
+                    PrintLine(HelpMenu)
+                    Return True
+                Case Else
+                    Return False
+            End Select
+        End Function
 
         ''' <summary>
         ''' Requests input from the user, attempting to convert it to a specific type.
@@ -155,9 +196,6 @@ Namespace IO
             Return Request(AddressOf Parse(Of T), message, style)
         End Function
 
-
-
-
         ''' <summary>
         ''' Requests a string input from the user And returns it.
         ''' </summary>
@@ -167,26 +205,23 @@ Namespace IO
         ''' <exception cref="ExitToMenuException">Thrown when the user chooses to return to the menu.</exception>
         ''' <exception cref="ExitProgramException">Thrown when the user chooses to exit the program.</exception>
         Public Function Request(Optional message As String = Nothing, Optional style As RequestStyle = RequestStyle.[Default]) As String
-            Select Case style
-                Case RequestStyle.[Default]
-                    If message IsNot Nothing Then Print(message, ConsoleColor.Magenta)
-                    Print(vbLf & "> ")
-                Case RequestStyle.Inline
-                    If message IsNot Nothing Then Print(message, ConsoleColor.Magenta)
-                    Print(": ", ConsoleColor.Magenta)
-                Case RequestStyle.Bare
-                Case Else
-                    Throw New InvalidEnumArgumentException(NameOf(style), CType(style, Integer), GetType(RequestStyle))
-            End Select
+            Dim input As String
+            Do
+                Select Case style
+                    Case RequestStyle.[Default]
+                        If message IsNot Nothing Then Print(message)
+                        Print(vbLf & "> ")
+                    Case RequestStyle.Inline
+                        If message IsNot Nothing Then Print(message)
+                        Print(": ")
+                    Case RequestStyle.Bare
+                    Case Else
+                        Throw New InvalidEnumArgumentException(NameOf(style), CType(style, Integer), GetType(RequestStyle))
+                End Select
 
-            Dim input As String = If(Reader.ReadLine(), "")
-            Dim trimmed = input.Trim().ToLower()
-
-            If trimmed = "menu" Then Throw New ExitToMenuException()
-            If trimmed = "exit" Then Throw New ExitProgramException()
-
+                input = Reader.ReadLine()
+            Loop While HandleCommand(input)
             Return input
-
         End Function
 
         ''' <summary>
@@ -210,10 +245,14 @@ Namespace IO
         ''' <param name="converter">A function that converts each input string into the requested type.</param>
         ''' <returns>An array of elements of type T entered by the user.</returns>
         Public Function ReadArrayInline(Of T)(converter As Converter(Of String, T)) As DynArray(Of T)
-            Return Reader _
-                .ReadLine() _
+            Dim input As String
+            Do
+                input = Reader.ReadLine()
+            Loop While HandleCommand(input)
+
+            Return input _
                 .Split() _
-                .Map(Function(input) converter(input)) _
+                .Map(Function(inp) converter(inp)) _
                 .ToDynArray()
         End Function
 
@@ -230,7 +269,6 @@ Namespace IO
                 .ToDynArray()
         End Function
 
-
         ''' <summary>
         ''' Requests the user to specify the input method for entering an array.
         ''' </summary>
@@ -240,7 +278,6 @@ Namespace IO
         Public Function RequestArray(Of T As {IParsable(Of T), New})(getRandomItem As Func(Of T)) As DynArray(Of T)
             Return RequestArray(AddressOf Parse(Of T), getRandomItem)
         End Function
-
 
         ''' <summary>
         ''' Requests the user to specify the input method for entering an array.
@@ -257,6 +294,7 @@ Namespace IO
             Else
                 Do
                     Try
+                        PrintLine("Enter the array separated by spaces:")
                         Return ReadArrayInline(converter)
                     Catch e As Exception When TypeOf e Is FormatException OrElse TypeOf e Is OverflowException
                         [Error](e.Message)
@@ -275,7 +313,6 @@ Namespace IO
             Return RequestMatrix(AddressOf Parse(Of T), getRandomItem)
         End Function
 
-
         ''' <summary>
         ''' Requests a matrix of elements, using a specified converter And random item generator.
         ''' </summary>
@@ -284,7 +321,7 @@ Namespace IO
         ''' <param name="getRandomItem">A function that generates random elements of type T.</param>
         ''' <returns>A dynamically sized matrix (array of arrays) with parsed Or randomly generated elements.</returns>
         Public Function RequestMatrix(Of T)(converter As Converter(Of String, T), getRandomItem As Func(Of T)) As DynArray(Of DynArray(Of T))
-            Dim size As Integer = Request(AddressOf SizeInt, "Input number of sub-arrays")
+            Dim size As Integer = Request(AddressOf SizeInt, "Input number Of Sub-arrays")
             Dim isRandomOrWasError As Boolean = ChooseInputMethod()
 
             Dim result As DynArray(Of DynArray(Of T)) =
@@ -314,6 +351,7 @@ Namespace IO
 
             For i As Integer = 0 To size - 1
                 Try
+                    Print(i + 1 & ": ")
                     typed(i) = ReadArrayInline(Function(input) converter(input))
                 Catch e As Exception When TypeOf e Is FormatException OrElse TypeOf e Is OverflowException
                     [Error](e.Message)
@@ -346,7 +384,7 @@ Namespace IO
             Const message As String =
                 "Select input method:" & vbCrLf &
                 "    1. Random" & vbCrLf &
-                "    2. Line by line"
+                "    2. Manual"
 
             Do
                 Select Case Request(message).Trim()
@@ -362,7 +400,7 @@ Namespace IO
         ''' </summary>
         ''' <param name="input">The user input as a string.</param>
         ''' <returns>A valid array size.</returns>
-        Public Function SizeInt(input As String) As Integer
+        Private Function SizeInt(input As String) As Integer
             Dim size As Integer = Integer.Parse(input)
 
             If size < 1 Then
@@ -372,7 +410,7 @@ Namespace IO
             Return size
         End Function
 
-        Public Function Parse(Of T As {IParsable(Of T), New})(input As String) As T
+        Private Function Parse(Of T As {IParsable(Of T), New})(input As String) As T
             Dim method = GetType(T).GetMethod("Parse", {GetType(String), GetType(IFormatProvider)})
 
             Try
@@ -391,5 +429,4 @@ Namespace IO
             End Try
         End Function
     End Class
-
 End Namespace

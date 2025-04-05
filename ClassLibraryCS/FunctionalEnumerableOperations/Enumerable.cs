@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Numerics;
 using System.Collections;
-using ClassLibrary.Collections;
+using ClassLibraryCS.Collections;
 using System.Collections.Generic;
 
-namespace ClassLibrary.FunctionalEnumerableOperations;
+namespace ClassLibraryCS.FunctionalEnumerableOperations;
 
 public static class Enumerable
 {

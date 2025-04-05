@@ -1,6 +1,6 @@
 using System;
 
-namespace ClassLibrary.Collections;
+namespace ClassLibraryCS.Collections;
 
 /// <summary>
 /// A utility class that generates random data, including arrays and dynamic arrays.
