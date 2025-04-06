@@ -2,7 +2,7 @@
 /// Provides parsing and handling of command-line arguments for the lab3 application.
 /// Supports reading an input file, enabling/disabling console output, and setting a visual theme.
 /// </summary>
-module CliArgs
+module Cli.Args
 
 open System
 open System.IO
@@ -16,7 +16,7 @@ open ClassLibraryVB.IO
 /// user message output, and theme customization.
 /// </summary>
 [<Literal>]
-let usage = $"""
+let public usage = $"""
 Usage:
     lab3 [input-file] [options]
 
@@ -51,7 +51,7 @@ Options:
 /// including the selected theme, input source, and verbosity setting.
 /// </summary>
 /// <param name="args">Array of command-line arguments.</param>
-type CliHandler(args: string array) =
+type Handler(args: string array) =
     let openReader (filepath: string) =
         try
             new StreamReader(filepath)
