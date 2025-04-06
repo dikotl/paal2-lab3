@@ -2,7 +2,7 @@
 open System.Text
 open System.Collections.Generic
 open Tasks
-open CliArgs
+open Cli
 open ClassLibraryVB.IO
 open ClassLibraryFS.ConsoleUI
 
@@ -45,7 +45,7 @@ let main args =
     Console.InputEncoding <- Encoding.UTF8
     Console.OutputEncoding <- Encoding.UTF8
 
-    let argsHandler = CliHandler(args)
+    let argsHandler = Args.Handler(args)
 
     let parsedTasks =
         seq {
