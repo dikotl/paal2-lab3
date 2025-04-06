@@ -65,6 +65,9 @@ type Theme =
         | Some theme -> theme
         | None -> Theme.Default
 
+    /// <summary>
+    /// Represents the default color scheme for the application. All elements are displayed in gray.
+    /// </summary>
     static member Default =
         {
             Border = Gray
@@ -74,6 +77,9 @@ type Theme =
             Other  = Gray
         }
 
+    /// <summary>
+    /// Represents the classic color scheme for the application with green headers, yellow keys, and magenta for other elements.
+    /// </summary>
     static member Classic =
         {
             Border = DarkGray
@@ -83,6 +89,9 @@ type Theme =
             Other  = Magenta
         }
 
+    /// <summary>
+    /// Represents a blue accent color scheme with blue borders and cyan accents for other elements.
+    /// </summary>
     static member BlueAccents =
         {
             Border = Blue
@@ -92,6 +101,9 @@ type Theme =
             Other  = Cyan
         }
 
+    /// <summary>
+    /// Represents a hacker-inspired color scheme with dark green and green accents throughout the interface.
+    /// </summary>
     static member Hackerman =
         {
             Border = DarkGray
@@ -101,6 +113,9 @@ type Theme =
             Other  = DarkGreen
         }
 
+    /// <summary>
+    /// Represents a cold theme with cyan borders and blue accents, creating a cool and fresh visual style.
+    /// </summary>
     static member Cold =
         {
             Border = Cyan
@@ -110,6 +125,9 @@ type Theme =
             Other  = DarkCyan
         }
 
+    /// <summary>
+    /// Represents a warm theme with red borders, yellow headers, and magenta for keys, providing a warm and cozy feel.
+    /// </summary>
     static member Warm =
         {
             Border = Red
@@ -119,6 +137,9 @@ type Theme =
             Other  = DarkRed
         }
 
+    /// <summary>
+    /// Represents a sunset-themed color scheme with dark red borders and yellow headers, evoking the colors of a sunset.
+    /// </summary>
     static member Sunset =
         {
             Border = DarkRed
@@ -128,6 +149,9 @@ type Theme =
             Other  = DarkYellow
         }
 
+    /// <summary>
+    /// Represents a forest-inspired theme with dark green and green accents to create an earthy, nature-filled atmosphere.
+    /// </summary>
     static member Forest =
         {
             Border = DarkGreen
@@ -137,6 +161,9 @@ type Theme =
             Other  = DarkGreen
         }
 
+    /// <summary>
+    /// Represents an ocean-inspired color scheme with blue and cyan elements, reflecting the colors of the sea.
+    /// </summary>
     static member Ocean =
         {
             Border = Blue
