@@ -203,7 +203,7 @@ let (=>>) color s =
 /// Extension method for strings to wrap them in ANSI escape codes for a given ConsoleColor.
 /// </summary>
 [<Extension>]
-type WrapEscColor() =
+type StringExtension() =
     /// <summary>
     /// Wraps the string in ANSI escape codes using the specified ConsoleColor.
     /// </summary>
