@@ -9,7 +9,12 @@ open System.IO
 open ClassLibraryFS.Coloring
 open ClassLibraryVB.IO
 
-
+/// <summary>
+/// Represents the usage guide and available options for the lab3 application.
+/// This string provides a detailed description of the command-line interface (CLI) 
+/// options and how to use the application, including options for setting input files, 
+/// user message output, and theme customization.
+/// </summary>
 [<Literal>]
 let usage = $"""
 Usage:
