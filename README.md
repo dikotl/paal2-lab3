@@ -2,6 +2,11 @@
 
 This is a student's laboratory work on the topic “Dynamic arrays (one-dimensional and jagged)”.
 
+## Documentation repository
+
+Here's a repo(with Github pages) with full API documentation and task descriptions
+[https://github.com/Remenod/paal2-lab3-doc](https://github.com/Remenod/paal2-lab3-doc)
+
 ## Lab Assignment: Dynamic Arrays
 
 This task consists of two blocks, where different methods of handling dynamic arrays are to be implemented: one-dimensional arrays and jagged arrays. Below is the general approach for implementing each block in C#.
