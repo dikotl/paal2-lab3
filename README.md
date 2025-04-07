@@ -4,8 +4,7 @@ This is a student's laboratory work on the topic “Dynamic arrays (one-dimensio
 
 ## Documentation repository
 
-Here's a repo(with Github pages) with full API documentation and task descriptions
-[https://github.com/Remenod/paal2-lab3-doc](https://github.com/Remenod/paal2-lab3-doc)
+Here's a [repo](https://github.com/Remenod/paal2-lab3-doc)(Github pages) with full API documentation and task descriptions.
 
 ## Lab Assignment: Dynamic Arrays
 
