@@ -24,7 +24,7 @@ public static class Tasks
 
     public static void Task10(Context context)
     {
-        var arr = context.RequestArray(() => Generator.Rand.Next(-99, 99)).ToDynArray();
+        var arr = context.RequestArray(() => Generator.Rand.Next(-40, 40)).ToDynArray();
         DelElements();
         context.WriteLine(arr);
 
@@ -117,7 +117,7 @@ public static class Tasks
 
     public static void Task13(Context context)
     {
-        var arr = context.RequestMatrix(int.Parse, () => Generator.Rand.Next(-20, 20));
+        var arr = context.RequestMatrix(int.Parse, () => Generator.Rand.Next(-50, 50));
 
         var rowWithMinItem = arr.Enumerate()
                                 .Map(x => (x.item.Min(), x.i))
@@ -133,7 +133,7 @@ public static class Tasks
 
     public static void Task14(Context context)
     {
-        var arr = context.RequestMatrix(int.Parse, () => Generator.Rand.Next(-20, 20));
+        var arr = context.RequestMatrix(int.Parse, () => Generator.Rand.Next(-50, 50));
 
         var rowWithMinItem = arr.Enumerate()
                                 .Map(x => (x.item.Min(), x.i))
