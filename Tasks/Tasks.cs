@@ -10,19 +10,19 @@ public static class Tasks
 {
     public static readonly Dictionary<int, (Action<Context> task, string description)> Block1 = new()
     {
-        [10] = (Task10, "Видалити елементи між першим мінімальним і останнім максимальним"),
-        [15] = (Task15, "Вставити 0 після кожного парного елемента"),
-        [16] = (Task16, "Вставити 1 перед кожним парним елементом"),
+        [10] = (Task1_10, "Видалити елементи між першим мінімальним і останнім максимальним"),
+        [15] = (Task1_15, "Вставити 0 після кожного парного елемента"),
+        [16] = (Task1_16, "Вставити 1 перед кожним парним елементом"),
     };
 
     public static readonly Dictionary<int, (Action<Context> task, string description)> Block2 = new()
     {
-        [11] = (Task11, "Додати рядок після першого рядка з максимальним елементом"),
-        [13] = (Task13, "Додати рядок перед першим рядком із мінімальним елементом"),
-        [14] = (Task14, "Додати рядок після останнього рядка з мінімальним елементом"),
+        [11] = (Task2_11, "Додати рядок після першого рядка з максимальним елементом"),
+        [13] = (Task2_13, "Додати рядок перед першим рядком із мінімальним елементом"),
+        [14] = (Task2_14, "Додати рядок після останнього рядка з мінімальним елементом"),
     };
 
-    public static void Task10(Context context)
+    public static void Task1_10(Context context)
     {
         var arr = context.RequestArray(() => Generator.Rand.Next(-40, 40)).ToDynArray();
         DelElements();
@@ -53,7 +53,7 @@ public static class Tasks
 
     }
 
-    public static void Task15(Context context)
+    public static void Task1_15(Context context)
     {
         DynArray<int> input = context.RequestArray(() => Generator.Rand.Next(-999, 999));
         DynArray<int> result = input
@@ -74,7 +74,7 @@ public static class Tasks
         }
     }
 
-    public static void Task16(Context context)
+    public static void Task1_16(Context context)
     {
         DynArray<int> input = context.RequestArray(() => Generator.Rand.Next(-999, 999));
         DynArray<int> result = input
@@ -96,7 +96,7 @@ public static class Tasks
     }
 
 
-    public static void Task11(Context context)
+    public static void Task2_11(Context context)
     {
         var jaggedArray = context.RequestMatrix(int.Parse, () => Generator.Rand.Next(1, 101));
 
@@ -115,7 +115,7 @@ public static class Tasks
             context.WriteLine(row);
     }
 
-    public static void Task13(Context context)
+    public static void Task2_13(Context context)
     {
         var arr = context.RequestMatrix(int.Parse, () => Generator.Rand.Next(-50, 50));
 
@@ -131,7 +131,7 @@ public static class Tasks
             context.WriteLine(item);
     }
 
-    public static void Task14(Context context)
+    public static void Task2_14(Context context)
     {
         var arr = context.RequestMatrix(int.Parse, () => Generator.Rand.Next(-50, 50));
 
