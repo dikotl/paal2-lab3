@@ -108,7 +108,7 @@ public static class Tasks
                 if (element > maxElement)
                     (maxElement, maxRowIndex) = (element, i);
 
-        jaggedArray.Insert(maxRowIndex + 1, [99, 100]);
+        jaggedArray.Insert(maxRowIndex + 1, [maxElement]);
 
         context.PrintLine("Result:");
         foreach (var row in jaggedArray)
