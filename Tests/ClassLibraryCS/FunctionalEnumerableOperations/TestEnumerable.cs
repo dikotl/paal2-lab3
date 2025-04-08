@@ -4,35 +4,35 @@ using System.Linq.Expressions;
 using System.Numerics;
 using System.Reflection;
 using ClassLibraryCS.Collections;
-using ClassLibraryCS.FunctionalEnumerableOperations;
-using static Tests.ClassLibraryCS.FunctionalEnumerableOperations.ConstValues;
+using ClassLibraryCS.FunctionalOperations;
+using static Tests.ClassLibraryCS.FunctionalOperations.ConstValues;
 
-using Feo = ClassLibraryCS.FunctionalEnumerableOperations;
+using Fo = ClassLibraryCS.FunctionalOperations;
 
-namespace Tests.ClassLibraryCS.FunctionalEnumerableOperations;
+namespace Tests.ClassLibraryCS.FunctionalOperations;
 
 [TestClass]
 public sealed class Transforms
 {
     [TestMethod]
     public void TestSkip___Int() =>
-        FeoTestImplementation.TestSkip(Generator.GetRandomIntArray);
+        FoTestImplementation.TestSkip(Generator.GetRandomIntArray);
 
     [TestMethod]
     public void TestSkip___Double() =>
-        FeoTestImplementation.TestSkip(Generator.GetRandomDoubleArray);
+        FoTestImplementation.TestSkip(Generator.GetRandomDoubleArray);
 
     [TestMethod]
     public void TestTake___Int() =>
-        FeoTestImplementation.TestTake(Generator.GetRandomIntArray);
+        FoTestImplementation.TestTake(Generator.GetRandomIntArray);
 
     [TestMethod]
     public void TestTake___Double() =>
-        FeoTestImplementation.TestTake(Generator.GetRandomDoubleArray);
+        FoTestImplementation.TestTake(Generator.GetRandomDoubleArray);
 
     [TestMethod]
     public void TestFilter_1___Int() =>
-        FeoTestImplementation.TestFilter_1(Generator.GetRandomIntArray, [
+        FoTestImplementation.TestFilter_1(Generator.GetRandomIntArray, [
             a => a < 0,
             a => a > 0,
             a => a % 2 == 0,
@@ -48,7 +48,7 @@ public sealed class Transforms
 
     [TestMethod]
     public void TestFilter_1___Double() =>
-        FeoTestImplementation.TestFilter_1(Generator.GetRandomDoubleArray, [
+        FoTestImplementation.TestFilter_1(Generator.GetRandomDoubleArray, [
             a => a < 0,
             a => a > 0,
             a => a % 2 == 0,
@@ -64,7 +64,7 @@ public sealed class Transforms
 
     [TestMethod]
     public void TestFilter_2___Int() =>
-        FeoTestImplementation.TestFilter_2(Generator.GetRandomIntArray, [
+        FoTestImplementation.TestFilter_2(Generator.GetRandomIntArray, [
             (a, i) => a % 2 == 0 && i % 2 == 0,
             (a, i) => a % 2 != 0 && i % 2 != 0,
             (a, i) => a == i,
@@ -79,7 +79,7 @@ public sealed class Transforms
 
     [TestMethod]
     public void TestFilter_2___Double() =>
-        FeoTestImplementation.TestFilter_2(Generator.GetRandomDoubleArray, [
+        FoTestImplementation.TestFilter_2(Generator.GetRandomDoubleArray, [
             (a, i) => a > 0 && i % 2 == 0,
             (a, i) => a < 0 && i % 2 != 0,
             (a, i) => Math.Abs(a) < i,
@@ -94,7 +94,7 @@ public sealed class Transforms
 
     [TestMethod]
     public void TestTakeWhile___Int() =>
-        FeoTestImplementation.TestTakeWhile(Generator.GetRandomIntArray, [
+        FoTestImplementation.TestTakeWhile(Generator.GetRandomIntArray, [
             a => a > 0,
             a => a % 2 == 0,
             a => a < 100,
@@ -107,7 +107,7 @@ public sealed class Transforms
 
     [TestMethod]
     public void TestTakeWhile___Double() =>
-        FeoTestImplementation.TestTakeWhile(Generator.GetRandomDoubleArray, [
+        FoTestImplementation.TestTakeWhile(Generator.GetRandomDoubleArray, [
             a => a > 0,
             a => a < 100,
             a => Math.Abs(a) > 0.1,
@@ -119,7 +119,7 @@ public sealed class Transforms
 
     [TestMethod]
     public void TestSkipWhile___Int() =>
-        FeoTestImplementation.TestSkipWhile(Generator.GetRandomIntArray, [
+        FoTestImplementation.TestSkipWhile(Generator.GetRandomIntArray, [
             a => a > 0,
             a => a % 2 == 0,
             a => a < 100,
@@ -132,7 +132,7 @@ public sealed class Transforms
 
     [TestMethod]
     public void TestSkipWhile___Double() =>
-        FeoTestImplementation.TestSkipWhile(Generator.GetRandomDoubleArray, [
+        FoTestImplementation.TestSkipWhile(Generator.GetRandomDoubleArray, [
             a => a > 0,
             a => a < 100,
             a => Math.Abs(a) > 0.1,
@@ -144,7 +144,7 @@ public sealed class Transforms
 
     [TestMethod]
     public void TestMap___Int() =>
-        FeoTestImplementation.TestMap(Generator.GetRandomIntArray, [
+        FoTestImplementation.TestMap(Generator.GetRandomIntArray, [
             x => x + 1,
             x => x * 2,
             x => x * x,
@@ -153,7 +153,7 @@ public sealed class Transforms
 
     [TestMethod]
     public void TestMap___Double() =>
-        FeoTestImplementation.TestMap(Generator.GetRandomDoubleArray, [
+        FoTestImplementation.TestMap(Generator.GetRandomDoubleArray, [
         x => x + 0.5,
         x => x * 3,
         x => x * x,
@@ -166,7 +166,7 @@ public sealed class BoolAggregations
 {
     [TestMethod]
     public void TestAll___Int() =>
-        FeoTestImplementation.TestAll(Generator.GetRandomIntArray,
+        FoTestImplementation.TestAll(Generator.GetRandomIntArray,
         [
             a => a < 0,
             a => a > 0,
@@ -176,7 +176,7 @@ public sealed class BoolAggregations
 
     [TestMethod]
     public void TestAll___Double() =>
-        FeoTestImplementation.TestAll(Generator.GetRandomDoubleArray,
+        FoTestImplementation.TestAll(Generator.GetRandomDoubleArray,
         [
             a => a < 0,
             a => a > 0,
@@ -186,7 +186,7 @@ public sealed class BoolAggregations
 
     [TestMethod]
     public void TestAny___Int() =>
-        FeoTestImplementation.TestAny(Generator.GetRandomIntArray,
+        FoTestImplementation.TestAny(Generator.GetRandomIntArray,
         [
             a => a < 0,
             a => a > 0,
@@ -196,7 +196,7 @@ public sealed class BoolAggregations
 
     [TestMethod]
     public void TestAny___Double() =>
-        FeoTestImplementation.TestAny(Generator.GetRandomDoubleArray,
+        FoTestImplementation.TestAny(Generator.GetRandomDoubleArray,
         [
             a => a < 0,
             a => a > 0,
@@ -210,35 +210,35 @@ public sealed class Convertors
 {
     [TestMethod]
     public void TestToArray___Int() =>
-        FeoTestImplementation.TestToArray(Generator.GetRandomIntArray);
+        FoTestImplementation.TestToArray(Generator.GetRandomIntArray);
 
     [TestMethod]
     public void TestToArray___Double() =>
-        FeoTestImplementation.TestToArray(Generator.GetRandomDoubleArray);
+        FoTestImplementation.TestToArray(Generator.GetRandomDoubleArray);
 
     [TestMethod]
     public void TestToList___Int() =>
-        FeoTestImplementation.TestToList(Generator.GetRandomIntArray);
+        FoTestImplementation.TestToList(Generator.GetRandomIntArray);
 
     [TestMethod]
     public void TestToList___Double() =>
-        FeoTestImplementation.TestToList(Generator.GetRandomDoubleArray);
+        FoTestImplementation.TestToList(Generator.GetRandomDoubleArray);
 
     [TestMethod]
     public void TestToSet___Int() =>
-        FeoTestImplementation.TestToSet(Generator.GetRandomIntArray);
+        FoTestImplementation.TestToSet(Generator.GetRandomIntArray);
 
     [TestMethod]
     public void TestToSet___Double() =>
-        FeoTestImplementation.TestToSet(Generator.GetRandomDoubleArray);
+        FoTestImplementation.TestToSet(Generator.GetRandomDoubleArray);
 
     [TestMethod]
     public void TestToIndexedEnumerable___Int() =>
-        FeoTestImplementation.TestToIndexedEnumerable(Generator.GetRandomIntArray);
+        FoTestImplementation.TestToIndexedEnumerable(Generator.GetRandomIntArray);
 
     [TestMethod]
     public void TestToIndexedEnumerable___Double() =>
-        FeoTestImplementation.TestToIndexedEnumerable(Generator.GetRandomDoubleArray);
+        FoTestImplementation.TestToIndexedEnumerable(Generator.GetRandomDoubleArray);
 }
 
 [TestClass]
@@ -246,7 +246,7 @@ public sealed class Folds
 {
     [TestMethod]
     public void TestFold_1___Int() =>
-        FeoTestImplementation.TestFold_1(Generator.GetRandomIntArray,
+        FoTestImplementation.TestFold_1(Generator.GetRandomIntArray,
         [
             (acc, c) => acc + c,
             (acc, c) => c < acc ? c : acc,
@@ -259,7 +259,7 @@ public sealed class Folds
 
     [TestMethod]
     public void TestFold_1___Double() =>
-        FeoTestImplementation.TestFold_1(Generator.GetRandomDoubleArray,
+        FoTestImplementation.TestFold_1(Generator.GetRandomDoubleArray,
         [
             (acc, c) => acc + c,
             (acc, c) => c < acc ? c : acc,
@@ -272,7 +272,7 @@ public sealed class Folds
 
     [TestMethod]
     public void TestFold_2___Int() =>
-        FeoTestImplementation.TestFold_2(Generator.GetRandomIntArray,
+        FoTestImplementation.TestFold_2(Generator.GetRandomIntArray,
         Generator.Rand.Next(DefElementBound),
         [
             (acc, c) => acc + c,
@@ -286,7 +286,7 @@ public sealed class Folds
 
     [TestMethod]
     public void TestFold_2___Double() =>
-        FeoTestImplementation.TestFold_2(Generator.GetRandomDoubleArray,
+        FoTestImplementation.TestFold_2(Generator.GetRandomDoubleArray,
         Generator.Rand.Next(DefElementBound) * Generator.Rand.NextDouble(),
         [
             (acc, c) => acc + c,
@@ -304,15 +304,15 @@ public sealed class ValueFinders
 {
     [TestMethod]
     public void TestMinMax_1___Int() =>
-        FeoTestImplementation.TestMinMax_1(Generator.GetRandomIntArray);
+        FoTestImplementation.TestMinMax_1(Generator.GetRandomIntArray);
 
     [TestMethod]
     public void TestMinMax_1___Double() =>
-        FeoTestImplementation.TestMinMax_1(Generator.GetRandomDoubleArray);
+        FoTestImplementation.TestMinMax_1(Generator.GetRandomDoubleArray);
 
     [TestMethod]
     public void TestMinMax_2___Int() =>
-        FeoTestImplementation.TestMinMax_2(Generator.GetRandomIntArray,
+        FoTestImplementation.TestMinMax_2(Generator.GetRandomIntArray,
         [
             x => x,
             x => x % 10,
@@ -322,7 +322,7 @@ public sealed class ValueFinders
 
     [TestMethod]
     public void TestMinMax_2___Double() =>
-        FeoTestImplementation.TestMinMax_2(Generator.GetRandomDoubleArray,
+        FoTestImplementation.TestMinMax_2(Generator.GetRandomDoubleArray,
         [
             x => x,
             x => Math.Abs(x),
@@ -333,7 +333,7 @@ public sealed class ValueFinders
 
     [TestMethod]
     public void TestFirstOrDefault_1___Int() =>
-        FeoTestImplementation.TestFirstOrDefault_1(Generator.GetRandomIntArray,
+        FoTestImplementation.TestFirstOrDefault_1(Generator.GetRandomIntArray,
        [
            a => a < 0,
             a => a > 0,
@@ -344,7 +344,7 @@ public sealed class ValueFinders
 
     [TestMethod]
     public void TestFirstOrDefault_1___Double() =>
-        FeoTestImplementation.TestFirstOrDefault_1(Generator.GetRandomDoubleArray,
+        FoTestImplementation.TestFirstOrDefault_1(Generator.GetRandomDoubleArray,
         [
             a => a < 0,
             a => a > 0,
@@ -355,7 +355,7 @@ public sealed class ValueFinders
 
     [TestMethod]
     public void TestFirstOrDefault_2___Int() =>
-        FeoTestImplementation.TestFirstOrDefault_2(Generator.GetRandomIntArray,
+        FoTestImplementation.TestFirstOrDefault_2(Generator.GetRandomIntArray,
         [
             a => a < 0,
             a => a > 0,
@@ -366,7 +366,7 @@ public sealed class ValueFinders
 
     [TestMethod]
     public void TestFirstOrDefault_2___Double() =>
-        FeoTestImplementation.TestFirstOrDefault_2(Generator.GetRandomDoubleArray,
+        FoTestImplementation.TestFirstOrDefault_2(Generator.GetRandomDoubleArray,
         [
             a => a < 0,
             a => a > 0,
@@ -381,7 +381,7 @@ public sealed class Sorters
 {
     [TestMethod]
     public void TestOrderBy___Int() =>
-        FeoTestImplementation.TestOrderBy(Generator.GetRandomIntArray,
+        FoTestImplementation.TestOrderBy(Generator.GetRandomIntArray,
         [
             a => a,
             a => -a,
@@ -403,7 +403,7 @@ public sealed class Sorters
 
     [TestMethod]
     public void TestOrderBy___Double() =>
-        FeoTestImplementation.TestOrderBy(Generator.GetRandomDoubleArray,
+        FoTestImplementation.TestOrderBy(Generator.GetRandomDoubleArray,
         [
            a => a,
             a => -a,
@@ -425,7 +425,7 @@ public sealed class Sorters
 
     [TestMethod]
     public void TestOrderByDescending___Int() =>
-        FeoTestImplementation.TestOrderByDescending(Generator.GetRandomIntArray,
+        FoTestImplementation.TestOrderByDescending(Generator.GetRandomIntArray,
         [
             a => a,
             a => -a,
@@ -447,7 +447,7 @@ public sealed class Sorters
 
     [TestMethod]
     public void TestOrderByDescending___Double() =>
-        FeoTestImplementation.TestOrderByDescending(Generator.GetRandomDoubleArray,
+        FoTestImplementation.TestOrderByDescending(Generator.GetRandomDoubleArray,
         [
            a => a,
             a => -a,
@@ -469,7 +469,7 @@ public sealed class Sorters
 
     [TestMethod]
     public void TestOrderBy_withComparer___Int() =>
-        FeoTestImplementation.TestOrderBy(Generator.GetRandomIntArray,
+        FoTestImplementation.TestOrderBy(Generator.GetRandomIntArray,
         [
             a => a,
             a => -a,
@@ -492,7 +492,7 @@ public sealed class Sorters
 
     [TestMethod]
     public void TestOrderBy_withComparer___Double() =>
-        FeoTestImplementation.TestOrderBy(Generator.GetRandomDoubleArray,
+        FoTestImplementation.TestOrderBy(Generator.GetRandomDoubleArray,
         [
            a => a,
             a => -a,
@@ -515,7 +515,7 @@ public sealed class Sorters
 
     [TestMethod]
     public void TestOrderByDescending_withComparer___Int() =>
-        FeoTestImplementation.TestOrderByDescending(Generator.GetRandomIntArray,
+        FoTestImplementation.TestOrderByDescending(Generator.GetRandomIntArray,
         [
             a => a,
             a => -a,
@@ -538,7 +538,7 @@ public sealed class Sorters
 
     [TestMethod]
     public void TestOrderByDescending_withComparer___Double() =>
-        FeoTestImplementation.TestOrderByDescending(Generator.GetRandomDoubleArray,
+        FoTestImplementation.TestOrderByDescending(Generator.GetRandomDoubleArray,
         [
             a => a,
             a => -a,
@@ -561,7 +561,7 @@ public sealed class Sorters
 
     [TestMethod]
     public void TestThenBy___Int() =>
-        FeoTestImplementation.TestThenBy(Generator.GetRandomIntArray,
+        FoTestImplementation.TestThenBy(Generator.GetRandomIntArray,
         [
             a => a,
             a => -a,
@@ -583,7 +583,7 @@ public sealed class Sorters
 
     [TestMethod]
     public void TestThenBy___Double() =>
-        FeoTestImplementation.TestThenBy(Generator.GetRandomDoubleArray,
+        FoTestImplementation.TestThenBy(Generator.GetRandomDoubleArray,
         [
            a => a,
             a => -a,
@@ -605,7 +605,7 @@ public sealed class Sorters
 
     [TestMethod]
     public void TestThenByDescending___Int() =>
-        FeoTestImplementation.TestThenByDescending(Generator.GetRandomIntArray,
+        FoTestImplementation.TestThenByDescending(Generator.GetRandomIntArray,
         [
             a => a,
             a => -a,
@@ -627,7 +627,7 @@ public sealed class Sorters
 
     [TestMethod]
     public void TestThenByDescending___Double() =>
-        FeoTestImplementation.TestThenByDescending(Generator.GetRandomDoubleArray,
+        FoTestImplementation.TestThenByDescending(Generator.GetRandomDoubleArray,
         [
            a => a,
             a => -a,
@@ -649,7 +649,7 @@ public sealed class Sorters
 
     [TestMethod]
     public void TestThenBy_withComparer___Int() =>
-        FeoTestImplementation.TestOrderBy(Generator.GetRandomIntArray,
+        FoTestImplementation.TestOrderBy(Generator.GetRandomIntArray,
         [
             a => a,
             a => -a,
@@ -672,7 +672,7 @@ public sealed class Sorters
 
 }
 
-public static class FeoTestImplementation
+public static class FoTestImplementation
 {
     public static void TestToIndexedEnumerable<T>(Func<Range, int, IEnumerable<T>> generateArray)
     {
@@ -699,8 +699,8 @@ public static class FeoTestImplementation
             var min = System.Linq.Enumerable.Min(a);
             var max = System.Linq.Enumerable.Max(a);
 
-            Assert.AreEqual(expectedMin, min, $"Feo.Min <{typeof(T)}> does not work correctly");
-            Assert.AreEqual(expectedMax, max, $"Feo.Max <{typeof(T)}> does not work correctly");
+            Assert.AreEqual(expectedMin, min, $"Fo.Min <{typeof(T)}> does not work correctly");
+            Assert.AreEqual(expectedMax, max, $"Fo.Max <{typeof(T)}> does not work correctly");
         }
     }
 
@@ -716,8 +716,8 @@ public static class FeoTestImplementation
                 var min = System.Linq.Enumerable.Min(a, selector.Compile());
                 var max = System.Linq.Enumerable.Max(a, selector.Compile());
 
-                Assert.AreEqual(expectedMin, min, $"Feo.Min <{typeof(T)}> does not work correctly with {selector.Body}");
-                Assert.AreEqual(expectedMax, max, $"Feo.Max <{typeof(T)}> does not work correctly with {selector.Body}");
+                Assert.AreEqual(expectedMin, min, $"Fo.Min <{typeof(T)}> does not work correctly with {selector.Body}");
+                Assert.AreEqual(expectedMax, max, $"Fo.Max <{typeof(T)}> does not work correctly with {selector.Body}");
             }
     }
 

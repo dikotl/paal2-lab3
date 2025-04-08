@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using ClassLibraryCS.Collections;
 using ClassLibraryVB.IO;
-using ClassLibraryCS.FunctionalEnumerableOperations;
+using ClassLibraryCS.FunctionalOperations;
 
 namespace Tasks;
 

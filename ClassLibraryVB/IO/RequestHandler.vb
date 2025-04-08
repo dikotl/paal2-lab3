@@ -3,7 +3,7 @@ Imports System.IO
 Imports System.Reflection
 Imports System.ComponentModel
 Imports ClassLibraryCS.Collections
-Imports ClassLibraryCS.FunctionalEnumerableOperations
+Imports ClassLibraryCS.FunctionalOperations
 Imports ClassLibraryFS
 Imports ClassLibraryFS.ConsoleUI
 
