@@ -19,8 +19,7 @@ public class DynArray<T> : IList<T>, ICloneable
     public bool IsReadOnly => false;
 
     /// <summary>
-    /// Checks if the type T is a array by determining if it is assignable from <see cref="ICollection"/>. Returns true if T is a
-    /// jagged array type.
+    /// Checks if the type T is a array by determining if it is assignable from <see cref="ICollection"/>. Gets true if T is an collecion type.
     /// </summary>
     private readonly bool IsJagged;
 
