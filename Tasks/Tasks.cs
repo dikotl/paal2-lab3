@@ -111,8 +111,7 @@ public static class Tasks
         jaggedArray.Insert(maxRowIndex + 1, [maxElement]);
 
         context.PrintLine("Result:");
-        foreach (var row in jaggedArray)
-            context.WriteLine(row);
+        context.WriteLine(jaggedArray);
     }
 
     public static void Task2_13(Context context)
@@ -127,8 +126,7 @@ public static class Tasks
 
         arr.Insert(rowWithMinItem.i, [rowWithMinItem.Item1]);
         context.PrintLine($"Result:");
-        foreach (var item in arr)
-            context.WriteLine(item);
+        context.WriteLine(arr);
     }
 
     public static void Task2_14(Context context)
@@ -143,7 +141,6 @@ public static class Tasks
 
         arr.Insert(rowWithMinItem.i + 1, [rowWithMinItem.Item1]);
         context.PrintLine($"Result:");
-        foreach (var item in arr)
-            context.WriteLine(item);
+        context.WriteLine(arr);
     }
 }
