@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using ClassLibraryCS.Collections;
 using ClassLibraryVB.IO;
-using ClassLibraryCS.FunctionalEnumerableOperations;
+using ClassLibraryCS.FunctionalOperations;
 
 namespace Tasks;
 
@@ -24,8 +24,9 @@ public static class Tasks
 
     public static void Task10(Context context)
     {
-        var arr = context.RequestArray(() => Generator.Rand.Next(-99, 99)).ToDynArray();
+        var arr = context.RequestArray(() => Generator.Rand.Next(-40, 40)).ToDynArray();
         DelElements();
+        context.PrintLine("Result:");
         context.WriteLine(arr);
 
         void DelElements()
@@ -63,6 +64,7 @@ public static class Tasks
             .Fold(input[..], WithInsert)
             .ToDynArray();
 
+        context.PrintLine("Result:");
         context.WriteLine(result);
 
 
@@ -84,6 +86,7 @@ public static class Tasks
             .Fold(input[..], WithInsert)
             .ToDynArray();
 
+        context.PrintLine("Result:");
         context.WriteLine(result);
 
 
@@ -108,16 +111,15 @@ public static class Tasks
                 if (element > maxElement)
                     (maxElement, maxRowIndex) = (element, i);
 
-        jaggedArray.Insert(maxRowIndex + 1, [99, 100]);
+        jaggedArray.Insert(maxRowIndex + 1, [maxElement]);
 
-        context.PrintLine("Result:", ConsoleColor.DarkCyan);
-        foreach (var row in jaggedArray)
-            context.WriteLine(row);
+        context.PrintLine("Result:");
+        context.WriteLine(jaggedArray);
     }
 
     public static void Task13(Context context)
     {
-        var arr = context.RequestMatrix(int.Parse, () => Generator.Rand.Next(-20, 20));
+        var arr = context.RequestMatrix(int.Parse, () => Generator.Rand.Next(-50, 50));
 
         var rowWithMinItem = arr.Enumerate()
                                 .Map(x => (x.item.Min(), x.i))
@@ -126,14 +128,13 @@ public static class Tasks
                                 .FirstOrDefault(x => true);
 
         arr.Insert(rowWithMinItem.i, [rowWithMinItem.Item1]);
-        context.PrintLine($"Result:", ConsoleColor.DarkCyan);
-        foreach (var item in arr)
-            context.WriteLine(item);
+        context.PrintLine($"Result:");
+        context.WriteLine(arr);
     }
 
     public static void Task14(Context context)
     {
-        var arr = context.RequestMatrix(int.Parse, () => Generator.Rand.Next(-20, 20));
+        var arr = context.RequestMatrix(int.Parse, () => Generator.Rand.Next(-50, 50));
 
         var rowWithMinItem = arr.Enumerate()
                                 .Map(x => (x.item.Min(), x.i))
@@ -142,8 +143,7 @@ public static class Tasks
                                 .FirstOrDefault(x => true);
 
         arr.Insert(rowWithMinItem.i + 1, [rowWithMinItem.Item1]);
-        context.PrintLine($"Result:", ConsoleColor.DarkCyan);
-        foreach (var item in arr)
-            context.WriteLine(item);
+        context.PrintLine($"Result:");
+        context.WriteLine(arr);
     }
 }

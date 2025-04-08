@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using ClassLibraryCS.FunctionalOperations;
 
 namespace ClassLibraryCS.Collections;
 
@@ -16,6 +17,11 @@ public class DynArray<T> : IList<T>, ICloneable
     /// Gets a value indicating whether the collection is read-only.
     /// </summary>
     public bool IsReadOnly => false;
+
+    /// <summary>
+    /// Checks if the type T is a array by determining if it is assignable from <see cref="ICollection"/>. Gets true if T is an collecion type.
+    /// </summary>
+    private readonly bool IsJagged;
 
     /// <summary>
     /// Gets the number of elements currently in the collection.
@@ -69,6 +75,10 @@ public class DynArray<T> : IList<T>, ICloneable
     {
         if (capacity < 0)
             throw new ArgumentOutOfRangeException(nameof(capacity), "Negative capacity is not a valid");
+
+        IsJagged = typeof(T).GetInterfaces().Any(i =>
+            i.IsGenericType &&
+            i.GetGenericTypeDefinition() == typeof(ICollection<>));
 
         data = new T[capacity];
     }
@@ -367,21 +377,23 @@ public class DynArray<T> : IList<T>, ICloneable
 
     /// <summary>
     /// Returns a string representation of the array, with each element separated by a comma.
+    /// If the elements of <typeparamref name="T"/> implement <see cref="ICollection{T}"/>, each item will be printed on a new line.
     /// </summary>
     /// <returns>A string representation of the array.</returns>
     public override string ToString()
     {
         // We don't know what length T.ToString() have.
         var buffer = new StringBuilder();
-        buffer.Append('[');
+        if (!IsJagged) buffer.Append('[');
 
         for (int i = 0; i < Count; i++)
         {
             if (i > 0) buffer.Append(", ");
+            if (IsJagged && i > 0) buffer.Append('\n');
             _ = buffer.Append(data[i]?.ToString());
         }
 
-        buffer.Append(']');
+        if (!IsJagged) buffer.Append(']');
         return buffer.ToString();
     }
 

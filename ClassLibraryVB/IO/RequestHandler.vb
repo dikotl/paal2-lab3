@@ -3,7 +3,7 @@ Imports System.IO
 Imports System.Reflection
 Imports System.ComponentModel
 Imports ClassLibraryCS.Collections
-Imports ClassLibraryCS.FunctionalEnumerableOperations
+Imports ClassLibraryCS.FunctionalOperations
 Imports ClassLibraryFS
 Imports ClassLibraryFS.ConsoleUI
 
@@ -260,7 +260,8 @@ Namespace IO
             Dim size As Integer = Request(Function(input) SizeInt(input), "Input number of elements")
             Dim generatedArray As DynArray(Of T) = Generator.GetRandomDynArray(New Range(size, size), getRandomItem)
 
-            PrintLine(String.Format("Generated array: {0}", generatedArray))
+            PrintLine("Generated array:")
+            WriteLine(generatedArray)
             Return generatedArray
         End Function
 

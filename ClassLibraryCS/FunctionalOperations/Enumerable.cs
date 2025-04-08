@@ -4,7 +4,7 @@ using System.Collections;
 using ClassLibraryCS.Collections;
 using System.Collections.Generic;
 
-namespace ClassLibraryCS.FunctionalEnumerableOperations;
+namespace ClassLibraryCS.FunctionalOperations;
 
 /// <summary>
 /// Provides extension methods for working with sequences, including transformations, filtering, and taking elements.

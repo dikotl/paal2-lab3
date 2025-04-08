@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 using ClassLibraryCS.Collections;
-using ClassLibraryCS.FunctionalEnumerableOperations;
+using ClassLibraryCS.FunctionalOperations;
 using static Tests.ClassLibraryCS.Collections.ConstValues;
 
 namespace Tests.ClassLibraryCS.Collections;
