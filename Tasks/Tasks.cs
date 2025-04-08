@@ -26,6 +26,7 @@ public static class Tasks
     {
         var arr = context.RequestArray(() => Generator.Rand.Next(-40, 40)).ToDynArray();
         DelElements();
+        context.PrintLine("Result:");
         context.WriteLine(arr);
 
         void DelElements()
@@ -63,6 +64,7 @@ public static class Tasks
             .Fold(input[..], WithInsert)
             .ToDynArray();
 
+        context.PrintLine("Result:");
         context.WriteLine(result);
 
 
@@ -84,6 +86,7 @@ public static class Tasks
             .Fold(input[..], WithInsert)
             .ToDynArray();
 
+        context.PrintLine("Result:");
         context.WriteLine(result);
 
 
